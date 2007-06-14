@@ -3,6 +3,10 @@
  *
  */
 
+#if defined(__CUDACC__)
+#error Not compatible with CUDA. Don't compile with nvcc.
+#endif
+
 
 #ifndef CUPP_exception_H
 #define CUPP_exception_H
@@ -10,6 +14,7 @@
 #include <exception>
 
 namespace cupp {
+namespace exception {
 
 /**
  * @class exception
@@ -29,6 +34,7 @@ class exception : std::exception {
 		virtual char const* what() const throw() = 0;
 };
 
+}
 }
 
 #endif

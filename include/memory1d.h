@@ -4,8 +4,8 @@
  */
 
 
-#ifndef CUPP_device_H
-#define CUPP_device_H
+#ifndef CUPP_memory1d_H
+#define CUPP_memory1d_H
 
 namespace cupp {
 

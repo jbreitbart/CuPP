@@ -12,7 +12,7 @@
 
 #include "exception/no_device_ex.h"
 #include "exception/no_supporting_device_ex.h"
-#include "exception/cuda_runtime_ex.h"
+#include "exception/cuda_runtime_error.h"
 
 #include "memory1d.h"
 
@@ -66,6 +66,7 @@ class device {
 		 * @param name  The requested device name; pass 0 to ignore it
 		 */
 		void real_constructor(const int major, const int minor, const char* name) {
+			using namespace cupp::exception;
 			// check if there is already a device
 			int cur_device;
 			if (cudaGetDevice(&cur_device)== cudaSuccess) {
@@ -129,12 +130,13 @@ class device {
 		 * @brief Allocates 1-dimension memory on the device.
 		 * @param size The number of elements you want to allocate on the device.
 		 * @return A pointer to 1-dimension device memory.
+		 * @exception cupp::exception::cuda_runtime_error Thrown if the memory allocation fails.
 		 */
 		template<typename T>
 		memory1D<T> get_memory1D(std::size_t size) const {
 			T* devptr;
 			if (cudaMalloc((void**)&devptr, sizeof(T)*size) != cudaSuccess) {
-				throw cuda_runtime_ex(cudaGetLastError());
+				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 
 			return memory1D<T>(devptr, size);
@@ -148,7 +150,7 @@ class device {
 		template<typename T>
 		void free (const memory1D<T> &memory) const {
 			if (cudaFree(memory.pointer_) != cudaSuccess) {
-				throw cuda_runtime_ex(cudaGetLastError());
+				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 		}
 
@@ -161,7 +163,7 @@ class device {
 		template <typename T>
 		void copy_host_to_device(const T* src, const memory1D<T> &dest) {
 			if (cudaMemcpy(p.pointer_, dest, p.size_*sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
-				throw cuda_runtime_ex(cudaGetLastError());
+				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 		}
 
@@ -174,7 +176,7 @@ class device {
 		template <typename T>
 		void copy_device_to_host(const memory1D<T> &src, T* dest) {
 			if (cudaMemcpy(dest, src.pointer_, p.size_*sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
-				throw cuda_runtime_ex(cudaGetLastError());
+				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 		}
 		
@@ -186,10 +188,6 @@ class device {
 			// set the device
 			int device_count;
 			cudaGetDeviceCount(&device_count);
-
-			if (device_count == 0) {
-				throw no_device_ex();
-			}
 
 			return device_count;
 		}

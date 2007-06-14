@@ -189,8 +189,8 @@ class device {
 
 			return device_count;
 		}
-#endif
-};
+#endif // !defined(__CUDACC__)
+}; // class device
 
 /**
  * @class memory1D
@@ -240,11 +240,11 @@ class device::memory1D {
 		operator T*() const {
 			return pointer_;
 		}
-	#endif
+	#endif // defined(__CUDACC__)
 
 	friend cupp::device;
-};
+}; // class memory1d
 
-}
+} // namespace cupp
 
 #endif

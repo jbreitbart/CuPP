@@ -12,7 +12,7 @@
 namespace cupp {
 
 /**
- * @class no_device_ex
+ * @class no_supporting_device_ex
  * @author Jens Breitbart
  * @version 0.1
  * @date 13.06.2007

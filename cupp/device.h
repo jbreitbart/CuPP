@@ -193,7 +193,7 @@ class device {
 }; // class device
 
 /**
- * @class memory1D
+ * @class device::memory1D
  * @author Jens Breitbart
  * @version 0.1
  * @date 13.06.2007
@@ -226,6 +226,9 @@ class device::memory1D {
 		/**
 		 * @return How many elements we can store on the device
 		 */
+		#if defined(__CUDACC__)
+		__host__ __device__
+		#endif
 		std::size_t size() const {
 			return size_;
 		}

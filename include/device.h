@@ -3,12 +3,18 @@
  *
  */
 
+#if defined(__CUDACC__)
+#error Not compatible with CUDA. Don't compile with nvcc.
+#endif
+
 #ifndef CUPP_device_H
 #define CUPP_device_H
 
 #include "exception/no_device_ex.h"
 #include "exception/no_supporting_device_ex.h"
 #include "exception/cuda_runtime_ex.h"
+
+#include "memory1d.h"
 
 #include <cstddef>
 #include <string>
@@ -27,8 +33,6 @@ namespace cupp {
  * asdvasdvasdv
  */
 class device {
-// No device functionality when working with nvcc
-#if !defined(__CUDACC__)
 	public: /***  CONSTRUCTORS & DESTRUCTORS ***/
 		/**
 		 * @brief Generates a default device with no special requirements
@@ -127,13 +131,13 @@ class device {
 		 * @return A pointer to 1-dimension device memory.
 		 */
 		template<typename T>
-		device::memory1D<T> get_memory1D(std::size_t size) const {
+		memory1D<T> get_memory1D(std::size_t size) const {
 			T* devptr;
 			if (cudaMalloc((void**)&devptr, sizeof(T)*size) != cudaSuccess) {
 				throw cuda_runtime_ex(cudaGetLastError());
 			}
 
-			return device::memory1D<T>(devptr, size);
+			return memory1D<T>(devptr, size);
 		}
 
 		/**
@@ -142,7 +146,7 @@ class device {
 		 * @warning After this call is completed @a memory is no longer valid.
 		 */
 		template<typename T>
-		void free (const device::memory1D<T> &memory) const {
+		void free (const memory1D<T> &memory) const {
 			if (cudaFree(memory.pointer_) != cudaSuccess) {
 				throw cuda_runtime_ex(cudaGetLastError());
 			}
@@ -155,7 +159,7 @@ class device {
 		 * @warning We will copy @a dest.size() many elements, you have to assure that @a src points to enough data.
 		 */
 		template <typename T>
-		void copy_host_to_device(const T* src, const device::memory1D<T> &dest) {
+		void copy_host_to_device(const T* src, const memory1D<T> &dest) {
 			if (cudaMemcpy(p.pointer_, dest, p.size_*sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 				throw cuda_runtime_ex(cudaGetLastError());
 			}
@@ -168,7 +172,7 @@ class device {
 		 * @warning We will copy @a src.size() many elements, you have to assure that @a dest points to enough data.
 		 */
 		template <typename T>
-		void copy_device_to_host(cons device::memory1D<T> &src, T* dest) {
+		void copy_device_to_host(const memory1D<T> &src, T* dest) {
 			if (cudaMemcpy(dest, src.pointer_, p.size_*sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 				throw cuda_runtime_ex(cudaGetLastError());
 			}
@@ -189,64 +193,7 @@ class device {
 
 			return device_count;
 		}
-#endif // !defined(__CUDACC__)
 }; // class device
-
-/**
- * @class device::memory1D
- * @author Jens Breitbart
- * @version 0.1
- * @date 13.06.2007
- * @brief A pointer to linear 1-dimensional memory.
- * @warning You have to free this memory, or you will have a ressource leak!
- *
- * asdvasdvasdv
- */
-template <typename T>
-class device::memory1D {
-	private: /***  INTERNAL DATA  ***/
-		const T* pointer_;
-		const std::size_t size_;
-		
-	private: /***  CONSTRUCTORS & DESTRUCTORS ***/
-		memory1D() {};
-		memory1D(const T* pointer, const std::size_t size) :
-			pointer_(pointer), size_(size) {}
-	public:
-		/**
-		 * @brief Copy constructor
-		 * @param copy
-		 * @todo Should we test if the pointer is used in the correct context?
-		 * @todo Do we need a public copy-constructor?
-		 */
-		memory1D(const memory1D &copy) : pointer_(copy.pointer_), size_(copy.size_) {}
-
-	public:
-		
-		/**
-		 * @return How many elements we can store on the device
-		 */
-		#if defined(__CUDACC__)
-		__host__ __device__
-		#endif
-		std::size_t size() const {
-			return size_;
-		}
-
-	public: /***  GPU FUNCTIONS  ***/
-	#if defined(__CUDACC__)
-		/**
-		 * @brief Cast the memory1D into a simple pointer
-		 * @warning Only available on the GPU.
-		 */
-		__device__
-		operator T*() const {
-			return pointer_;
-		}
-	#endif // defined(__CUDACC__)
-
-	friend cupp::device;
-}; // class memory1d
 
 } // namespace cupp
 

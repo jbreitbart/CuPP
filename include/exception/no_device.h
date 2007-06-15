@@ -3,13 +3,13 @@
  *
  */
 
+#ifndef CUPP_no_device_H
+#define CUPP_no_device_H
+
 #if defined(__CUDACC__)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-
-#ifndef CUPP_no_device_H
-#define CUPP_no_device_H
 
 #include "exception.h"
 
@@ -23,14 +23,14 @@ namespace exception {
  * @date 13.06.2007
  * @brief This exception is thrown when no CUDA device is found.
  */
-class no_device : cupp::exception {
+class no_device : public cupp::exception {
 	public:
 		char const* what() const throw() {
 			return "No CUDA device found.";
 		}
 };
 
-}
-}
+} // namespace excpetion
+} // namespace cupp
 
 #endif

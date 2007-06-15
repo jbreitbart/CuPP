@@ -1,0 +1,28 @@
+/**
+ * @file 
+ *
+ * Common definitions and helper macros of the Cupp project.
+ *
+ * Copyright: See COPYING file that comes with this distribution
+ */
+
+#ifndef CUPP_cupp_common_H
+#define CUPP_cupp_common_H
+
+#if defined(__CUDACC__)
+	#define CUPP_HOST __host__
+	#define CUPP_DEVICE __device__
+	#define CUPP_GLOBAL __global__
+	#define CUPP_CONSTANT __constant__
+	#define CUPP_SHARED __shared__
+#else
+	#define CUPP_HOST
+	#define CUPP_DEVICE
+	#define CUPP_GLOBAL
+	#define CUPP_CONSTANT
+	#define CUPP_SHARED
+#endif
+
+
+
+#endif // CUPP_cupp_common_H

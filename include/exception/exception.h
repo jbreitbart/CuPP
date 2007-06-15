@@ -3,13 +3,14 @@
  *
  */
 
+#ifndef CUPP_exception_H
+#define CUPP_exception_H
+
+
 #if defined(__CUDACC__)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-
-#ifndef CUPP_exception_H
-#define CUPP_exception_H
 
 #include <exception>
 
@@ -26,7 +27,7 @@ namespace exception {
  *
  * It is based on the std::exception and can be handled the same way.
  */
-class exception : std::exception {
+class exception : public std::exception {
 	public:
 		/**
 		 * @return An error message in human readable form.
@@ -34,7 +35,7 @@ class exception : std::exception {
 		virtual char const* what() const throw() = 0;
 };
 
-}
-}
+} // namespace exception
+} // namespace cupp
 
 #endif

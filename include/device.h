@@ -3,15 +3,16 @@
  *
  */
 
+#ifndef CUPP_device_H
+#define CUPP_device_H
+
 #if defined(__CUDACC__)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-#ifndef CUPP_device_H
-#define CUPP_device_H
 
-#include "exception/no_device_ex.h"
-#include "exception/no_supporting_device_ex.h"
+#include "exception/no_device.h"
+#include "exception/no_supporting_device.h"
 #include "exception/cuda_runtime_error.h"
 
 #include "memory1d.h"
@@ -22,6 +23,9 @@
 
 namespace cupp {
 
+
+
+// @code_review Please put the public members first and then the private ones.
 /**
  * @class device
  * @author Jens Breitbart
@@ -37,7 +41,7 @@ class device {
 		/**
 		 * @brief Generates a default device with no special requirements
 		 */
-		explicit device() {
+		device() {
 			real_constructor(-1, -1, "Device Emulation");
 		}
 
@@ -59,6 +63,9 @@ class device {
 		}
 
 	private:
+		
+		// @code_review Please put code that isn't template dependent into a cpp file. This way
+		//              no one including this header gets dependent (and includes) @c std::string.
 		/**
 		 * @brief This is the real constructor.
 		 * @param major The requested major rev. number; pass -1 to ignore it
@@ -74,14 +81,14 @@ class device {
 				return;
 			}
 			
-			const int device_count = device::number_of_devices();
+			const int device_cnt = device_count();
 
-			if (device_count == 0) {
-				throw no_device_ex();
+			if ( device_cnt == 0) {
+				throw no_device();
 			}
 			
-			int dev;
-			for (dev = 0; dev < device_count; ++dev) {
+			int dev = 0;
+			for (dev = 0; dev < device_cnt; ++dev) {
 				cudaDeviceProp device_prop;
 				cudaGetDeviceProperties(&device_prop, dev);
 				bool take_it = false;
@@ -118,8 +125,8 @@ class device {
 				}
 			}
 			
-			if (dev == device_count) {
-				throw no_supporting_device_ex();
+			if (dev == device_cnt) {
+				throw no_supporting_device();
 			}
 			
 			cudaSetDevice(dev);
@@ -135,7 +142,7 @@ class device {
 		template<typename T>
 		memory1D<T> get_memory1D(std::size_t size) const {
 			T* devptr;
-			if (cudaMalloc((void**)&devptr, sizeof(T)*size) != cudaSuccess) {
+			if (cudaMalloc( static_cast<void**>( &devptr ), sizeof(T)*size ) != cudaSuccess) {
 				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 
@@ -148,7 +155,7 @@ class device {
 		 * @warning After this call is completed @a memory is no longer valid.
 		 */
 		template<typename T>
-		void free (const memory1D<T> &memory) const {
+		void free (const memory1D<T>& memory) const {
 			if (cudaFree(memory.pointer_) != cudaSuccess) {
 				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
@@ -161,8 +168,8 @@ class device {
 		 * @warning We will copy @a dest.size() many elements, you have to assure that @a src points to enough data.
 		 */
 		template <typename T>
-		void copy_host_to_device(const T* src, const memory1D<T> &dest) {
-			if (cudaMemcpy(p.pointer_, dest, p.size_*sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
+		void copy_host_to_device(const T* src, const memory1D<T>& dest) {
+			if (cudaMemcpy(dest.pointer_, src, dest.size() *sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
 		}
@@ -174,7 +181,7 @@ class device {
 		 * @warning We will copy @a src.size() many elements, you have to assure that @a dest points to enough data.
 		 */
 		template <typename T>
-		void copy_device_to_host(const memory1D<T> &src, T* dest) {
+		void copy_device_to_host(const memory1D<T>& src, T* dest) {
 			if (cudaMemcpy(dest, src.pointer_, p.size_*sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 				throw exception::cuda_runtime_error(cudaGetLastError());
 			}
@@ -184,12 +191,12 @@ class device {
 		/**
 		 * @return the number of available devices
 		 */
-		static const int number_of_devices() {
+		static const int device_count() {
 			// set the device
-			int device_count;
-			cudaGetDeviceCount(&device_count);
+			int device_cnt = 0;
+			cudaGetDeviceCount(&device_cnt);
 
-			return device_count;
+			return device_cnt;
 		}
 }; // class device
 

@@ -3,13 +3,14 @@
  *
  */
 
+#ifndef CUPP_cuda_runtime_error_H
+#define CUPP_cuda_runtime_error_H
+
+
 #if defined(__CUDACC__)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-
-#ifndef CUPP_cuda_runtime_error_H
-#define CUPP_cuda_runtime_error_H
 
 #include "exception.h"
 
@@ -27,7 +28,7 @@ namespace exception {
  *
  * The returned error string is a default CUDA error string.
  */
-class cuda_runtime_error : cupp::exception {
+class cuda_runtime_error : public cupp::exception {
 	private:
 		// the error
 		cudaError_t error_;

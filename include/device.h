@@ -140,7 +140,7 @@ class device {
 		 * @exception cupp::exception::cuda_runtime_error Thrown if the memory allocation fails.
 		 */
 		template<typename T>
-		memory1D<T> get_memory1D(std::size_t size) const {
+		memory1D<T> allocate_memory1D(std::size_t size) const {
 			T* devptr;
 			if (cudaMalloc( static_cast<void**>( &devptr ), sizeof(T)*size ) != cudaSuccess) {
 				throw exception::cuda_runtime_error(cudaGetLastError());

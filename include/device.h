@@ -25,7 +25,7 @@ namespace cupp {
 
 
 
-// @code_review Please put the public members first and then the private ones.
+/// @code_review Please put the public members first and then the private ones.
 /**
  * @class device
  * @author Jens Breitbart
@@ -64,8 +64,8 @@ class device {
 
 	private:
 		
-		// @code_review Please put code that isn't template dependent into a cpp file. This way
-		//              no one including this header gets dependent (and includes) @c std::string.
+		/// @code_review Please put code that isn't template dependent into a cpp file. This way
+		///              no one including this header gets dependent (and includes) @c std::string.
 		/**
 		 * @brief This is the real constructor.
 		 * @param major The requested major rev. number; pass -1 to ignore it
@@ -74,6 +74,7 @@ class device {
 		 */
 		void real_constructor(const int major, const int minor, const char* name) {
 			using namespace cupp::exception;
+			
 			// check if there is already a device
 			int cur_device;
 			if (cudaGetDevice(&cur_device)== cudaSuccess) {
@@ -192,7 +193,6 @@ class device {
 		 * @return the number of available devices
 		 */
 		static const int device_count() {
-			// set the device
 			int device_cnt = 0;
 			cudaGetDeviceCount(&device_cnt);
 

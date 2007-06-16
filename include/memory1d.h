@@ -15,7 +15,7 @@
 
 namespace cupp {
 
-// @code_review Please put the public members first and then the private ones.
+/// @code_review Please put the public members first and then the private ones.
 /**
  * @class memory1d
  * @author Jens Breitbart
@@ -30,7 +30,7 @@ template <typename T>
 class memory1d {
 	private: /***  INTERNAL DATA  ***/
 		const T* pointer_;
-		// @code_review Should we remove @c size_ and use @c cudaGetSymbolSize instead?
+		/// @code_review Should we remove @c size_ and use @c cudaGetSymbolSize instead?
 		const std::size_t size_;
 		
 	private: /***  CONSTRUCTORS & DESTRUCTORS ***/
@@ -38,7 +38,7 @@ class memory1d {
 		memory1d(const T* pointer, const std::size_t size) :
 			pointer_(pointer), size_(size) {}
 	public:
-		// @code_review Do typedefs work with nvcc?
+		/// @code_review Do typedefs work with nvcc?
 		typedef std::size_t size_type;
 		typedef T value_type;
 		typedef T* pointer;
@@ -56,8 +56,9 @@ class memory1d {
 		
 		/**
 		 * @return How many elements we can store on the device
+		 * @platform Device
 		 */
-		//  @code_review Should we define a special header that defines macros like
+		///  @code_review Should we define a special header that defines macros like
 		CUPP_HOST CUPP_DEVICE
 		size_type size() const {
 			return size_;
@@ -75,8 +76,8 @@ class memory1d {
 		}
 	#endif // defined(__CUDACC__)
 
-	// @code_review If friendship must be delcared then the class should be in the same file as its
-	//              friend.
+	/// @code_review If friendship must be delcared then the class should be in the same file as its
+	///              friend.
 	friend cupp::device;
 }; // class memory1d
 

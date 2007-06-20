@@ -12,7 +12,7 @@
 #endif
 
 
-#include "exception.h"
+#include "exception/exception.h"
 
 #include <cuda_runtime.h>
 
@@ -28,7 +28,7 @@ namespace exception {
  *
  * The returned error string is a default CUDA error string.
  */
-class cuda_runtime_error : public cupp::exception {
+class cuda_runtime_error : public exception {
 	private:
 		// the error
 		cudaError_t error_;

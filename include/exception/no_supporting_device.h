@@ -11,7 +11,7 @@
 #endif
 
 
-#include "exception.h"
+#include "exception/exception.h"
 
 namespace cupp {
 namespace exception {
@@ -23,7 +23,7 @@ namespace exception {
  * @date 13.06.2007
  * @brief This exception is thrown when no CUDA device matches the requirements.
  */
-class no_supporting_device : public cupp::exception {
+class no_supporting_device : public exception {
 	public:
 		char const* what() const throw() {
 			return "No supported CUDA device found.";

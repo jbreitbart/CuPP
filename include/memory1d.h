@@ -56,7 +56,7 @@ class memory1d {
 		
 		/**
 		 * @return How many elements we can store on the device
-		 * @platform Device
+		 * @platform Device Horrible performance
 		 */
 		///  @code_review Should we define a special header that defines macros like
 		CUPP_HOST CUPP_DEVICE

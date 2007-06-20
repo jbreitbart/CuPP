@@ -15,23 +15,28 @@
 <div class="tabs">
   <ul>
     <li><a href="annotated.html"><span>Class&nbsp;List</span></a></li>
+    <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
 <b>cupp</b>::<b>exception</b>::<a class="el" href="classcupp_1_1exception_1_1cuda__runtime__error.html">cuda_runtime_error</a></div>
-<h1>cupp::exception::cuda_runtime_error Class Reference</h1><!-- doxytag: class="cupp::exception::cuda_runtime_error" -->This exception is thrown when an low-level CUDA error occurs, eg. an internal call to cudaMalloc fails.  
+<h1>cupp::exception::cuda_runtime_error Class Reference</h1><!-- doxytag: class="cupp::exception::cuda_runtime_error" --><!-- doxytag: inherits="cupp::exception::exception" -->This exception is thrown when an low-level CUDA error occurs, eg. an internal call to cudaMalloc fails.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;<a class="el" href="cuda__runtime__error_8h-source.html">cuda_runtime_error.h</a>&gt;</code>
 <p>
+<p>Inheritance diagram for cupp::exception::cuda_runtime_error:
+<p><center><img src="classcupp_1_1exception_1_1cuda__runtime__error.png" usemap="#cupp::exception::cuda_runtime_error_map" border="0" alt=""></center>
+<map name="cupp::exception::cuda_runtime_error_map">
+<area href="classcupp_1_1exception_1_1exception.html" alt="cupp::exception::exception" shape="rect" coords="0,0,218,24">
+</map>
 <a href="classcupp_1_1exception_1_1cuda__runtime__error-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1exception_1_1cuda__runtime__error.html#3b97c66d5db642e22996e698e6fd866d">cuda_runtime_error</a> (cudaError_t error)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Generates an exception with the error number <em>error</em>.  <a href="#3b97c66d5db642e22996e698e6fd866d"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb152945b34caf0790a7c5e36a732ff3"></a><!-- doxytag: member="cupp::exception::cuda_runtime_error::what" ref="eb152945b34caf0790a7c5e36a732ff3" args="() const" -->
-char const *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const  throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">char const *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1exception_1_1cuda__runtime__error.html#eb152945b34caf0790a7c5e36a732ff3">what</a> () const  throw ()</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -70,9 +75,32 @@ Generates an exception with the error number <em>error</em>.
 
 </div>
 </div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="eb152945b34caf0790a7c5e36a732ff3"></a><!-- doxytag: member="cupp::exception::cuda_runtime_error::what" ref="eb152945b34caf0790a7c5e36a732ff3" args="() const" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char const* cupp::exception::cuda_runtime_error::what           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const  throw ()<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>An error message in human readable form. </dd></dl>
+
+<p>
+Implements <a class="el" href="classcupp_1_1exception_1_1exception.html#f6223e64f0340cd031192153c94ff3d6">cupp::exception::exception</a>.
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>/home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include/exception/<a class="el" href="cuda__runtime__error_8h-source.html">cuda_runtime_error.h</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Sat Jun 16 11:41:16 2007 for cupp by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jun 20 17:06:10 2007 for cupp by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

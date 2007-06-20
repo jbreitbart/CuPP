@@ -3,60 +3,97 @@
  *
  */
 
-#ifndef CUPP_device_H
-#define CUPP_device_H
 
-#if defined(__CUDACC__)
-#error Not compatible with CUDA. Don't compile with nvcc.
-#endif
+#include "device.h"
 
-//#include "memory1d.h"
+#include <string>
 
-#include <cstddef>
+#include "exception/no_device.h"
+#include "exception/no_supporting_device.h"
+#include "exception/cuda_runtime_error.h"
+
+#include <cuda_runtime.h>
 
 namespace cupp {
 
+device::device() {
+	real_constructor(-1, -1, "Device Emulation");
+}
 
-/// @code_review Please put the public members first and then the private ones.
-/**
- * @class device
- * @author Jens Breitbart
- * @version 0.1
- * @date 13.06.2007
- * @warning 
- * @brief asdvasd
- *
- * asdvasdvasdv
- */
-class device {
-	public: /***  CONSTRUCTORS & DESTRUCTORS ***/
-		/**
-		 * @brief Generates a default device with no special requirements
-		 */
-		device();
+device::device (const int major) {
+	real_constructor(major, -1, 0);
+}
 
-		/**
-		 * @brief Generates a device with @a major revision number
-		 * @param major The requested major revision number of the device
-		 */
-		explicit device (const int major);
-		
-		/**
-		 * @brief Generates a device with @a major and @a minor revision number
-		 * @param major The requested major revision number of the device
-		 * @param minor The requested minor revision number of the device
-		 */
-		explicit device (const int major, const int minor);
+device::device (const int major, const int minor) {
+	real_constructor(major, minor, 0);
+}
 
-	private:
-		
-		/**
-		 * @brief This is the real constructor.
-		 * @param major The requested major rev. number; pass -1 to ignore it
-		 * @param minor The requested minor rev. number; pass -1 to ignore it
-		 * @param name  The requested device name; pass 0 to ignore it
-		 */
-		void real_constructor(const int major, const int minor, const char* name);
+void device::real_constructor(const int major, const int minor, const char* name) {
+	using namespace cupp::exception;
+
+	// check if there is already a device
+	int cur_device;
+	if (cudaGetDevice(&cur_device)== cudaSuccess) {
+		cudaSetDevice(cur_device);
+		return;
+	}
+
+	const int device_cnt = 0;//device_count();
+
+	if ( device_cnt == 0) {
+		throw no_device();
+	}
+
+	int dev = 0;
+	for (dev = 0; dev < device_cnt; ++dev) {
+		cudaDeviceProp device_prop;
+		cudaGetDeviceProperties(&device_prop, dev);
+		bool take_it = false;
+
+		//check major rev number
+		if (name!=0) {
+			if (std::string(name)==std::string(device_prop.name)) {
+				take_it=true;
+			} else {
+				take_it=false;
+			}
+		}
+
+		//check major rev number
+		if (major!=-1) {
+			if (major==device_prop.major) {
+				take_it=true;
+			} else {
+				take_it=false;
+			}
+		}
+
+		//check minor rev number
+		if (minor!=-1) {
+			if (minor==device_prop.minor) {
+				take_it=true;
+			} else {
+				take_it=false;
+			}
+		}
+
+		if ( take_it ) {
+			break;
+		}
+	}
+
+	if (dev == device_cnt) {
+		throw no_supporting_device();
+	}
+
+	cudaSetDevice(dev);
+}
+
+
+}
+
+
+
 #if 0
 	public: /***  1D-MEMORY FUNCTIONS  ***/
 		/**
@@ -123,9 +160,4 @@ class device {
 
 			return device_cnt;
 		}
-#endif
-}; // class device
-
-} // namespace cupp
-
 #endif

@@ -11,10 +11,17 @@
 
 #include "memory1d.h"
 
-__global__ void real_GPU (int* p) {
+__global__ void global_function (cupp::memory1d<int> p) {
 	p[threadIdx.x]*=2;
 }
 
+typedef void(*kernelT)(cupp::memory1d<int>);
+
+kernelT get_kernel() {
+	return global_function;
+}
+
+#if 0
 void kernel(cupp::memory1d<int> &p) {
 	using namespace cupp;
 	// set up the enviroment
@@ -32,3 +39,4 @@ void kernel(cupp::memory1d<int> &p) {
 	}
 
 }
+#endif

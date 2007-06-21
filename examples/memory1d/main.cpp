@@ -3,11 +3,14 @@
 
 #include "device.h"
 #include "memory1d.h"
+#include "kernel.h"
 
 using namespace std;
 using namespace cupp;
 
-void kernel(memory1d<int> &p);
+typedef void(*kernelT)(cupp::memory1d<int>);
+
+kernelT get_kernel();
 
 int main(int argc, char *argv[]) {
 	// lets get a simple CUDA device up and running
@@ -28,9 +31,15 @@ int main(int argc, char *argv[]) {
 	
 	// get some memory on the device and fill it with the data from eight
 	memory1d<int> mem(d, eight, 8);
+	
+	dim3 block_dim (8);
+	dim3 grid_dim  (1);
 
-	// call a kernel
-	kernel (mem);
+	// generate the kernel
+	kernel<cupp::memory1d<int> > k (get_kernel(), grid_dim, block_dim);
+	
+	// call the kernel
+	k(d, mem);
 
 	mem.copy_to_host(eight);
 	

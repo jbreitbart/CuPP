@@ -57,7 +57,7 @@ class memory1d {
 
 		// dev is a pure dummy, it is only used to force the user to configure a device
 		// before creating memory on it.
-		
+		#if !defined(__CUDACC__)
 		/**
 		 * @brief Associates memory for @a size elements on the device @a dev
 		 * @param dev The device on which you want to allocate memory
@@ -120,7 +120,7 @@ class memory1d {
 		 */
 		CUPP_HOST
 		~memory1d();
-
+#endif
 
 		/**
 		 * @brief Copies the data from @a other to its own memory block.
@@ -237,10 +237,12 @@ class memory1d {
 		void copy_to_host( OutputIterator out_iter );
 #endif
 
+#if 0
 		// Be strongly cautioned not to use this!!!!!!
 		//Perhaps we should just use the functions below (your idea! I really like it!)
 		CUPP_HOST CUPP_DEVICE
 		T* cuda_pointer() const {return device_pointer_;}
+#endif
 
 /// @code_review we should discuss this :-)
 #if defined(__CUDACC__)
@@ -251,9 +253,9 @@ class memory1d {
 		 * @todo How to implement this for the host? 
 		 */
 		CUPP_DEVICE
-		T& operator[]( size_type index );
+		T& operator[]( size_type size_type );
 #endif
-		
+
 		/**
 		 * @brief Access the memory
 		 * @param index The index of the element you want to access
@@ -263,7 +265,7 @@ class memory1d {
 		 */
 		CUPP_HOST CUPP_DEVICE
 		T const& operator[]( size_type index ) const;
-
+		
 	private:
 		/**
 		 * @brief Allocates memory on the device
@@ -291,7 +293,7 @@ class memory1d {
 		size_type size_;
 }; // class memory1d
 
-
+#if !defined(__CUDACC__)
 template <typename T>
 memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_(0), size_(size) {
 	malloc();
@@ -332,7 +334,7 @@ template <typename T>
 memory1d<T>::~memory1d() {
 	free();
 }
-
+#endif
 
 template <typename T>
 memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
@@ -466,7 +468,6 @@ void memory1d<T>::copy_to_host (T* destination) {
 	}
 #endif
 
-
 template <typename T>
 T const& memory1d<T>::operator[](size_type index) const {
 	#if defined(__CUDACC__)
@@ -478,7 +479,6 @@ T const& memory1d<T>::operator[](size_type index) const {
 		return returnee;
 	#endif
 }
-
 
 } // namespace cupp
 

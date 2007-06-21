@@ -21,7 +21,7 @@ namespace exception {
  * @author Jens Breitbart
  * @version 0.1
  * @date 21.06.2007
- * @brief This exception is thrown when memory access non allocated memory is accessed
+ * @brief This exception is thrown when non allocated memory is accessed
  */
 class memory_access_violation : public exception {
 	public:

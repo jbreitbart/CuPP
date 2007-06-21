@@ -16,8 +16,10 @@
 
 #include "cupp_common.h"
 
-#include "exception/cuda_runtime_error.h"
-#include "exception/memory_access_violation.h"
+#if !defined(__CUDACC__)
+	#include "exception/cuda_runtime_error.h"
+	#include "exception/memory_access_violation.h"
+#endif
 
 #include <cuda_runtime.h>
 
@@ -97,9 +99,10 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-		CUPP_HOST
+#if !defined(__CUDACC__)
 		template <typename InputIterator>
 		memory1d( device const& dev, InputIterator first, InputIterator last );
+#endif
 
 		/**
 		 * @brief Creates a new memory block on the device and copies the data of @a other to the new block.
@@ -165,9 +168,10 @@ class memory1d {
 		 * @platform Host only
 		 * @todo We could resize the memory if last-first > size
 		 */
-		CUPP_HOST
+#if !defined(__CUDACC__)
 		template <typename InputIterator>
 		void copy_to_device( InputIterator first, InputIterator last, int offset );
+#endif
 		
 		/**
 		 * @brief Copies data to the memory on the device
@@ -177,7 +181,7 @@ class memory1d {
 		 * @platform Host only
 		 */
 		CUPP_HOST
-		void copy_to_device( T const* data, int offset );
+		void copy_to_device( T const* data, size_type offset=0 );
 		
 		/**
 		 * @brief Copies data to the memory on the device
@@ -228,19 +232,18 @@ class memory1d {
 		 * @warning @a out_iter must be able to hold at least @c size() elements.
 		 * @platform Host only
 		 */
-		CUPP_HOST
+#if !defined(__CUDACC__)
 		template <typename OutputIterator>
 		void copy_to_host( OutputIterator out_iter );
+#endif
 
-#if 0
 		// Be strongly cautioned not to use this!!!!!!
 		//Perhaps we should just use the functions below (your idea! I really like it!)
 		CUPP_HOST CUPP_DEVICE
-		T* cuda_pointer() const;
-#endif
+		T* cuda_pointer() const {return device_pointer_;}
 
 /// @code_review we should discuss this :-)
-//#if defined(__CUDACC__)
+#if defined(__CUDACC__)
 		/**
 		 * @brief Access the memory
 		 * @param index The index of the element you want to access
@@ -249,7 +252,7 @@ class memory1d {
 		 */
 		CUPP_DEVICE
 		T& operator[]( size_type index );
-//#endif
+#endif
 		
 		/**
 		 * @brief Access the memory
@@ -309,15 +312,17 @@ memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : devi
 }
 
 
-template <typename T>
-template <typename InputIterator>
-memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
-	malloc();
-	copy_to_device(first, last);
-}
+#if !defined(__CUDACC__)
+	template <typename T>
+	template <typename InputIterator>
+	memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
+		malloc();
+		copy_to_device(first, last);
+	}
+#endif
 
 template <typename T>
-memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_(0), size_(size) {
+memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_(0), size_(other.size()) {
 	malloc();
 	copy_to_device(other);
 }
@@ -350,16 +355,20 @@ typename memory1d<T>::size_type memory1d<T>::size() const {
 
 template <typename T>
 void memory1d<T>::set(int value) {
-	if (cudaMemset( static_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+	if (cudaMemset( reinterpret_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
 
 template <typename T>
 void memory1d<T>::malloc() {
-	if (cudaMalloc( static_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
@@ -367,22 +376,26 @@ void memory1d<T>::malloc() {
 template <typename T>
 void memory1d<T>::free() {
 	if (cudaFree(device_pointer_) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
 
-template <typename T>
-template <typename InputIterator>
-void memory1d<T>::copy_to_device( InputIterator first, InputIterator last, int offset ) {
-	std::vector<T> temp;
-	temp.assign(first, last);
-	copy_to_device(temp.size(), &temp[0], offset);
-}
+#if !defined(__CUDACC__)
+	template <typename T>
+	template <typename InputIterator>
+	void memory1d<T>::copy_to_device( InputIterator first, InputIterator last, int offset ) {
+		std::vector<T> temp;
+		temp.assign(first, last);
+		copy_to_device(temp.size(), &temp[0], offset);
+	}
+#endif
 
 
 template <typename T>
-void memory1d<T>::copy_to_device( T const* data, int offset ) {
+void memory1d<T>::copy_to_device( T const* data, size_type offset ) {
 	copy_to_device(size(), data, offset);
 }
 
@@ -390,11 +403,15 @@ void memory1d<T>::copy_to_device( T const* data, int offset ) {
 template <typename T>
 void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offset) {
 	if (count + offset > size()) {
-		throw exception::memory_access_violation();
+		#if !defined(__CUDACC__)
+			throw exception::memory_access_violation();
+		#endif
 	}
 	
 	if ( cudaMemcpy(device_pointer_+offset, data, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
@@ -407,11 +424,15 @@ void memory1d<T>::copy_to_device (memory1d const& other, size_type offset) {
 template <typename T>
 void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_type offset) {
 	if (count+offset > size()) {
-		throw exception::memory_access_violation();
+		#if !defined(__CUDACC__)
+			throw exception::memory_access_violation();
+		#endif
 	}
 
 	if ( cudaMemcpy(device_pointer_+offset, other.device_pointer_, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
@@ -419,20 +440,23 @@ void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_t
 template <typename T>
 void memory1d<T>::copy_to_host (T* destination) {
 	if (cudaMemcpy(destination, device_pointer_, size() * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+		#if !defined(__CUDACC__)
+			throw exception::cuda_runtime_error(cudaGetLastError());
+		#endif
 	}
 }
 
+#if !defined(__CUDACC__)
+	template <typename T>
+	template <typename OutputIterator>
+	void memory1d<T>::copy_to_host(OutputIterator out_iter) {
+		std::vector<T> temp( size() );
 
-template <typename T>
-template <typename OutputIterator>
-void memory1d<T>::copy_to_host(OutputIterator out_iter) {
-	std::vector<T> temp( size() );
+		copy_to_host(&temp[0]);
 
-	copy_to_host(&temp[0]);
-
-	std::copy(temp.begin(), temp.end(), out_iter);
-}
+		std::copy(temp.begin(), temp.end(), out_iter);
+	}
+#endif
 
 
 #if defined(__CUDACC__)
@@ -445,14 +469,14 @@ void memory1d<T>::copy_to_host(OutputIterator out_iter) {
 
 template <typename T>
 T const& memory1d<T>::operator[](size_type index) const {
-#if defined(__CUDACC__)
-	return device_pointer_[index];
-#endif
-#if !defined(__CUDACC__)
-	T returnee;
-	copy_to_device(1, &returnee, index);
-	return returnee;
-#endif
+	#if defined(__CUDACC__)
+		return device_pointer_[index];
+	#endif
+	#if !defined(__CUDACC__)
+		T returnee;
+		copy_to_device(1, &returnee, index);
+		return returnee;
+	#endif
 }
 
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>cupp: /home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include/memory1d.h Source File</title>
+<title>CuPP: /home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include/memory1d.h Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -8,6 +8,7 @@
 <div class="tabs">
   <ul>
     <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+    <li><a href="namespaces.html"><span>Namespaces</span></a></li>
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li id="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
@@ -23,55 +24,294 @@
 <a name="l00009"></a>00009 <span class="comment">// Include std::size_t</span>
 <a name="l00010"></a>00010 <span class="preprocessor">#include &lt;cstddef&gt;</span>
 <a name="l00011"></a>00011 
-<a name="l00012"></a>00012 <span class="preprocessor">#include "<a class="code" href="cupp__common_8h.html">cupp_common.h</a>"</span>
-<a name="l00013"></a>00013 
+<a name="l00012"></a>00012 <span class="comment">// Include std::swap</span>
+<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;algorithm&gt;</span>
 <a name="l00014"></a>00014 
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 <span class="keyword">namespace </span>cupp {
-<a name="l00017"></a>00017 
-<a name="l00019"></a>00019 
-<a name="l00029"></a>00029 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
-<a name="l00030"></a><a class="code" href="classcupp_1_1memory1d.html">00030</a> <span class="keyword">class </span><a class="code" href="classcupp_1_1memory1d.html">memory1d</a> {
-<a name="l00031"></a>00031         <span class="keyword">private</span>: <span class="comment">/***  INTERNAL DATA  ***/</span>
-<a name="l00032"></a>00032                 <span class="keyword">const</span> T* pointer_;
-<a name="l00034"></a>00034                 <span class="keyword">const</span> std::size_t size_;
-<a name="l00035"></a>00035                 
-<a name="l00036"></a>00036         <span class="keyword">private</span>: <span class="comment">/***  CONSTRUCTORS &amp; DESTRUCTORS ***/</span>
-<a name="l00037"></a>00037                 <a class="code" href="classcupp_1_1memory1d.html">memory1d</a>() {};
-<a name="l00038"></a>00038                 <a class="code" href="classcupp_1_1memory1d.html">memory1d</a>(<span class="keyword">const</span> T* pointer, <span class="keyword">const</span> std::size_t <a class="code" href="classcupp_1_1memory1d.html#dd255f5301c5cde7eb2892cf14c59e76">size</a>) :
-<a name="l00039"></a>00039                         pointer_(pointer), size_(size) {}
-<a name="l00040"></a>00040         <span class="keyword">public</span>:
-<a name="l00042"></a><a class="code" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">00042</a>                 <span class="keyword">typedef</span> std::size_t <a class="code" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a>;
-<a name="l00043"></a>00043                 <span class="keyword">typedef</span> T value_type;
-<a name="l00044"></a>00044                 <span class="keyword">typedef</span> T* pointer;
-<a name="l00045"></a>00045                 
-<a name="l00046"></a>00046                 
-<a name="l00053"></a><a class="code" href="classcupp_1_1memory1d.html#57479bb8e908a1155f4d82a588ce19dc">00053</a>                 <a class="code" href="classcupp_1_1memory1d.html">memory1d</a>(<span class="keyword">const</span> memory1D&amp; copy) : pointer_(copy.pointer_), size_(copy.size_) {}
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055         <span class="keyword">public</span>:
-<a name="l00056"></a>00056                 
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062                 CUPP_HOST CUPP_DEVICE
-<a name="l00063"></a><a class="code" href="classcupp_1_1memory1d.html#dd255f5301c5cde7eb2892cf14c59e76">00063</a>                 <a class="code" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a> <a class="code" href="classcupp_1_1memory1d.html#dd255f5301c5cde7eb2892cf14c59e76">size</a>()<span class="keyword"> const </span>{
-<a name="l00064"></a>00064                         <span class="keywordflow">return</span> size_;
-<a name="l00065"></a>00065                 }
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067         <span class="keyword">public</span>: <span class="comment">/***  GPU FUNCTIONS  ***/</span>
-<a name="l00068"></a>00068 <span class="preprocessor">        #if defined(__CUDACC__)</span>
-<a name="l00069"></a>00069 <span class="preprocessor"></span>
-<a name="l00073"></a>00073                 CUPP_DEVICE
-<a name="l00074"></a>00074                 operator T*()<span class="keyword"> const </span>{
-<a name="l00075"></a>00075                         <span class="keywordflow">return</span> pointer_;
-<a name="l00076"></a>00076                 }
-<a name="l00077"></a>00077 <span class="preprocessor">        #endif // defined(__CUDACC__)</span>
-<a name="l00078"></a>00078 <span class="preprocessor"></span>
-<a name="l00081"></a>00081         <span class="keyword">friend</span> <a class="code" href="classcupp_1_1device.html">cupp::device</a>;
-<a name="l00082"></a>00082 }; <span class="comment">// class memory1d</span>
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084 } <span class="comment">// namespace cupp</span>
-<a name="l00085"></a>00085 
-<a name="l00086"></a>00086 <span class="preprocessor">#endif</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jun 20 17:06:10 2007 for cupp by&nbsp;
+<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;vector&gt;</span>
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017 <span class="preprocessor">#include "<a class="code" href="cupp__common_8h.html">cupp_common.h</a>"</span>
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include "exception/cuda_runtime_error.h"</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include "exception/memory_access_violation.h"</span>
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;cuda_runtime.h&gt;</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025 <span class="keyword">namespace </span>cupp {
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="comment">// Just used to force the user to configure and get a device.</span>
+<a name="l00028"></a>00028 <span class="keyword">class </span>device;
+<a name="l00029"></a>00029 
+<a name="l00041"></a>00041 <span class="keyword">template</span>&lt; <span class="keyword">typename</span> T &gt;
+<a name="l00042"></a><a class="code" href="classcupp_1_1memory1d.html">00042</a> <span class="keyword">class </span><a class="code" href="classcupp_1_1memory1d.html">memory1d</a> {
+<a name="l00043"></a>00043         <span class="keyword">public</span>:
+<a name="l00048"></a><a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">00048</a>                 <span class="keyword">typedef</span> std::size_t <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>;
+<a name="l00049"></a>00049 
+<a name="l00054"></a><a class="code" href="classcupp_1_1memory1d.html#ca7e5c907bb05dbbf624048d594fed41">00054</a>                 <span class="keyword">typedef</span> T <a class="code" href="classcupp_1_1memory1d.html#ca7e5c907bb05dbbf624048d594fed41">value_type</a>;
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056                 <span class="comment">// dev is a pure dummy, it is only used to force the user to configure a device</span>
+<a name="l00057"></a>00057                 <span class="comment">// before creating memory on it.</span>
+<a name="l00058"></a>00058                 
+<a name="l00066"></a>00066                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00067"></a>00067                 <a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a> );
+<a name="l00068"></a>00068                 
+<a name="l00077"></a>00077                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00078"></a>00078                 <a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, <span class="keywordtype">int</span> init_value, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a> );
+<a name="l00079"></a>00079                 
+<a name="l00089"></a>00089                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00090"></a>00090                 <a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, T <span class="keyword">const</span>* data, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a> );
+<a name="l00091"></a>00091                 
+<a name="l00100"></a>00100                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00101"></a>00101                 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIterator&gt;
+<a name="l00102"></a>00102                 <a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, InputIterator first, InputIterator last );
+<a name="l00103"></a>00103 
+<a name="l00110"></a>00110                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00111"></a>00111                 <a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;</a> <span class="keyword">const</span>&amp; other );
+<a name="l00112"></a>00112 
+<a name="l00118"></a>00118                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00119"></a>00119                 <a class="code" href="classcupp_1_1memory1d.html#5927528983a596d5db61d7b61be8a7af">~memory1d</a>();
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121 
+<a name="l00128"></a>00128                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00129"></a>00129                 <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt; T &gt;</a>&amp; <a class="code" href="classcupp_1_1memory1d.html#60c153374377e9753b40e64f206183ae">operator=</a>( <span class="keyword">const</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt; T &gt;</a> &amp;other );
+<a name="l00130"></a>00130                 
+<a name="l00131"></a>00131 
+<a name="l00138"></a>00138                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a> <a class="code" href="cupp__common_8h.html#bccb41c1bbadc2cb460ffb39002d4a42">CUPP_DEVICE</a>
+<a name="l00139"></a>00139                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#029bc23c7f25812efbe35413cc57cd45">swap</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d</a>&amp; other );
+<a name="l00140"></a>00140                 
+<a name="l00141"></a>00141 
+<a name="l00147"></a>00147                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a> <a class="code" href="cupp__common_8h.html#bccb41c1bbadc2cb460ffb39002d4a42">CUPP_DEVICE</a>
+<a name="l00148"></a>00148                 <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>() <span class="keyword">const</span>;
+<a name="l00149"></a>00149                 
+<a name="l00150"></a>00150 
+<a name="l00156"></a>00156                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00157"></a>00157                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3">set</a>( <span class="keywordtype">int</span> value );
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159 
+<a name="l00168"></a>00168                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00169"></a>00169                 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIterator&gt;
+<a name="l00170"></a>00170                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>( InputIterator first, InputIterator last, <span class="keywordtype">int</span> offset );
+<a name="l00171"></a>00171                 
+<a name="l00179"></a>00179                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00180"></a>00180                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>( T <span class="keyword">const</span>* data, <span class="keywordtype">int</span> offset );
+<a name="l00181"></a>00181                 
+<a name="l00191"></a>00191                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00192"></a>00192                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>( <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> count, T <span class="keyword">const</span>* data, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0 );
+<a name="l00193"></a>00193 
+<a name="l00201"></a>00201                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00202"></a>00202                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d</a> <span class="keyword">const</span>&amp; other, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0 );
+<a name="l00203"></a>00203                 
+<a name="l00212"></a>00212                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00213"></a>00213                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d</a> <span class="keyword">const</span>&amp; other, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> count, <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0 );
+<a name="l00214"></a>00214                 
+<a name="l00215"></a>00215 
+<a name="l00222"></a>00222                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00223"></a>00223                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8">copy_to_host</a>( T* destination );
+<a name="l00224"></a>00224                 
+<a name="l00231"></a>00231                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00232"></a>00232                 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> OutputIterator&gt;
+<a name="l00233"></a>00233                 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8">copy_to_host</a>( OutputIterator out_iter );
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 <span class="preprocessor">#if 0</span>
+<a name="l00236"></a>00236 <span class="preprocessor"></span>                <span class="comment">// Be strongly cautioned not to use this!!!!!!</span>
+<a name="l00237"></a>00237                 <span class="comment">//Perhaps we should just use the functions below (your idea! I really like it!)</span>
+<a name="l00238"></a>00238                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a> <a class="code" href="cupp__common_8h.html#bccb41c1bbadc2cb460ffb39002d4a42">CUPP_DEVICE</a>
+<a name="l00239"></a>00239                 T* cuda_pointer() <span class="keyword">const</span>;
+<a name="l00240"></a>00240 <span class="preprocessor">#endif</span>
+<a name="l00241"></a>00241 <span class="preprocessor"></span>
+<a name="l00243"></a>00243 <span class="comment">//#if defined(__CUDACC__)</span>
+<a name="l00250"></a>00250 <span class="comment"></span>                <a class="code" href="cupp__common_8h.html#bccb41c1bbadc2cb460ffb39002d4a42">CUPP_DEVICE</a>
+<a name="l00251"></a>00251                 T&amp; <a class="code" href="classcupp_1_1memory1d.html#d27147e5b102766a851feb835f6227b2">operator[]</a>( <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> index );
+<a name="l00252"></a>00252 <span class="comment">//#endif</span>
+<a name="l00253"></a>00253                 
+<a name="l00261"></a>00261                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a> <a class="code" href="cupp__common_8h.html#bccb41c1bbadc2cb460ffb39002d4a42">CUPP_DEVICE</a>
+<a name="l00262"></a>00262                 T <span class="keyword">const</span>&amp; <a class="code" href="classcupp_1_1memory1d.html#d27147e5b102766a851feb835f6227b2">operator[]</a>( <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> index ) <span class="keyword">const</span>;
+<a name="l00263"></a>00263 
+<a name="l00264"></a>00264         <span class="keyword">private</span>:
+<a name="l00269"></a>00269                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00270"></a>00270                 <span class="keywordtype">void</span> malloc();
+<a name="l00271"></a>00271 
+<a name="l00276"></a>00276                 <a class="code" href="cupp__common_8h.html#012a52da202d51c12b87e96f4a53688e">CUPP_HOST</a>
+<a name="l00277"></a>00277                 <span class="keywordtype">void</span> free();
+<a name="l00278"></a>00278 
+<a name="l00279"></a>00279         <span class="keyword">private</span>:
+<a name="l00283"></a>00283                 T* device_pointer_;
+<a name="l00284"></a>00284 
+<a name="l00288"></a>00288                 <a class="code" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> size_;
+<a name="l00289"></a>00289 }; <span class="comment">// class memory1d</span>
+<a name="l00290"></a>00290 
+<a name="l00291"></a>00291 
+<a name="l00292"></a>00292 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00293"></a><a class="code" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">00293</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, size_type size ) : device_pointer_(0), size_(size) {
+<a name="l00294"></a>00294         malloc();
+<a name="l00295"></a>00295 }
+<a name="l00296"></a>00296 
+<a name="l00297"></a>00297 
+<a name="l00298"></a>00298 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00299"></a><a class="code" href="classcupp_1_1memory1d.html#27dea9a27e57089e86f8f9b24c267e6a">00299</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, <span class="keywordtype">int</span> init_value, size_type size ) : device_pointer_(0), size_(size) {
+<a name="l00300"></a>00300         malloc();
+<a name="l00301"></a>00301         <a class="code" href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3">set</a>(init_value);
+<a name="l00302"></a>00302 }
+<a name="l00303"></a>00303 
+<a name="l00304"></a>00304 
+<a name="l00305"></a>00305 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00306"></a><a class="code" href="classcupp_1_1memory1d.html#c7209be022ba435a3c9d10e945f97cf8">00306</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, T <span class="keyword">const</span>* data, size_type size ) : device_pointer_(0), size_(size) {
+<a name="l00307"></a>00307         malloc();
+<a name="l00308"></a>00308         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(data);
+<a name="l00309"></a>00309 }
+<a name="l00310"></a>00310 
+<a name="l00311"></a>00311 
+<a name="l00312"></a>00312 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00313"></a>00313 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIterator&gt;
+<a name="l00314"></a><a class="code" href="classcupp_1_1memory1d.html#b06cfee11ea2877eab97feb0365f5cdd">00314</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::memory1d</a>( <a class="code" href="classcupp_1_1device.html">device</a> <span class="keyword">const</span>&amp; dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
+<a name="l00315"></a>00315         malloc();
+<a name="l00316"></a>00316         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(first, last);
+<a name="l00317"></a>00317 }
+<a name="l00318"></a>00318 
+<a name="l00319"></a>00319 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00320"></a><a class="code" href="classcupp_1_1memory1d.html#136249ffebd3b479e96434d37035b14f">00320</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::memory1d</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;</a> <span class="keyword">const</span>&amp; other ) : device_pointer_(0), size_(size) {
+<a name="l00321"></a>00321         malloc();
+<a name="l00322"></a>00322         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(other);
+<a name="l00323"></a>00323 }
+<a name="l00324"></a>00324 
+<a name="l00325"></a>00325 
+<a name="l00326"></a>00326 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00327"></a><a class="code" href="classcupp_1_1memory1d.html#5927528983a596d5db61d7b61be8a7af">00327</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::~memory1d</a>() {
+<a name="l00328"></a>00328         free();
+<a name="l00329"></a>00329 }
+<a name="l00330"></a>00330 
+<a name="l00331"></a>00331 
+<a name="l00332"></a>00332 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00333"></a><a class="code" href="classcupp_1_1memory1d.html#60c153374377e9753b40e64f206183ae">00333</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt; T &gt;</a>&amp; <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::operator=</a>( <span class="keyword">const</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt; T &gt;</a> &amp;other ) {
+<a name="l00334"></a>00334         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(other);
+<a name="l00335"></a>00335 }
+<a name="l00336"></a>00336 
+<a name="l00337"></a>00337 
+<a name="l00338"></a>00338 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00339"></a><a class="code" href="classcupp_1_1memory1d.html#029bc23c7f25812efbe35413cc57cd45">00339</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::swap</a>( <a class="code" href="classcupp_1_1memory1d.html">memory1d</a>&amp; other ) {
+<a name="l00340"></a>00340         std::swap(<span class="keyword">this</span>.device_pointer_, other.<a class="code" href="classcupp_1_1memory1d.html#d3029cf66944d55cca1adcf84c229c59">device_pointer_</a>);
+<a name="l00341"></a>00341         std::swap(<span class="keyword">this</span>.size_, other.<a class="code" href="classcupp_1_1memory1d.html#86578857018df789f739e4e76ec218dc">size_</a>);
+<a name="l00342"></a>00342 }
+<a name="l00343"></a>00343 
+<a name="l00344"></a>00344 
+<a name="l00345"></a>00345 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00346"></a><a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">00346</a> <span class="keyword">typename</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::size_type</a> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::size</a>()<span class="keyword"> const </span>{
+<a name="l00347"></a>00347         <span class="keywordflow">return</span> size_;
+<a name="l00348"></a>00348 }
+<a name="l00349"></a>00349 
+<a name="l00350"></a>00350 
+<a name="l00351"></a>00351 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00352"></a><a class="code" href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3">00352</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::set</a>(<span class="keywordtype">int</span> value) {
+<a name="l00353"></a>00353         <span class="keywordflow">if</span> (cudaMemset( static_cast&lt;void*&gt;( device_pointer_ ), value, <span class="keyword">sizeof</span>(T)*<a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>() ) != cudaSuccess) {
+<a name="l00354"></a>00354                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1cuda__runtime__error.html">exception::cuda_runtime_error</a>(cudaGetLastError());
+<a name="l00355"></a>00355         }
+<a name="l00356"></a>00356 }
+<a name="l00357"></a>00357 
+<a name="l00358"></a>00358 
+<a name="l00359"></a>00359 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00360"></a>00360 <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::malloc</a>() {
+<a name="l00361"></a>00361         <span class="keywordflow">if</span> (cudaMalloc( static_cast&lt;void**&gt;( &amp;device_pointer_ ), <span class="keyword">sizeof</span>(T)*<a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>() ) != cudaSuccess) {
+<a name="l00362"></a>00362                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1cuda__runtime__error.html">exception::cuda_runtime_error</a>(cudaGetLastError());
+<a name="l00363"></a>00363         }
+<a name="l00364"></a>00364 }
+<a name="l00365"></a>00365 
+<a name="l00366"></a>00366 
+<a name="l00367"></a>00367 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00368"></a>00368 <span class="keywordtype">void</span> memory1d&lt;T&gt;::free() {
+<a name="l00369"></a>00369         <span class="keywordflow">if</span> (cudaFree(device_pointer_) != cudaSuccess) {
+<a name="l00370"></a>00370                 <span class="keywordflow">throw</span> exception::cuda_runtime_error(cudaGetLastError());
+<a name="l00371"></a>00371         }
+<a name="l00372"></a>00372 }
+<a name="l00373"></a>00373 
+<a name="l00374"></a>00374 
+<a name="l00375"></a>00375 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00376"></a>00376 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIterator&gt;
+<a name="l00377"></a><a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">00377</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_device</a>( InputIterator first, InputIterator last, <span class="keywordtype">int</span> offset ) {
+<a name="l00378"></a>00378         std::vector&lt;T&gt; temp;
+<a name="l00379"></a>00379         temp.assign(first, last);
+<a name="l00380"></a>00380         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(temp.size(), &amp;temp[0], offset);
+<a name="l00381"></a>00381 }
+<a name="l00382"></a>00382 
+<a name="l00383"></a>00383 
+<a name="l00384"></a>00384 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00385"></a><a class="code" href="classcupp_1_1memory1d.html#3ebb0730716d757d8d66549943fb0af9">00385</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_device</a>( T <span class="keyword">const</span>* data, <span class="keywordtype">int</span> offset ) {
+<a name="l00386"></a>00386         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(<a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>(), data, offset);
+<a name="l00387"></a>00387 }
+<a name="l00388"></a>00388 
+<a name="l00389"></a>00389 
+<a name="l00390"></a>00390 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00391"></a><a class="code" href="classcupp_1_1memory1d.html#86d7de4483de2f6d08bba6a2b4f95ef5">00391</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_device</a>( size_type count, T <span class="keyword">const</span>* data, size_type offset) {
+<a name="l00392"></a>00392         <span class="keywordflow">if</span> (count + offset &gt; <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>()) {
+<a name="l00393"></a>00393                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1memory__access__violation.html">exception::memory_access_violation</a>();
+<a name="l00394"></a>00394         }
+<a name="l00395"></a>00395         
+<a name="l00396"></a>00396         <span class="keywordflow">if</span> ( cudaMemcpy(device_pointer_+offset, data, count * <span class="keyword">sizeof</span>(T), cudaMemcpyHostToDevice) != cudaSuccess) {
+<a name="l00397"></a>00397                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1cuda__runtime__error.html">exception::cuda_runtime_error</a>(cudaGetLastError());
+<a name="l00398"></a>00398         }
+<a name="l00399"></a>00399 }
+<a name="l00400"></a>00400 
+<a name="l00401"></a>00401 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00402"></a><a class="code" href="classcupp_1_1memory1d.html#c12907b0c1baea7e2116838f4f6f5878">00402</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_device</a> (<a class="code" href="classcupp_1_1memory1d.html">memory1d</a> <span class="keyword">const</span>&amp; other, size_type offset) {
+<a name="l00403"></a>00403         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(other, other.<a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>(), offset);
+<a name="l00404"></a>00404 }
+<a name="l00405"></a>00405 
+<a name="l00406"></a>00406 
+<a name="l00407"></a>00407 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00408"></a><a class="code" href="classcupp_1_1memory1d.html#43c6c743f74a4d860be872f646e21d0b">00408</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_device</a> (<a class="code" href="classcupp_1_1memory1d.html">memory1d</a> <span class="keyword">const</span>&amp; other, size_type count, size_type offset) {
+<a name="l00409"></a>00409         <span class="keywordflow">if</span> (count+offset &gt; <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>()) {
+<a name="l00410"></a>00410                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1memory__access__violation.html">exception::memory_access_violation</a>();
+<a name="l00411"></a>00411         }
+<a name="l00412"></a>00412 
+<a name="l00413"></a>00413         <span class="keywordflow">if</span> ( cudaMemcpy(device_pointer_+offset, other.<a class="code" href="classcupp_1_1memory1d.html#d3029cf66944d55cca1adcf84c229c59">device_pointer_</a>, count * <span class="keyword">sizeof</span>(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
+<a name="l00414"></a>00414                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1cuda__runtime__error.html">exception::cuda_runtime_error</a>(cudaGetLastError());
+<a name="l00415"></a>00415         }
+<a name="l00416"></a>00416 }
+<a name="l00417"></a>00417 
+<a name="l00418"></a>00418 
+<a name="l00419"></a>00419 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00420"></a><a class="code" href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8">00420</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_host</a> (T* destination) {
+<a name="l00421"></a>00421         <span class="keywordflow">if</span> (cudaMemcpy(destination, device_pointer_, <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>() * <span class="keyword">sizeof</span>(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+<a name="l00422"></a>00422                 <span class="keywordflow">throw</span> <a class="code" href="classcupp_1_1exception_1_1cuda__runtime__error.html">exception::cuda_runtime_error</a>(cudaGetLastError());
+<a name="l00423"></a>00423         }
+<a name="l00424"></a>00424 }
+<a name="l00425"></a>00425 
+<a name="l00426"></a>00426 
+<a name="l00427"></a>00427 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00428"></a>00428 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> OutputIterator&gt;
+<a name="l00429"></a><a class="code" href="classcupp_1_1memory1d.html#c14c166f0dd89e473efed1cae2178c3a">00429</a> <span class="keywordtype">void</span> <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::copy_to_host</a>(OutputIterator out_iter) {
+<a name="l00430"></a>00430         std::vector&lt;T&gt; temp( <a class="code" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a>() );
+<a name="l00431"></a>00431 
+<a name="l00432"></a>00432         <a class="code" href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8">copy_to_host</a>(&amp;temp[0]);
+<a name="l00433"></a>00433 
+<a name="l00434"></a>00434         std::copy(temp.begin(), temp.end(), out_iter);
+<a name="l00435"></a>00435 }
+<a name="l00436"></a>00436 
+<a name="l00437"></a>00437 
+<a name="l00438"></a>00438 <span class="preprocessor">#if defined(__CUDACC__)</span>
+<a name="l00439"></a>00439 <span class="preprocessor"></span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00440"></a>00440         T&amp; <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::operator[]</a>(size_type index) {
+<a name="l00441"></a>00441                 <span class="keywordflow">return</span> device_pointer_[index];
+<a name="l00442"></a>00442         }
+<a name="l00443"></a>00443 <span class="preprocessor">#endif</span>
+<a name="l00444"></a>00444 <span class="preprocessor"></span>
+<a name="l00445"></a>00445 
+<a name="l00446"></a>00446 <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;
+<a name="l00447"></a><a class="code" href="classcupp_1_1memory1d.html#500b2c9d536b323eddb456e9c886774d">00447</a> T <span class="keyword">const</span>&amp; <a class="code" href="classcupp_1_1memory1d.html">memory1d&lt;T&gt;::operator[]</a>(size_type index)<span class="keyword"> const </span>{
+<a name="l00448"></a>00448 <span class="preprocessor">#if defined(__CUDACC__)</span>
+<a name="l00449"></a>00449 <span class="preprocessor"></span>        <span class="keywordflow">return</span> device_pointer_[index];
+<a name="l00450"></a>00450 <span class="preprocessor">#endif</span>
+<a name="l00451"></a>00451 <span class="preprocessor"></span><span class="preprocessor">#if !defined(__CUDACC__)</span>
+<a name="l00452"></a>00452 <span class="preprocessor"></span>        T returnee;
+<a name="l00453"></a>00453         <a class="code" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a>(1, &amp;returnee, index);
+<a name="l00454"></a>00454         <span class="keywordflow">return</span> returnee;
+<a name="l00455"></a>00455 <span class="preprocessor">#endif</span>
+<a name="l00456"></a>00456 <span class="preprocessor"></span>}
+<a name="l00457"></a>00457 
+<a name="l00458"></a>00458 
+<a name="l00459"></a>00459 } <span class="comment">// namespace cupp</span>
+<a name="l00460"></a>00460 
+<a name="l00461"></a>00461 <span class="preprocessor">#endif</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Jun 21 01:58:12 2007 for CuPP by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

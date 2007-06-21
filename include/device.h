@@ -10,19 +10,19 @@
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-//#include "memory1d.h"
+#include "memory1d.h"
 
 #include <cstddef>
 
 namespace cupp {
 
 
-/// @code_review Please put the public members first and then the private ones.
 /**
  * @class device
  * @author Jens Breitbart
  * @version 0.1
  * @date 13.06.2007
+ * @platform Host only!
  * @warning 
  * @brief asdvasd
  *
@@ -48,8 +48,14 @@ class device {
 		 */
 		explicit device (const int major, const int minor);
 
-	private:
-		
+	
+	public: /*** UTILITY FUNCTIONS ***/
+		/**
+		 * @return the number of available devices
+		 */
+		static int device_count();
+	
+	private:	
 		/**
 		 * @brief This is the real constructor.
 		 * @param major The requested major rev. number; pass -1 to ignore it
@@ -57,73 +63,6 @@ class device {
 		 * @param name  The requested device name; pass 0 to ignore it
 		 */
 		void real_constructor(const int major, const int minor, const char* name);
-#if 0
-	public: /***  1D-MEMORY FUNCTIONS  ***/
-		/**
-		 * @brief Allocates 1-dimension memory on the device.
-		 * @param size The number of elements you want to allocate on the device.
-		 * @return A pointer to 1-dimension device memory.
-		 * @exception cupp::exception::cuda_runtime_error Thrown if the memory allocation fails.
-		 */
-		template<typename T>
-		memory1D<T> allocate_memory1D(std::size_t size) const {
-			T* devptr;
-			if (cudaMalloc( static_cast<void**>( &devptr ), sizeof(T)*size ) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
-
-			return memory1D<T>(devptr, size);
-		}
-
-		/**
-		 * @brief Frees memory on the GPU
-		 * @param memory The memory which will be freeed
-		 * @warning After this call is completed @a memory is no longer valid.
-		 */
-		template<typename T>
-		void free (const memory1D<T>& memory) const {
-			if (cudaFree(memory.pointer_) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
-		}
-
-		/**
-		 * @brief Copies data from the host to the device
-		 * @param src A pointer to the data we copy from
-		 * @param dest A pointer to where the data will be copied
-		 * @warning We will copy @a dest.size() many elements, you have to assure that @a src points to enough data.
-		 */
-		template <typename T>
-		void copy_host_to_device(const T* src, const memory1D<T>& dest) {
-			if (cudaMemcpy(dest.pointer_, src, dest.size() *sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
-		}
-
-		/**
-		 * @brief Copies data from the device to the host
-		 * @param src A pointer to the data we copy from
-		 * @param dest A pointer to where the data will be copied
-		 * @warning We will copy @a src.size() many elements, you have to assure that @a dest points to enough data.
-		 */
-		template <typename T>
-		void copy_device_to_host(const memory1D<T>& src, T* dest) {
-			if (cudaMemcpy(dest, src.pointer_, p.size_*sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
-		}
-		
-	public: /*** UTILITY FUNCTIONS ***/
-		/**
-		 * @return the number of available devices
-		 */
-		static const int device_count() {
-			int device_cnt = 0;
-			cudaGetDeviceCount(&device_cnt);
-
-			return device_cnt;
-		}
-#endif
 }; // class device
 
 } // namespace cupp

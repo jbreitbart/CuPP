@@ -9,77 +9,452 @@
 // Include std::size_t
 #include <cstddef>
 
+// Include std::swap
+#include <algorithm>
+
+#include <vector>
+
 #include "cupp_common.h"
 
+#include "exception/cuda_runtime_error.h"
+#include "exception/memory_access_violation.h"
+
+#include <cuda_runtime.h>
 
 
 namespace cupp {
 
-/// @code_review Please put the public members first and then the private ones.
+// Just used to force the user to configure and get a device.
+class device;
+
 /**
  * @class memory1d
+ * @author Björn Knafla: Initial design
  * @author Jens Breitbart
- * @version 0.1
- * @date 13.06.2007
- * @brief A pointer to linear 1-dimensional memory.
- * @warning You have to free this memory, or you will have a ressource leak!
+ * @version 0.2
+ * @date 20.06.2007
+ * @brief Represents a memory block on an associated CUDA device.
  *
- * asdvasdvasdv
+ * askk
  */
-template <typename T>
+
+template< typename T >
 class memory1d {
-	private: /***  INTERNAL DATA  ***/
-		const T* pointer_;
-		/// @code_review Should we remove @c size_ and use @c cudaGetSymbolSize instead?
-		const std::size_t size_;
-		
-	private: /***  CONSTRUCTORS & DESTRUCTORS ***/
-		memory1d() {};
-		memory1d(const T* pointer, const std::size_t size) :
-			pointer_(pointer), size_(size) {}
 	public:
-		/// @code_review Do typedefs work with nvcc?
+		/**
+		 * @typedef size_type
+		 * @brief The type you should use to index this class
+		 */
 		typedef std::size_t size_type;
+
+		/**
+		 * @typedef value_type
+		 * @brief The type of data you want to store
+		 */
 		typedef T value_type;
-		typedef T* pointer;
-		
-		
-		/**
-		 * @brief Copy constructor
-		 * @param copy
-		 * @todo Should we test if the pointer is used in the correct context?
-		 * @todo Do we need a public copy-constructor?
-		 */
-		memory1d(const memory1D& copy) : pointer_(copy.pointer_), size_(copy.size_) {}
 
-	public:
+		// dev is a pure dummy, it is only used to force the user to configure a device
+		// before creating memory on it.
 		
 		/**
-		 * @return How many elements we can store on the device
-		 * @platform Device Horrible performance
+		 * @brief Associates memory for @a size elements on the device @a dev
+		 * @param dev The device on which you want to allocate memory
+		 * @param size How many elements you store on the device
+		 * @exception cuda_runtime_error
+		 * @platform Host only
 		 */
-		///  @code_review Should we define a special header that defines macros like
+		CUPP_HOST
+		memory1d( device const& dev, size_type size );
+		
+		/**
+		 * @brief Associates memory for @a size elements on the device @a dev and fills it with the byte @a init_value
+		 * @param dev The device on which you want to allocate memory
+		 * @param init_value The initialization value for the memory
+		 * @param size How many elements you store on the device
+		 * @exception cuda_runtime_error
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		memory1d( device const& dev, int init_value, size_type size );
+		
+		/**
+		 * @brief Associates memory for @a size elements on the device @a dev and fills it with the data pointed by @a data
+		 * @param dev The device on which you want to allocate memory
+		 * @param data The data which will get transfered to the GPU
+		 * @param size How many elements you store on the device
+		 * @exception cuda_runtime_error
+		 * @warning Be sure that @a data points to at least @a size many elements.
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		memory1d( device const& dev, T const* data, size_type size );
+		
+		/**
+		 * @brief Associates memory on the device @a dev and copies all elements between @a first and @a last to that memory.
+		 * @param dev The device on which you want to allocate memory
+		 * @param first The starting point of your data
+		 * @param last The end+1 of your data
+		 * @exception cuda_runtime_error
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		template <typename InputIterator>
+		memory1d( device const& dev, InputIterator first, InputIterator last );
+
+		/**
+		 * @brief Creates a new memory block on the device and copies the data of @a other to the new block.
+		 * @param other The memory that will be copied.
+		 * @exception cuda_runtime_error
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		memory1d( memory1d<T> const& other );
+
+		/**
+		 * @brief Frees the memory on the device.
+		 * @exception cuda_runtime_error
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		~memory1d();
+
+
+		/**
+		 * @brief Copies the data from @a other to its own memory block.
+		 * @param other The data you want to copy
+		 * @todo how to handle different sizes?
+		 * @platform Host
+		 */
+		CUPP_HOST
+		memory1d< T >& operator=( const memory1d< T > &other );
+		
+
+		/**
+		 * @brief Swaps the data between @a other and @a this.
+		 * @param other The data you want to swap
+		 * @platform Host
+		 * @platform Device
+		 */
 		CUPP_HOST CUPP_DEVICE
-		size_type size() const {
-			return size_;
-		}
+		void swap( memory1d& other );
+		
 
-	public: /***  GPU FUNCTIONS  ***/
-	#if defined(__CUDACC__)
 		/**
-		 * @brief Cast the memory1D into a simple pointer
-		 * @warning Only available on the GPU.
+		 * @brief Returns the size of the memory block
+		 * @platform Host
+		 * @platform Device
+		 */
+		CUPP_HOST CUPP_DEVICE
+		size_type size() const;
+		
+
+		/**
+		 * @brief Set the memory block to the byte value of @a value
+		 * @param value The byte value to be set.
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		void set( int value );
+
+
+		/**
+		 * @brief Copies data to the memory on the device
+		 * @param first The starting point of your data
+		 * @param last The end+1 of your data
+		 * @param offset Is non-byte offset (TM)
+		 * @platform Host only
+		 * @todo We could resize the memory if last-first > size
+		 */
+		CUPP_HOST
+		template <typename InputIterator>
+		void copy_to_device( InputIterator first, InputIterator last, int offset );
+		
+		/**
+		 * @brief Copies data to the memory on the device
+		 * @param data The data which will get transfered to the device
+		 * @param offset Is non-byte offset (TM)
+		 * @warning Be sure that @a data points to at least @a this.size() many elements.
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		void copy_to_device( T const* data, int offset );
+		
+		/**
+		 * @brief Copies data to the memory on the device
+		 * @param data The data which will get transfered to the device
+		 * @param count How many data you want to transfer
+		 * @param offset Is non-byte offset (TM)
+		 * @warning Be sure that @a data points to at least @a count() many elements.
+		 * @platform Host only
+		 * @todo We could resize the memory if count+offset > size
+		 */
+		CUPP_HOST
+		void copy_to_device( size_type count, T const* data, size_type offset=0 );
+
+		/**
+		 * @brief Copies data to the memory on the device
+		 * @param other The memory that will be copied.
+		 * @param offset Is non-byte offset (TM)
+		 * @platform Host only
+		 * @todo We could resize the memory if other.size > size
+		 */
+		CUPP_HOST
+		void copy_to_device( memory1d const& other, size_type offset=0 );
+		
+		/**
+		 * @brief Copies data to the memory on the device
+		 * @param other The memory that will be copied.
+		 * @param count How many elements will be copied
+		 * @param offset Is non-byte offset (TM)
+		 * @platform Host only
+		 * @todo We could resize the memory if @c other.size() != @c size()
+		 */
+		CUPP_HOST
+		void copy_to_device( memory1d const& other, size_type count, size_type offset=0 );
+		
+
+		/**
+		 * @brief Copies data from the memory on the device to @a destination
+		 * @param destination The place where you want to store the data
+		 * @warning Be sure that @a destination points to at least @c size() many elements.
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		void copy_to_host( T* destination );
+		
+		/**
+		 * @brief Copies data from the memory on the device to @a out_iter
+		 * @param out_iter An output iterator where you want the data to be stored
+		 * @warning @a out_iter must be able to hold at least @c size() elements.
+		 * @platform Host only
+		 */
+		CUPP_HOST
+		template <typename OutputIterator>
+		void copy_to_host( OutputIterator out_iter );
+
+#if 0
+		// Be strongly cautioned not to use this!!!!!!
+		//Perhaps we should just use the functions below (your idea! I really like it!)
+		CUPP_HOST CUPP_DEVICE
+		T* cuda_pointer() const;
+#endif
+
+/// @code_review we should discuss this :-)
+//#if defined(__CUDACC__)
+		/**
+		 * @brief Access the memory
+		 * @param index The index of the element you want to access
+		 * @platform Device
+		 * @todo How to implement this for the host? 
 		 */
 		CUPP_DEVICE
-		operator T*() const {
-			return pointer_;
-		}
-	#endif // defined(__CUDACC__)
+		T& operator[]( size_type index );
+//#endif
+		
+		/**
+		 * @brief Access the memory
+		 * @param index The index of the element you want to access
+		 * @warning @a out_iter must be able to hold at least @c size() elements.
+		 * @platform Device
+		 * @platform Host
+		 */
+		CUPP_HOST CUPP_DEVICE
+		T const& operator[]( size_type index ) const;
 
-	/// @code_review If friendship must be delcared then the class should be in the same file as its
-	///              friend.
-	friend cupp::device;
+	private:
+		/**
+		 * @brief Allocates memory on the device
+		 * @exception cuda_runtime_error
+		 */
+		CUPP_HOST
+		void malloc();
+
+		/**
+		 * @brief Free the memory on the device
+		 * @exception cuda_runtime_error
+		 */
+		CUPP_HOST
+		void free();
+
+	private:
+		/**
+		 * The pointer to the device memory
+		 */
+		T* device_pointer_;
+
+		/**
+		 * How many memory has been allocated
+		 */
+		size_type size_;
 }; // class memory1d
+
+
+template <typename T>
+memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_(0), size_(size) {
+	malloc();
+}
+
+
+template <typename T>
+memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_(0), size_(size) {
+	malloc();
+	set(init_value);
+}
+
+
+template <typename T>
+memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_(0), size_(size) {
+	malloc();
+	copy_to_device(data);
+}
+
+
+template <typename T>
+template <typename InputIterator>
+memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
+	malloc();
+	copy_to_device(first, last);
+}
+
+template <typename T>
+memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_(0), size_(size) {
+	malloc();
+	copy_to_device(other);
+}
+
+
+template <typename T>
+memory1d<T>::~memory1d() {
+	free();
+}
+
+
+template <typename T>
+memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
+	copy_to_device(other);
+}
+
+
+template <typename T>
+void memory1d<T>::swap( memory1d& other ) {
+	std::swap(this.device_pointer_, other.device_pointer_);
+	std::swap(this.size_, other.size_);
+}
+
+
+template <typename T>
+typename memory1d<T>::size_type memory1d<T>::size() const {
+	return size_;
+}
+
+
+template <typename T>
+void memory1d<T>::set(int value) {
+	if (cudaMemset( static_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::malloc() {
+	if (cudaMalloc( static_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::free() {
+	if (cudaFree(device_pointer_) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+template <typename InputIterator>
+void memory1d<T>::copy_to_device( InputIterator first, InputIterator last, int offset ) {
+	std::vector<T> temp;
+	temp.assign(first, last);
+	copy_to_device(temp.size(), &temp[0], offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device( T const* data, int offset ) {
+	copy_to_device(size(), data, offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offset) {
+	if (count + offset > size()) {
+		throw exception::memory_access_violation();
+	}
+	
+	if ( cudaMemcpy(device_pointer_+offset, data, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+template <typename T>
+void memory1d<T>::copy_to_device (memory1d const& other, size_type offset) {
+	copy_to_device(other, other.size(), offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_type offset) {
+	if (count+offset > size()) {
+		throw exception::memory_access_violation();
+	}
+
+	if ( cudaMemcpy(device_pointer_+offset, other.device_pointer_, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_host (T* destination) {
+	if (cudaMemcpy(destination, device_pointer_, size() * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+template <typename OutputIterator>
+void memory1d<T>::copy_to_host(OutputIterator out_iter) {
+	std::vector<T> temp( size() );
+
+	copy_to_host(&temp[0]);
+
+	std::copy(temp.begin(), temp.end(), out_iter);
+}
+
+
+#if defined(__CUDACC__)
+	template <typename T>
+	T& memory1d<T>::operator[](size_type index) {
+		return device_pointer_[index];
+	}
+#endif
+
+
+template <typename T>
+T const& memory1d<T>::operator[](size_type index) const {
+#if defined(__CUDACC__)
+	return device_pointer_[index];
+#endif
+#if !defined(__CUDACC__)
+	T returnee;
+	copy_to_device(1, &returnee, index);
+	return returnee;
+#endif
+}
+
 
 } // namespace cupp
 

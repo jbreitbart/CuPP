@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>cupp: cupp::exception::exception Class Reference</title>
+<title>CuPP: cupp::exception::exception Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -8,6 +8,7 @@
 <div class="tabs">
   <ul>
     <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+    <li><a href="namespaces.html"><span>Namespaces</span></a></li>
     <li id="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
@@ -19,20 +20,21 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<b>cupp</b>::<b>exception</b>::<a class="el" href="classcupp_1_1exception_1_1exception.html">exception</a></div>
-<h1>cupp::exception::exception Class Reference</h1><!-- doxytag: class="cupp::exception::exception" -->The base class for all exceptions thrown by CUPP.  
+<a class="el" href="namespacecupp.html">cupp</a>::<a class="el" href="namespacecupp_1_1exception.html">exception</a>::<a class="el" href="classcupp_1_1exception_1_1exception.html">exception</a></div>
+<h1>cupp::exception::exception Class Reference</h1><!-- doxytag: class="cupp::exception::exception" --><!-- doxytag: inherits="std::exception" -->The base class for all exceptions thrown by CUPP.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;<a class="el" href="exception_8h-source.html">exception.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for cupp::exception::exception:
-<p><center><img src="classcupp_1_1exception_1_1exception.png" usemap="#cupp::exception::exception_map" border="0" alt=""></center>
-<map name="cupp::exception::exception_map">
-<area href="classcupp_1_1exception_1_1cuda__runtime__error.html" alt="cupp::exception::cuda_runtime_error" shape="rect" coords="0,56,231,80">
-<area href="classcupp_1_1exception_1_1no__device.html" alt="cupp::exception::no_device" shape="rect" coords="241,56,472,80">
-<area href="classcupp_1_1exception_1_1no__supporting__device.html" alt="cupp::exception::no_supporting_device" shape="rect" coords="482,56,713,80">
+Inheritance diagram for cupp::exception::exception:<p><center><img src="classcupp_1_1exception_1_1exception__inherit__graph.png" border="0" usemap="#cupp_1_1exception_1_1exception__inherit__map" alt="Inheritance graph"></center>
+<map name="cupp_1_1exception_1_1exception__inherit__map">
+<area href="classcupp_1_1exception_1_1cuda__runtime__error.html" shape="rect" coords="410,6,650,30" alt="">
+<area href="classcupp_1_1exception_1_1memory__access__violation.html" shape="rect" coords="391,54,668,78" alt="">
+<area href="classcupp_1_1exception_1_1no__device.html" shape="rect" coords="438,102,622,126" alt="">
+<area href="classcupp_1_1exception_1_1no__supporting__device.html" shape="rect" coords="403,150,656,174" alt="">
 </map>
-<a href="classcupp_1_1exception_1_1exception-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center>Collaboration diagram for cupp::exception::exception:<p><center><img src="classcupp_1_1exception_1_1exception__coll__graph.png" border="0" usemap="#cupp_1_1exception_1_1exception__coll__map" alt="Collaboration graph"></center>
+<center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center><a href="classcupp_1_1exception_1_1exception-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual char const *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1exception_1_1exception.html#f6223e64f0340cd031192153c94ff3d6">what</a> () const=0  throw ()</td></tr>
@@ -47,7 +49,9 @@ The base class for all exceptions thrown by CUPP.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>This class is pure virtual.</dd></dl>
 It is based on the std::exception and can be handled the same way. 
 <p>
-<hr><h2>Member Function Documentation</h2>
+
+<p>
+Definition at line <a class="el" href="exception_8h-source.html#l00030">30</a> of file <a class="el" href="exception_8h-source.html">exception.h</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="f6223e64f0340cd031192153c94ff3d6"></a><!-- doxytag: member="cupp::exception::exception::what" ref="f6223e64f0340cd031192153c94ff3d6" args="() const=0" -->
 <div class="memitem">
 <div class="memproto">
@@ -67,12 +71,12 @@ It is based on the std::exception and can be handled the same way.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>An error message in human readable form. </dd></dl>
 
 <p>
-Implemented in <a class="el" href="classcupp_1_1exception_1_1cuda__runtime__error.html#eb152945b34caf0790a7c5e36a732ff3">cupp::exception::cuda_runtime_error</a>, <a class="el" href="classcupp_1_1exception_1_1no__device.html#945fb53fb3e38c518e03c18ffca4c662">cupp::exception::no_device</a>, and <a class="el" href="classcupp_1_1exception_1_1no__supporting__device.html#64c80e869d26d381cf657c4ff4bc8b19">cupp::exception::no_supporting_device</a>.
+Implemented in <a class="el" href="classcupp_1_1exception_1_1cuda__runtime__error.html#eb152945b34caf0790a7c5e36a732ff3">cupp::exception::cuda_runtime_error</a>, <a class="el" href="classcupp_1_1exception_1_1memory__access__violation.html#56eecfbd72876e5451487d8f4736541e">cupp::exception::memory_access_violation</a>, <a class="el" href="classcupp_1_1exception_1_1no__device.html#945fb53fb3e38c518e03c18ffca4c662">cupp::exception::no_device</a>, and <a class="el" href="classcupp_1_1exception_1_1no__supporting__device.html#64c80e869d26d381cf657c4ff4bc8b19">cupp::exception::no_supporting_device</a>.
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>/home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include/exception/<a class="el" href="exception_8h-source.html">exception.h</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Wed Jun 20 17:06:10 2007 for cupp by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Jun 21 01:58:12 2007 for CuPP by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

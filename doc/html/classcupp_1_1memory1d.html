@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>cupp: cupp::memory1d&lt; T &gt; Class Template Reference</title>
+<title>CuPP: cupp::memory1d&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -8,6 +8,7 @@
 <div class="tabs">
   <ul>
     <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+    <li><a href="namespaces.html"><span>Namespaces</span></a></li>
     <li id="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
@@ -19,63 +20,107 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<b>cupp</b>::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a></div>
-<h1>cupp::memory1d&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="cupp::memory1d" -->A pointer to linear 1-dimensional memory.  
+<a class="el" href="namespacecupp.html">cupp</a>::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a></div>
+<h1>cupp::memory1d&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="cupp::memory1d" -->Represents a memory block on an associated CUDA device.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;<a class="el" href="memory1d_8h-source.html">memory1d.h</a>&gt;</code>
 <p>
-<a href="classcupp_1_1memory1d-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+Collaboration diagram for cupp::memory1d&lt; T &gt;:<p><center><img src="classcupp_1_1memory1d__coll__graph.png" border="0" usemap="#cupp_1_1memory1d_3_01T_01_4__coll__map" alt="Collaboration graph"></center>
+<center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center><a href="classcupp_1_1memory1d-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef std::size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d8d3843f28003d14c39b16d7dd921926"></a><!-- doxytag: member="cupp::memory1d::size_type" ref="d8d3843f28003d14c39b16d7dd921926" args="" -->
+typedef std::size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bc896393be75982e3d6f9c1d17954681"></a><!-- doxytag: member="cupp::memory1d::value_type" ref="bc896393be75982e3d6f9c1d17954681" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type you should use to index this class. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ca7e5c907bb05dbbf624048d594fed41"></a><!-- doxytag: member="cupp::memory1d::value_type" ref="ca7e5c907bb05dbbf624048d594fed41" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#ca7e5c907bb05dbbf624048d594fed41">value_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5a71edd845be0ed707220a45706485ad"></a><!-- doxytag: member="cupp::memory1d::pointer" ref="5a71edd845be0ed707220a45706485ad" args="" -->
-typedef T *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type of data you want to store. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#57479bb8e908a1155f4d82a588ce19dc">memory1d</a> (const memory1D &amp;copy)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#d751708a65c3585a41a4d5af068e9324">memory1d</a> (<a class="el" href="classcupp_1_1device.html">device</a> const &amp;dev, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> size)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor.  <a href="#57479bb8e908a1155f4d82a588ce19dc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">CUPP_HOST CUPP_DEVICE <a class="el" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#dd255f5301c5cde7eb2892cf14c59e76">size</a> () const</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Associates memory for <em>size</em> elements on the device <em>dev</em>.  <a href="#d751708a65c3585a41a4d5af068e9324"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#27dea9a27e57089e86f8f9b24c267e6a">memory1d</a> (<a class="el" href="classcupp_1_1device.html">device</a> const &amp;dev, int init_value, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> size)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Associates memory for <em>size</em> elements on the device <em>dev</em> and fills it with the byte <em>init_value</em>.  <a href="#27dea9a27e57089e86f8f9b24c267e6a"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#c7209be022ba435a3c9d10e945f97cf8">memory1d</a> (<a class="el" href="classcupp_1_1device.html">device</a> const &amp;dev, T const *data, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> size)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Associates memory for <em>size</em> elements on the device <em>dev</em> and fills it with the data pointed by <em>data</em>.  <a href="#c7209be022ba435a3c9d10e945f97cf8"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename InputIterator&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#b06cfee11ea2877eab97feb0365f5cdd">memory1d</a> (<a class="el" href="classcupp_1_1device.html">device</a> const &amp;dev, InputIterator first, InputIterator last)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Associates memory on the device <em>dev</em> and copies all elements between <em>first</em> and <em>last</em> to that memory.  <a href="#b06cfee11ea2877eab97feb0365f5cdd"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#136249ffebd3b479e96434d37035b14f">memory1d</a> (<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; const &amp;other)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new memory block on the device and copies the data of <em>other</em> to the new block.  <a href="#136249ffebd3b479e96434d37035b14f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#5927528983a596d5db61d7b61be8a7af">~memory1d</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Frees the memory on the device. <dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error.</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+ <a href="#5927528983a596d5db61d7b61be8a7af"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#60c153374377e9753b40e64f206183ae">operator=</a> (const <a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; &amp;other)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies the data from <em>other</em> to its own memory block.  <a href="#60c153374377e9753b40e64f206183ae"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#029bc23c7f25812efbe35413cc57cd45">swap</a> (<a class="el" href="classcupp_1_1memory1d.html">memory1d</a> &amp;other)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Swaps the data between <em>other</em> and <em>this</em>.  <a href="#029bc23c7f25812efbe35413cc57cd45"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size</a> () const</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the size of the memory block.  <a href="#fa373d72fb99e3ae6bd77750995e8a91"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3">set</a> (int value)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the memory block to the byte value of <em>value</em>.  <a href="#0d8fadfcccc1fb21cb220b66940a3ae3"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename InputIterator&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828">copy_to_device</a> (InputIterator first, InputIterator last, int offset)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data to the memory on the device.  <a href="#f17bb2aaffa06e16da0ec7f943036828"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#3ebb0730716d757d8d66549943fb0af9">copy_to_device</a> (T const *data, int offset)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data to the memory on the device.  <a href="#3ebb0730716d757d8d66549943fb0af9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#86d7de4483de2f6d08bba6a2b4f95ef5">copy_to_device</a> (<a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> count, T const *data, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data to the memory on the device.  <a href="#86d7de4483de2f6d08bba6a2b4f95ef5"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#c12907b0c1baea7e2116838f4f6f5878">copy_to_device</a> (<a class="el" href="classcupp_1_1memory1d.html">memory1d</a> const &amp;other, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data to the memory on the device.  <a href="#c12907b0c1baea7e2116838f4f6f5878"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#43c6c743f74a4d860be872f646e21d0b">copy_to_device</a> (<a class="el" href="classcupp_1_1memory1d.html">memory1d</a> const &amp;other, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> count, <a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> offset=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data to the memory on the device.  <a href="#43c6c743f74a4d860be872f646e21d0b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8">copy_to_host</a> (T *destination)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data from the memory on the device to <em>destination</em>.  <a href="#925e374e547076e93258bda9604eedc8"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename OutputIterator&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#c14c166f0dd89e473efed1cae2178c3a">copy_to_host</a> (OutputIterator out_iter)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies data from the memory on the device to <em>out_iter</em>.  <a href="#c14c166f0dd89e473efed1cae2178c3a"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#d27147e5b102766a851feb835f6227b2">operator[]</a> (<a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> index)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Access the memory.  <a href="#d27147e5b102766a851feb835f6227b2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">T const &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcupp_1_1memory1d.html#500b2c9d536b323eddb456e9c886774d">operator[]</a> (<a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> index) const</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Access the memory.  <a href="#500b2c9d536b323eddb456e9c886774d"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;typename T&gt;<br>
  class cupp::memory1d&lt; T &gt;</h3>
 
-A pointer to linear 1-dimensional memory. 
+Represents a memory block on an associated CUDA device. 
 <p>
-<dl class="author" compact><dt><b>Author:</b></dt><dd>Jens Breitbart </dd></dl>
-<dl class="version" compact><dt><b>Version:</b></dt><dd>0.1 </dd></dl>
-<dl class="date" compact><dt><b>Date:</b></dt><dd>13.06.2007 </dd></dl>
-<dl class="warning" compact><dt><b>Warning:</b></dt><dd>You have to free this memory, or you will have a ressource leak!</dd></dl>
-asdvasdvasdv 
+<dl class="author" compact><dt><b>Author:</b></dt><dd>Björn Knafla: Initial design <p>
+Jens Breitbart </dd></dl>
+<dl class="version" compact><dt><b>Version:</b></dt><dd>0.2 </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>20.06.2007</dd></dl>
+askk 
 <p>
-<hr><h2>Member Typedef Documentation</h2>
-<a class="anchor" name="e1648f9094c224c633c0afe7c1f7562e"></a><!-- doxytag: member="cupp::memory1d::size_type" ref="e1648f9094c224c633c0afe7c1f7562e" args="" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::size_t <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
 
 <p>
-<dl compact><dt><b><a class="el" href="code_review.html#_code_review000004">Code Review:</a></b></dt><dd>Do typedefs work with nvcc? </dd></dl>
-
-</div>
-</div><p>
-<hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="57479bb8e908a1155f4d82a588ce19dc"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="57479bb8e908a1155f4d82a588ce19dc" args="(const memory1D &amp;copy)" -->
+Definition at line <a class="el" href="memory1d_8h-source.html#l00042">42</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="d751708a65c3585a41a4d5af068e9324"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="d751708a65c3585a41a4d5af068e9324" args="(device const &amp;dev, size_type size)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -84,56 +129,927 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
           <td>(</td>
-          <td class="paramtype">const memory1D &amp;&nbsp;</td>
-          <td class="paramname"> <em>copy</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1device.html">device</a> const &amp;&nbsp;</td>
+          <td class="paramname"> <em>dev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>size</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Copy constructor. 
+Associates memory for <em>size</em> elements on the device <em>dev</em>. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>copy</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>The device on which you want to allocate memory </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>size</em>&nbsp;</td><td>How many elements you store on the device </td></tr>
   </table>
 </dl>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Should we test if the pointer is used in the correct context? </dd></dl>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Do we need a public copy-constructor? </dd></dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
 
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00293">293</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
 </div>
 </div><p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="dd255f5301c5cde7eb2892cf14c59e76"></a><!-- doxytag: member="cupp::memory1d::size" ref="dd255f5301c5cde7eb2892cf14c59e76" args="() const" -->
+<a class="anchor" name="27dea9a27e57089e86f8f9b24c267e6a"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="27dea9a27e57089e86f8f9b24c267e6a" args="(device const &amp;dev, int init_value, size_type size)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">CUPP_HOST CUPP_DEVICE <a class="el" href="classcupp_1_1memory1d.html#e1648f9094c224c633c0afe7c1f7562e">size_type</a> <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::size           </td>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
           <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"> const<code> [inline]</code></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1device.html">device</a> const &amp;&nbsp;</td>
+          <td class="paramname"> <em>dev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>init_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>size</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>How many elements we can store on the device </dd></dl>
-<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Device Horrible performance</dd></dl>
-<dl compact><dt><b><a class="el" href="code_review.html#_code_review000005">Code Review:</a></b></dt><dd>Should we define a special header that defines macros like </dd></dl>
+Associates memory for <em>size</em> elements on the device <em>dev</em> and fills it with the byte <em>init_value</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>The device on which you want to allocate memory </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>init_value</em>&nbsp;</td><td>The initialization value for the memory </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>size</em>&nbsp;</td><td>How many elements you store on the device </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00299">299</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00352">cupp::memory1d&lt; T &gt;::set()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_27dea9a27e57089e86f8f9b24c267e6a_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_27dea9a27e57089e86f8f9b24c267e6a_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_27dea9a27e57089e86f8f9b24c267e6a_cgraph_map">
+<area href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3" shape="rect" coords="249,6,396,30" alt="">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="447,6,599,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="c7209be022ba435a3c9d10e945f97cf8"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="c7209be022ba435a3c9d10e945f97cf8" args="(device const &amp;dev, T const *data, size_type size)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1device.html">device</a> const &amp;&nbsp;</td>
+          <td class="paramname"> <em>dev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T const *&nbsp;</td>
+          <td class="paramname"> <em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>size</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Associates memory for <em>size</em> elements on the device <em>dev</em> and fills it with the data pointed by <em>data</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>The device on which you want to allocate memory </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>The data which will get transfered to the GPU </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>size</em>&nbsp;</td><td>How many elements you store on the device </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd>Be sure that <em>data</em> points to at least <em>size</em> many elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00306">306</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_c7209be022ba435a3c9d10e945f97cf8_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_c7209be022ba435a3c9d10e945f97cf8_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_c7209be022ba435a3c9d10e945f97cf8_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="248,6,472,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="b06cfee11ea2877eab97feb0365f5cdd"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="b06cfee11ea2877eab97feb0365f5cdd" args="(device const &amp;dev, InputIterator first, InputIterator last)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIterator&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1device.html">device</a> const &amp;&nbsp;</td>
+          <td class="paramname"> <em>dev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIterator&nbsp;</td>
+          <td class="paramname"> <em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIterator&nbsp;</td>
+          <td class="paramname"> <em>last</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Associates memory on the device <em>dev</em> and copies all elements between <em>first</em> and <em>last</em> to that memory. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>The device on which you want to allocate memory </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>first</em>&nbsp;</td><td>The starting point of your data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>last</em>&nbsp;</td><td>The end+1 of your data </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00314">314</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_b06cfee11ea2877eab97feb0365f5cdd_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_b06cfee11ea2877eab97feb0365f5cdd_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_b06cfee11ea2877eab97feb0365f5cdd_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="248,6,472,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="136249ffebd3b479e96434d37035b14f"></a><!-- doxytag: member="cupp::memory1d::memory1d" ref="136249ffebd3b479e96434d37035b14f" args="(memory1d&lt; T &gt; const &amp;other)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; const &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Creates a new memory block on the device and copies the data of <em>other</em> to the new block. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>other</em>&nbsp;</td><td>The memory that will be copied. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00320">320</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_136249ffebd3b479e96434d37035b14f_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_136249ffebd3b479e96434d37035b14f_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_136249ffebd3b479e96434d37035b14f_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="248,6,472,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="5927528983a596d5db61d7b61be8a7af"></a><!-- doxytag: member="cupp::memory1d::~memory1d" ref="5927528983a596d5db61d7b61be8a7af" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::~<a class="el" href="classcupp_1_1memory1d.html">memory1d</a>           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Frees the memory on the device. <dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>cuda_runtime_error.</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+<p>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00327">327</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="60c153374377e9753b40e64f206183ae"></a><!-- doxytag: member="cupp::memory1d::operator=" ref="60c153374377e9753b40e64f206183ae" args="(const memory1d&lt; T &gt; &amp;other)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; &amp; <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::operator=           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies the data from <em>other</em> to its own memory block. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>other</em>&nbsp;</td><td>The data you want to copy </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>how to handle different sizes? </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00333">333</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_60c153374377e9753b40e64f206183ae_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_60c153374377e9753b40e64f206183ae_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_60c153374377e9753b40e64f206183ae_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="243,6,467,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="029bc23c7f25812efbe35413cc57cd45"></a><!-- doxytag: member="cupp::memory1d::swap" ref="029bc23c7f25812efbe35413cc57cd45" args="(memory1d &amp;other)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::swap           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Swaps the data between <em>other</em> and <em>this</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>other</em>&nbsp;</td><td>The data you want to swap </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Device </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00339">339</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00283">cupp::memory1d&lt; T &gt;::device_pointer_</a>, and <a class="el" href="memory1d_8h-source.html#l00288">cupp::memory1d&lt; T &gt;::size_</a>.
+</div>
+</div><p>
+<a class="anchor" name="fa373d72fb99e3ae6bd77750995e8a91"></a><!-- doxytag: member="cupp::memory1d::size" ref="fa373d72fb99e3ae6bd77750995e8a91" args="() const" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt;::<a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a> <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::size           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the size of the memory block. 
+<p>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Device </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00346">346</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+Referenced by <a class="el" href="memory1d_8h-source.html#l00385">cupp::memory1d&lt; T &gt;::copy_to_device()</a>, <a class="el" href="memory1d_8h-source.html#l00420">cupp::memory1d&lt; T &gt;::copy_to_host()</a>, and <a class="el" href="memory1d_8h-source.html#l00352">cupp::memory1d&lt; T &gt;::set()</a>.
+<p>
+Here is the caller graph for this function:<p><center><img src="classcupp_1_1memory1d_fa373d72fb99e3ae6bd77750995e8a91_icgraph.png" border="0" usemap="#classcupp_1_1memory1d_fa373d72fb99e3ae6bd77750995e8a91_icgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_fa373d72fb99e3ae6bd77750995e8a91_icgraph_map">
+<area href="classcupp_1_1memory1d.html#3ebb0730716d757d8d66549943fb0af9" shape="rect" coords="208,6,432,30" alt="">
+<area href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8" shape="rect" coords="216,54,424,78" alt="">
+<area href="classcupp_1_1memory1d.html#0d8fadfcccc1fb21cb220b66940a3ae3" shape="rect" coords="247,102,393,126" alt="">
+<area href="classcupp_1_1memory1d.html#c14c166f0dd89e473efed1cae2178c3a" shape="rect" coords="481,54,689,78" alt="">
+<area href="classcupp_1_1memory1d.html#27dea9a27e57089e86f8f9b24c267e6a" shape="rect" coords="489,102,681,126" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="0d8fadfcccc1fb21cb220b66940a3ae3"></a><!-- doxytag: member="cupp::memory1d::set" ref="0d8fadfcccc1fb21cb220b66940a3ae3" args="(int value)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::set           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>value</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set the memory block to the byte value of <em>value</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>value</em>&nbsp;</td><td>The byte value to be set. </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00352">352</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Referenced by <a class="el" href="memory1d_8h-source.html#l00299">cupp::memory1d&lt; T &gt;::memory1d()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_cgraph_map">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="204,6,356,30" alt="">
+</map>
+
+<p>
+Here is the caller graph for this function:<p><center><img src="classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_icgraph.png" border="0" usemap="#classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_icgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_0d8fadfcccc1fb21cb220b66940a3ae3_icgraph_map">
+<area href="classcupp_1_1memory1d.html#27dea9a27e57089e86f8f9b24c267e6a" shape="rect" coords="204,6,396,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="f17bb2aaffa06e16da0ec7f943036828"></a><!-- doxytag: member="cupp::memory1d::copy_to_device" ref="f17bb2aaffa06e16da0ec7f943036828" args="(InputIterator first, InputIterator last, int offset)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIterator&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_device           </td>
+          <td>(</td>
+          <td class="paramtype">InputIterator&nbsp;</td>
+          <td class="paramname"> <em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIterator&nbsp;</td>
+          <td class="paramname"> <em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>offset</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data to the memory on the device. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>first</em>&nbsp;</td><td>The starting point of your data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>last</em>&nbsp;</td><td>The end+1 of your data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>offset</em>&nbsp;</td><td>Is non-byte offset (TM) </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>We could resize the memory if last-first &gt; size </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00377">377</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+Referenced by <a class="el" href="memory1d_8h-source.html#l00385">cupp::memory1d&lt; T &gt;::copy_to_device()</a>, <a class="el" href="memory1d_8h-source.html#l00306">cupp::memory1d&lt; T &gt;::memory1d()</a>, <a class="el" href="memory1d_8h-source.html#l00333">cupp::memory1d&lt; T &gt;::operator=()</a>, and <a class="el" href="memory1d_8h-source.html#l00447">cupp::memory1d&lt; T &gt;::operator[]()</a>.
+<p>
+Here is the caller graph for this function:<p><center><img src="classcupp_1_1memory1d_f17bb2aaffa06e16da0ec7f943036828_icgraph.png" border="0" usemap="#classcupp_1_1memory1d_f17bb2aaffa06e16da0ec7f943036828_icgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_f17bb2aaffa06e16da0ec7f943036828_icgraph_map">
+<area href="classcupp_1_1memory1d.html#3ebb0730716d757d8d66549943fb0af9" shape="rect" coords="278,6,502,30" alt="">
+<area href="classcupp_1_1memory1d.html#c7209be022ba435a3c9d10e945f97cf8" shape="rect" coords="294,54,486,78" alt="">
+<area href="classcupp_1_1memory1d.html#60c153374377e9753b40e64f206183ae" shape="rect" coords="296,102,483,126" alt="">
+<area href="classcupp_1_1memory1d.html#500b2c9d536b323eddb456e9c886774d" shape="rect" coords="296,150,483,174" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="3ebb0730716d757d8d66549943fb0af9"></a><!-- doxytag: member="cupp::memory1d::copy_to_device" ref="3ebb0730716d757d8d66549943fb0af9" args="(T const *data, int offset)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_device           </td>
+          <td>(</td>
+          <td class="paramtype">T const *&nbsp;</td>
+          <td class="paramname"> <em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>offset</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data to the memory on the device. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>The data which will get transfered to the device </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>offset</em>&nbsp;</td><td>Is non-byte offset (TM) </td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd>Be sure that <em>data</em> points to at least <em>this.size()</em> many elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00385">385</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>, and <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_3ebb0730716d757d8d66549943fb0af9_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_3ebb0730716d757d8d66549943fb0af9_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_3ebb0730716d757d8d66549943fb0af9_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="278,6,502,30" alt="">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="314,54,466,78" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="86d7de4483de2f6d08bba6a2b4f95ef5"></a><!-- doxytag: member="cupp::memory1d::copy_to_device" ref="86d7de4483de2f6d08bba6a2b4f95ef5" args="(size_type count, T const *data, size_type offset=0)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_device           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T const *&nbsp;</td>
+          <td class="paramname"> <em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>offset</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data to the memory on the device. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>The data which will get transfered to the device </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>count</em>&nbsp;</td><td>How many data you want to transfer </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>offset</em>&nbsp;</td><td>Is non-byte offset (TM) </td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd>Be sure that <em>data</em> points to at least <em>count()</em> many elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>We could resize the memory if count+offset &gt; size </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00391">391</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_86d7de4483de2f6d08bba6a2b4f95ef5_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_86d7de4483de2f6d08bba6a2b4f95ef5_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_86d7de4483de2f6d08bba6a2b4f95ef5_cgraph_map">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="279,6,431,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="c12907b0c1baea7e2116838f4f6f5878"></a><!-- doxytag: member="cupp::memory1d::copy_to_device" ref="c12907b0c1baea7e2116838f4f6f5878" args="(memory1d const &amp;other, size_type offset=0)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_device           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; const &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>offset</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data to the memory on the device. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>other</em>&nbsp;</td><td>The memory that will be copied. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>offset</em>&nbsp;</td><td>Is non-byte offset (TM) </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>We could resize the memory if other.size &gt; size </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00402">402</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>, and <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_c12907b0c1baea7e2116838f4f6f5878_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_c12907b0c1baea7e2116838f4f6f5878_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_c12907b0c1baea7e2116838f4f6f5878_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="278,6,502,30" alt="">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="314,54,466,78" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="43c6c743f74a4d860be872f646e21d0b"></a><!-- doxytag: member="cupp::memory1d::copy_to_device" ref="43c6c743f74a4d860be872f646e21d0b" args="(memory1d const &amp;other, size_type count, size_type offset=0)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_device           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html">memory1d</a>&lt; T &gt; const &amp;&nbsp;</td>
+          <td class="paramname"> <em>other</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>offset</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data to the memory on the device. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>other</em>&nbsp;</td><td>The memory that will be copied. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>count</em>&nbsp;</td><td>How many elements will be copied </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>offset</em>&nbsp;</td><td>Is non-byte offset (TM) </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>We could resize the memory if <code>other.size()</code> != <code><a class="el" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size()</a></code> </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00408">408</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00283">cupp::memory1d&lt; T &gt;::device_pointer_</a>, and <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_43c6c743f74a4d860be872f646e21d0b_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_43c6c743f74a4d860be872f646e21d0b_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_43c6c743f74a4d860be872f646e21d0b_cgraph_map">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="279,6,431,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="925e374e547076e93258bda9604eedc8"></a><!-- doxytag: member="cupp::memory1d::copy_to_host" ref="925e374e547076e93258bda9604eedc8" args="(T *destination)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_host           </td>
+          <td>(</td>
+          <td class="paramtype">T *&nbsp;</td>
+          <td class="paramname"> <em>destination</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data from the memory on the device to <em>destination</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>destination</em>&nbsp;</td><td>The place where you want to store the data </td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd>Be sure that <em>destination</em> points to at least <code><a class="el" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size()</a></code> many elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00420">420</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Referenced by <a class="el" href="memory1d_8h-source.html#l00429">cupp::memory1d&lt; T &gt;::copy_to_host()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_cgraph_map">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="265,6,417,30" alt="">
+</map>
+
+<p>
+Here is the caller graph for this function:<p><center><img src="classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_icgraph.png" border="0" usemap="#classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_icgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_925e374e547076e93258bda9604eedc8_icgraph_map">
+<area href="classcupp_1_1memory1d.html#c14c166f0dd89e473efed1cae2178c3a" shape="rect" coords="265,6,473,30" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="c14c166f0dd89e473efed1cae2178c3a"></a><!-- doxytag: member="cupp::memory1d::copy_to_host" ref="c14c166f0dd89e473efed1cae2178c3a" args="(OutputIterator out_iter)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename OutputIterator&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::copy_to_host           </td>
+          <td>(</td>
+          <td class="paramtype">OutputIterator&nbsp;</td>
+          <td class="paramname"> <em>out_iter</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Copies data from the memory on the device to <em>out_iter</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>out_iter</em>&nbsp;</td><td>An output iterator where you want the data to be stored </td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd><em>out_iter</em> must be able to hold at least <code><a class="el" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size()</a></code> elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host only </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00429">429</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00420">cupp::memory1d&lt; T &gt;::copy_to_host()</a>, and <a class="el" href="memory1d_8h-source.html#l00346">cupp::memory1d&lt; T &gt;::size()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_c14c166f0dd89e473efed1cae2178c3a_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_c14c166f0dd89e473efed1cae2178c3a_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_c14c166f0dd89e473efed1cae2178c3a_cgraph_map">
+<area href="classcupp_1_1memory1d.html#925e374e547076e93258bda9604eedc8" shape="rect" coords="266,5,474,29" alt="">
+<area href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91" shape="rect" coords="524,31,676,55" alt="">
+</map>
+
+</div>
+</div><p>
+<a class="anchor" name="d27147e5b102766a851feb835f6227b2"></a><!-- doxytag: member="cupp::memory1d::operator[]" ref="d27147e5b102766a851feb835f6227b2" args="(size_type index)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T&amp; <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::operator[]           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>index</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Access the memory. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element you want to access </td></tr>
+  </table>
+</dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Device </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>How to implement this for the host? </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="500b2c9d536b323eddb456e9c886774d"></a><!-- doxytag: member="cupp::memory1d::operator[]" ref="500b2c9d536b323eddb456e9c886774d" args="(size_type index) const" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T const &amp; <a class="el" href="classcupp_1_1memory1d.html">cupp::memory1d</a>&lt; T &gt;::operator[]           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcupp_1_1memory1d.html#d8d3843f28003d14c39b16d7dd921926">size_type</a>&nbsp;</td>
+          <td class="paramname"> <em>index</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Access the memory. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element you want to access </td></tr>
+  </table>
+</dl>
+<dl class="warning" compact><dt><b>Warning:</b></dt><dd><em>out_iter</em> must be able to hold at least <code><a class="el" href="classcupp_1_1memory1d.html#fa373d72fb99e3ae6bd77750995e8a91">size()</a></code> elements. </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Device </dd></dl>
+<dl class="user" compact><dt><b>Supported Platform:</b></dt><dd>Host </dd></dl>
+
+<p>
+Definition at line <a class="el" href="memory1d_8h-source.html#l00447">447</a> of file <a class="el" href="memory1d_8h-source.html">memory1d.h</a>.
+<p>
+References <a class="el" href="memory1d_8h-source.html#l00377">cupp::memory1d&lt; T &gt;::copy_to_device()</a>.
+<p>
+Here is the call graph for this function:<p><center><img src="classcupp_1_1memory1d_500b2c9d536b323eddb456e9c886774d_cgraph.png" border="0" usemap="#classcupp_1_1memory1d_500b2c9d536b323eddb456e9c886774d_cgraph_map" alt=""></center>
+<map name="classcupp_1_1memory1d_500b2c9d536b323eddb456e9c886774d_cgraph_map">
+<area href="classcupp_1_1memory1d.html#f17bb2aaffa06e16da0ec7f943036828" shape="rect" coords="240,6,464,30" alt="">
+</map>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>/home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include/<a class="el" href="memory1d_8h-source.html">memory1d.h</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Wed Jun 20 17:06:10 2007 for cupp by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Jun 21 01:58:12 2007 for CuPP by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

@@ -87,7 +87,7 @@ class kernel {
 		 * @param d The device on which the kernel will be executed
 		 * @param a1 The first kernel parameter
 		 */
-		void operator()(const device &d, const P1 &a1 /*typename ForwardParamT<P1>::Type a1*/);
+		void operator()(const device &d, typename ForwardParamT<P1>::Type a1);
 
 		/**
 		 * @brief Executes the kernel
@@ -173,8 +173,9 @@ void kernel<P1, P2, P3>::operator()(const device &d) {
 
 
 template <typename P1, typename P2, typename P3>
-void kernel<P1, P2, P3>::operator()(const device &d, const P1 &a1 /*typename ForwardParamT<P1>::Type a1*/) {
+void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1) {
 	typename FunctionPtrT<void, P1, void, void>::Type temp = kernel_;
+
 	configure_call();
 
 	put_argument_on_stack(a1);

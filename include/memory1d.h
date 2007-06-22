@@ -57,7 +57,7 @@ class memory1d {
 
 		// dev is a pure dummy, it is only used to force the user to configure a device
 		// before creating memory on it.
-		#if !defined(__CUDACC__)
+#if !defined(__CUDACC__)
 		/**
 		 * @brief Associates memory for @a size elements on the device @a dev
 		 * @param dev The device on which you want to allocate memory
@@ -99,10 +99,8 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-#if !defined(__CUDACC__)
 		template <typename InputIterator>
 		memory1d( device const& dev, InputIterator first, InputIterator last );
-#endif
 
 		/**
 		 * @brief Creates a new memory block on the device and copies the data of @a other to the new block.

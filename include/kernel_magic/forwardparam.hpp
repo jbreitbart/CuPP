@@ -11,9 +11,6 @@
 #ifndef FORWARD_HPP
 #define FORWARD_HPP
 
-#include "ifthenelse.hpp"
-#include "typet.hpp"
-#include "typeop.hpp"
 
 namespace cupp {
 namespace kernel_magic {
@@ -25,11 +22,7 @@ namespace kernel_magic {
 template<typename T>
 class ForwardParamT {
   public:
-    typedef typename IfThenElse<TypeT<T>::IsClassT, 
-                                typename TypeOp<T>::RefConstT, 
-                                typename TypeOp<T>::ArgT
-                               >::ResultT
-            Type;
+    typedef T const & Type;
 };
 
 template<>

@@ -10,9 +10,9 @@
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-#include "memory1d.h"
+// #include "memory1d.h"
 
-#include <cstddef>
+// #include <cstddef>
 
 namespace cupp {
 

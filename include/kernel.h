@@ -119,9 +119,10 @@ class kernel {
 		 * @warning This must be called before you call put_argument_on_stack
 		 */
 		void configure_call();
+		
 	private:
 		/**
-		 * The pointer to function executed on the device
+		 * The pointer to the function executed on the device
 		 */
 		kernel_pointer kernel_;
 

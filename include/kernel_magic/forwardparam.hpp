@@ -16,8 +16,7 @@ namespace cupp {
 namespace kernel_magic {
 
 // ForwardParamT<T>::Type is
-// - constant reference for class types
-// - plain type for almost all other types
+// - constant reference for all types
 // - a dummy type (Unused) for type void
 template<typename T>
 class ForwardParamT {

@@ -45,7 +45,7 @@ class kernel {
 		/**
 		 * @brief The type of function executed on the device
 		 */
-		typedef typename FunctionPtrT<void, P1, P2, P3>::Type kernel_pointer;
+		typedef typename FunctionPtrT<P1, P2, P3>::Type kernel_pointer;
 	
 	public:
 		/**
@@ -160,7 +160,7 @@ kernel<P1, P2, P3>::kernel(kernel_pointer f, dim3 grid_dim, dim3 block_dim) : ke
 
 template <typename P1, typename P2, typename P3>
 void kernel<P1, P2, P3>::operator()(const device &d) {
-	typename FunctionPtrT<void, void, void, void>::Type temp = kernel_;
+	typename FunctionPtrT<void, void, void>::Type temp = kernel_;
 
 	configure_call();
 	
@@ -174,7 +174,7 @@ void kernel<P1, P2, P3>::operator()(const device &d) {
 
 template <typename P1, typename P2, typename P3>
 void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1) {
-	typename FunctionPtrT<void, P1, void, void>::Type temp = kernel_;
+	typename FunctionPtrT<P1, void, void>::Type temp = kernel_;
 
 	configure_call();
 
@@ -190,7 +190,7 @@ void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>:
 
 template <typename P1, typename P2, typename P3>
 void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2) {
-	typename FunctionPtrT<void, P1, P2, void>::Type temp = kernel_;
+	typename FunctionPtrT<P1, P2, void>::Type temp = kernel_;
 
 	configure_call();
 
@@ -207,7 +207,7 @@ void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>:
 
 template <typename P1, typename P2, typename P3>
 void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2, typename ForwardParamT<P3>::Type a3) {
-	typename FunctionPtrT<void, P1, P2, P3>::Type temp = kernel_;
+	typename FunctionPtrT<P1, P2, P3>::Type temp = kernel_;
 
 	configure_call();
 

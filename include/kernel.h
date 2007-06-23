@@ -11,8 +11,8 @@
 #endif
 
 #include "device.h"
-#include "kernel_magic/forwardparam.hpp"
-#include "kernel_magic/functionptrt.hpp"
+#include "kernel_magic/forward_param.h"
+#include "kernel_magic/function_ptr.h"
 #include "exception/cuda_runtime_error.h"
 #include "exception/stack_overflow.h"
 
@@ -45,7 +45,7 @@ class kernel {
 		/**
 		 * @brief The type of function executed on the device
 		 */
-		typedef typename FunctionPtrT<P1, P2, P3>::Type kernel_pointer;
+		typedef typename function_ptr<P1, P2, P3>::type kernel_pointer;
 	
 	public:
 		/**
@@ -87,7 +87,7 @@ class kernel {
 		 * @param d The device on which the kernel will be executed
 		 * @param a1 The first kernel parameter
 		 */
-		void operator()(const device &d, typename ForwardParamT<P1>::Type a1);
+		void operator()(const device &d, typename forward_param<P1>::type a1);
 
 		/**
 		 * @brief Executes the kernel
@@ -95,7 +95,7 @@ class kernel {
 		 * @param a1 The first kernel parameter
 		 * @param a2 The second kernel parameter
 		 */
-		void operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2);
+		void operator()(const device &d, typename forward_param<P1>::type a1, typename forward_param<P2>::type a2);
 
 		/**
 		 * @brief Executes the kernel
@@ -104,7 +104,7 @@ class kernel {
 		 * @param a2 The second kernel parameter
 		 * @param a3 The third kernel parameter
 		 */
-		void operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2, typename ForwardParamT<P3>::Type a3);
+		void operator()(const device &d, typename forward_param<P1>::type a1, typename forward_param<P2>::type a2, typename forward_param<P3>::type a3);
 
 	private:
 		/**
@@ -161,7 +161,7 @@ kernel<P1, P2, P3>::kernel(kernel_pointer f, dim3 grid_dim, dim3 block_dim) : ke
 
 template <typename P1, typename P2, typename P3>
 void kernel<P1, P2, P3>::operator()(const device &d) {
-	typename FunctionPtrT<void, void, void>::Type temp = kernel_;
+	typename function_ptr<void, void, void>::type temp = kernel_;
 
 	configure_call();
 	
@@ -174,8 +174,8 @@ void kernel<P1, P2, P3>::operator()(const device &d) {
 
 
 template <typename P1, typename P2, typename P3>
-void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1) {
-	typename FunctionPtrT<P1, void, void>::Type temp = kernel_;
+void kernel<P1, P2, P3>::operator()(const device &d, typename forward_param<P1>::type a1) {
+	typename function_ptr<P1, void, void>::type temp = kernel_;
 
 	configure_call();
 
@@ -190,8 +190,8 @@ void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>:
 
 
 template <typename P1, typename P2, typename P3>
-void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2) {
-	typename FunctionPtrT<P1, P2, void>::Type temp = kernel_;
+void kernel<P1, P2, P3>::operator()(const device &d, typename forward_param<P1>::type a1, typename forward_param<P2>::type a2) {
+	typename function_ptr<P1, P2, void>::type temp = kernel_;
 
 	configure_call();
 
@@ -207,8 +207,8 @@ void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>:
 
 
 template <typename P1, typename P2, typename P3>
-void kernel<P1, P2, P3>::operator()(const device &d, typename ForwardParamT<P1>::Type a1, typename ForwardParamT<P2>::Type a2, typename ForwardParamT<P3>::Type a3) {
-	typename FunctionPtrT<P1, P2, P3>::Type temp = kernel_;
+void kernel<P1, P2, P3>::operator()(const device &d, typename forward_param<P1>::type a1, typename forward_param<P2>::type a2, typename forward_param<P3>::type a3) {
+	typename function_ptr<P1, P2, P3>::type temp = kernel_;
 
 	configure_call();
 

@@ -312,14 +312,12 @@ memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : devi
 }
 
 
-#if !defined(__CUDACC__)
-	template <typename T>
-	template <typename InputIterator>
-	memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
-		malloc();
-		copy_to_device(first, last);
-	}
-#endif
+template <typename T>
+template <typename InputIterator>
+memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
+	malloc();
+	copy_to_device(first, last);
+}
 
 template <typename T>
 memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_(0), size_(other.size()) {

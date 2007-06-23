@@ -30,23 +30,3 @@ typedef void(*kernelT)(cupp::memory1d<int>);
 kernelT get_kernel() {
 	return global_function;
 }
-
-#if 0
-void kernel(cupp::memory1d<int> &p) {
-	using namespace cupp;
-	// set up the enviroment
-	dim3 block_dim (8);
-	dim3 grid_dim  (1);
-	
-	// start the kernel
-	real_GPU <<< grid_dim, block_dim >>> (p.cuda_pointer());
-
-	cudaError_t err = cudaGetLastError();
-	if( cudaSuccess != err) {
-		fprintf( stderr, "Cuda error: KERNEL EXEC FAILED in file '%s' in line %i : %s.\n",
-		__FILE__, __LINE__, cudaGetErrorString( err) );
-		exit(EXIT_FAILURE);
-	}
-
-}
-#endif

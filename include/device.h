@@ -44,6 +44,11 @@ class device {
 		 */
 		explicit device (const int major, const int minor);
 
+		/**
+		 * @brief Cleans up all ressources associated with the device
+		 */
+		~device();
+
 	
 	public: /*** UTILITY FUNCTIONS ***/
 		/**

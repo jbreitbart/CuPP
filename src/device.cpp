@@ -28,6 +28,10 @@ device::device (const int major, const int minor) {
 	real_constructor(major, minor, 0);
 }
 
+device::~device() {
+	cudaThreadExit();
+}
+
 void device::real_constructor(const int major, const int minor, const char* name) {
 	using namespace cupp::exception;
 

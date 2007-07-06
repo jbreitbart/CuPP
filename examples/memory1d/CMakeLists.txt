@@ -1,6 +1,6 @@
 
 # Add current directory and the cupp include directory to the nvcc include line.
-CUDA_INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ../../include )
+CUDA_INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Link cuda code in a library to something else.
 CUDA_ADD_LIBRARY(kernel kernel.cu )
@@ -9,8 +9,8 @@ CUDA_ADD_LIBRARY(kernel kernel.cu )
 ADD_DEFINITIONS(-Wall -O2 -g)
 
 #CuPP
-INCLUDE_DIRECTORIES(../../include)
-LINK_DIRECTORIES(../../lib)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 
 #CUDA
 INCLUDE_DIRECTORIES(/usr/local/cuda/include/)

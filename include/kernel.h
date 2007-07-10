@@ -35,7 +35,7 @@ using namespace cupp::kernel_magic;
  * asdvasdvasdv
  */
 
-/// @code_review wie dokumentiert man eigentlich template parameter
+/// @todo wie dokumentiert man eigentlich template parameter
 /// @todo a grid is only 2 dimensional!
 template <typename P1 = void,
           typename P2 = void,

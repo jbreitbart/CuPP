@@ -65,7 +65,6 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		memory1d( device const& dev, size_type size );
 		
 		/**
@@ -76,7 +75,6 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		memory1d( device const& dev, int init_value, size_type size );
 		
 		/**
@@ -88,7 +86,6 @@ class memory1d {
 		 * @warning Be sure that @a data points to at least @a size many elements.
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		memory1d( device const& dev, T const* data, size_type size );
 		
 		/**
@@ -108,7 +105,6 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		memory1d( memory1d<T> const& other );
 
 		/**
@@ -116,9 +112,7 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		~memory1d();
-#endif
 
 		/**
 		 * @brief Copies the data from @a other to its own memory block.
@@ -126,9 +120,8 @@ class memory1d {
 		 * @todo how to handle different sizes?
 		 * @platform Host
 		 */
-		CUPP_HOST
 		memory1d< T >& operator=( const memory1d< T > &other );
-		
+#endif
 
 		/**
 		 * @brief Swaps the data between @a other and @a this.
@@ -154,7 +147,7 @@ class memory1d {
 		 * @param value The byte value to be set.
 		 * @platform Host only
 		 */
-		CUPP_HOST
+#if !defined(__CUDACC__)
 		void set( int value );
 
 
@@ -166,10 +159,8 @@ class memory1d {
 		 * @platform Host only
 		 * @todo We could resize the memory if last-first > size
 		 */
-#if !defined(__CUDACC__)
 		template <typename InputIterator>
 		void copy_to_device( InputIterator first, InputIterator last, int offset );
-#endif
 		
 		/**
 		 * @brief Copies data to the memory on the device
@@ -178,7 +169,6 @@ class memory1d {
 		 * @warning Be sure that @a data points to at least @a this.size() many elements.
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		void copy_to_device( T const* data, size_type offset=0 );
 		
 		/**
@@ -190,7 +180,6 @@ class memory1d {
 		 * @platform Host only
 		 * @todo We could resize the memory if count+offset > size
 		 */
-		CUPP_HOST
 		void copy_to_device( size_type count, T const* data, size_type offset=0 );
 
 		/**
@@ -200,7 +189,6 @@ class memory1d {
 		 * @platform Host only
 		 * @todo We could resize the memory if other.size > size
 		 */
-		CUPP_HOST
 		void copy_to_device( memory1d const& other, size_type offset=0 );
 		
 		/**
@@ -211,7 +199,6 @@ class memory1d {
 		 * @platform Host only
 		 * @todo We could resize the memory if @c other.size() != @c size()
 		 */
-		CUPP_HOST
 		void copy_to_device( memory1d const& other, size_type count, size_type offset=0 );
 		
 
@@ -221,7 +208,6 @@ class memory1d {
 		 * @warning Be sure that @a destination points to at least @c size() many elements.
 		 * @platform Host only
 		 */
-		CUPP_HOST
 		void copy_to_host( T* destination );
 		
 		/**
@@ -230,7 +216,6 @@ class memory1d {
 		 * @warning @a out_iter must be able to hold at least @c size() elements.
 		 * @platform Host only
 		 */
-#if !defined(__CUDACC__)
 		template <typename OutputIterator>
 		void copy_to_host( OutputIterator out_iter );
 #endif
@@ -252,32 +237,31 @@ class memory1d {
 		 */
 		CUPP_DEVICE
 		T& operator[]( size_type size_type );
-#endif
 
 		/**
 		 * @brief Access the memory
 		 * @param index The index of the element you want to access
 		 * @warning @a out_iter must be able to hold at least @c size() elements.
 		 * @platform Device
-		 * @platform Host
 		 */
-		CUPP_HOST CUPP_DEVICE
+		CUPP_DEVICE
 		T const& operator[]( size_type index ) const;
-		
+#endif
+
 	private:
+#if !defined(__CUDACC__)
 		/**
 		 * @brief Allocates memory on the device
 		 * @exception cuda_runtime_error
 		 */
-		CUPP_HOST
 		void malloc();
 
 		/**
 		 * @brief Free the memory on the device
 		 * @exception cuda_runtime_error
 		 */
-		CUPP_HOST
 		void free();
+#endif
 
 	private:
 		/**
@@ -330,13 +314,114 @@ template <typename T>
 memory1d<T>::~memory1d() {
 	free();
 }
-#endif
 
 template <typename T>
 memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
 	copy_to_device(other);
 }
 
+
+
+template <typename T>
+void memory1d<T>::set(int value) {
+	if (cudaMemset( reinterpret_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::malloc() {
+	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::free() {
+	if (cudaFree(device_pointer_) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+template <typename InputIterator>
+void memory1d<T>::copy_to_device( InputIterator first, InputIterator last, int offset ) {
+	std::vector<T> temp;
+	temp.assign(first, last);
+	copy_to_device(temp.size(), &temp[0], offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device( T const* data, size_type offset ) {
+	copy_to_device(size(), data, offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offset) {
+	if (count + offset > size()) {
+		throw exception::memory_access_violation();
+	}
+	
+	if ( cudaMemcpy(device_pointer_+offset, data, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+template <typename T>
+void memory1d<T>::copy_to_device (memory1d const& other, size_type offset) {
+	copy_to_device(other, other.size(), offset);
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_type offset) {
+	if (count+offset > size()) {
+		throw exception::memory_access_violation();
+	}
+
+	if ( cudaMemcpy(device_pointer_+offset, other.device_pointer_, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void memory1d<T>::copy_to_host (T* destination) {
+	if (cudaMemcpy(destination, device_pointer_, size() * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+template <typename OutputIterator>
+void memory1d<T>::copy_to_host(OutputIterator out_iter) {
+	std::vector<T> temp( size() );
+
+	copy_to_host(&temp[0]);
+
+	std::copy(temp.begin(), temp.end(), out_iter);
+}
+
+#endif
+
+
+#if defined(__CUDACC__)
+template <typename T>
+T& memory1d<T>::operator[](size_type index) {
+	return device_pointer_[index];
+}
+
+template <typename T>
+T const& memory1d<T>::operator[](size_type index) const {
+	return device_pointer_[index];
+}
+#endif
 
 template <typename T>
 void memory1d<T>::swap( memory1d& other ) {
@@ -350,131 +435,6 @@ typename memory1d<T>::size_type memory1d<T>::size() const {
 	return size_;
 }
 
-
-template <typename T>
-void memory1d<T>::set(int value) {
-	if (cudaMemset( reinterpret_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-
-template <typename T>
-void memory1d<T>::malloc() {
-	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-
-template <typename T>
-void memory1d<T>::free() {
-	if (cudaFree(device_pointer_) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-
-#if !defined(__CUDACC__)
-	template <typename T>
-	template <typename InputIterator>
-	void memory1d<T>::copy_to_device( InputIterator first, InputIterator last, int offset ) {
-		std::vector<T> temp;
-		temp.assign(first, last);
-		copy_to_device(temp.size(), &temp[0], offset);
-	}
-#endif
-
-
-template <typename T>
-void memory1d<T>::copy_to_device( T const* data, size_type offset ) {
-	copy_to_device(size(), data, offset);
-}
-
-
-template <typename T>
-void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offset) {
-	if (count + offset > size()) {
-		#if !defined(__CUDACC__)
-			throw exception::memory_access_violation();
-		#endif
-	}
-	
-	if ( cudaMemcpy(device_pointer_+offset, data, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-template <typename T>
-void memory1d<T>::copy_to_device (memory1d const& other, size_type offset) {
-	copy_to_device(other, other.size(), offset);
-}
-
-
-template <typename T>
-void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_type offset) {
-	if (count+offset > size()) {
-		#if !defined(__CUDACC__)
-			throw exception::memory_access_violation();
-		#endif
-	}
-
-	if ( cudaMemcpy(device_pointer_+offset, other.device_pointer_, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-
-template <typename T>
-void memory1d<T>::copy_to_host (T* destination) {
-	if (cudaMemcpy(destination, device_pointer_, size() * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
-		#if !defined(__CUDACC__)
-			throw exception::cuda_runtime_error(cudaGetLastError());
-		#endif
-	}
-}
-
-#if !defined(__CUDACC__)
-	template <typename T>
-	template <typename OutputIterator>
-	void memory1d<T>::copy_to_host(OutputIterator out_iter) {
-		std::vector<T> temp( size() );
-
-		copy_to_host(&temp[0]);
-
-		std::copy(temp.begin(), temp.end(), out_iter);
-	}
-#endif
-
-
-#if defined(__CUDACC__)
-	template <typename T>
-	T& memory1d<T>::operator[](size_type index) {
-		return device_pointer_[index];
-	}
-#endif
-
-template <typename T>
-T const& memory1d<T>::operator[](size_type index) const {
-	#if defined(__CUDACC__)
-		return device_pointer_[index];
-	#endif
-	#if !defined(__CUDACC__)
-		T returnee;
-		copy_to_device(1, &returnee, index);
-		return returnee;
-	#endif
-}
 
 } // namespace cupp
 

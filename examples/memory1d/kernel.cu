@@ -4,10 +4,6 @@
  * Copyright: See COPYING file that comes with this distribution
  *
  */
-// includes, system
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 
 #include "memory1d.h"
 

@@ -25,33 +25,31 @@
 <a name="l00010"></a>00010 <span class="preprocessor"></span><span class="preprocessor">#error Not compatible with CUDA. Don't compile with nvcc.</span>
 <a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
 <a name="l00012"></a>00012 <span class="preprocessor"></span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include "memory1d.h"</span>
+<a name="l00013"></a><a class="code" href="namespacecupp.html">00013</a> <span class="keyword">namespace </span>cupp {
 <a name="l00014"></a>00014 
-<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;cstddef&gt;</span>
-<a name="l00016"></a>00016 
-<a name="l00017"></a><a class="code" href="namespacecupp.html">00017</a> <span class="keyword">namespace </span>cupp {
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 
-<a name="l00031"></a><a class="code" href="classcupp_1_1device.html">00031</a> <span class="keyword">class </span><a class="code" href="classcupp_1_1device.html">device</a> {
-<a name="l00032"></a>00032         <span class="keyword">public</span>: <span class="comment">/***  CONSTRUCTORS &amp; DESTRUCTORS ***/</span>
-<a name="l00036"></a>00036                 <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a>();
-<a name="l00037"></a>00037 
-<a name="l00042"></a>00042                 <span class="keyword">explicit</span> <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a> (<span class="keyword">const</span> <span class="keywordtype">int</span> major);
-<a name="l00043"></a>00043                 
-<a name="l00049"></a>00049                 <span class="keyword">explicit</span> <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a> (<span class="keyword">const</span> <span class="keywordtype">int</span> major, <span class="keyword">const</span> <span class="keywordtype">int</span> minor);
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051         
-<a name="l00052"></a>00052         <span class="keyword">public</span>: <span class="comment">/*** UTILITY FUNCTIONS ***/</span>
-<a name="l00056"></a>00056                 <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="classcupp_1_1device.html#4bb64757ad2f620d027d737f61579f29">device_count</a>();
-<a name="l00057"></a>00057         
-<a name="l00058"></a>00058         <span class="keyword">private</span>:        
-<a name="l00065"></a>00065                 <span class="keywordtype">void</span> real_constructor(<span class="keyword">const</span> <span class="keywordtype">int</span> major, <span class="keyword">const</span> <span class="keywordtype">int</span> minor, <span class="keyword">const</span> <span class="keywordtype">char</span>* name);
-<a name="l00066"></a>00066 }; <span class="comment">// class device</span>
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068 } <span class="comment">// namespace cupp</span>
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070 <span class="preprocessor">#endif</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Jun 21 23:56:14 2007 for CuPP by&nbsp;
+<a name="l00015"></a>00015 
+<a name="l00027"></a><a class="code" href="classcupp_1_1device.html">00027</a> <span class="keyword">class </span><a class="code" href="classcupp_1_1device.html">device</a> {
+<a name="l00028"></a>00028         <span class="keyword">public</span>: <span class="comment">/***  CONSTRUCTORS &amp; DESTRUCTORS ***/</span>
+<a name="l00032"></a>00032                 <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a>();
+<a name="l00033"></a>00033 
+<a name="l00038"></a>00038                 <span class="keyword">explicit</span> <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a> (<span class="keyword">const</span> <span class="keywordtype">int</span> major);
+<a name="l00039"></a>00039                 
+<a name="l00045"></a>00045                 <span class="keyword">explicit</span> <a class="code" href="classcupp_1_1device.html#89e891723c2952219fc70cecab8e6873">device</a> (<span class="keyword">const</span> <span class="keywordtype">int</span> major, <span class="keyword">const</span> <span class="keywordtype">int</span> minor);
+<a name="l00046"></a>00046 
+<a name="l00050"></a>00050                 <a class="code" href="classcupp_1_1device.html#fda5352ab456fb422d5416af4550d03e">~device</a>();
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052         
+<a name="l00053"></a>00053         <span class="keyword">public</span>: <span class="comment">/*** UTILITY FUNCTIONS ***/</span>
+<a name="l00057"></a>00057                 <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="classcupp_1_1device.html#4bb64757ad2f620d027d737f61579f29">device_count</a>();
+<a name="l00058"></a>00058         
+<a name="l00059"></a>00059         <span class="keyword">private</span>:        
+<a name="l00066"></a>00066                 <span class="keywordtype">void</span> real_constructor(<span class="keyword">const</span> <span class="keywordtype">int</span> major, <span class="keyword">const</span> <span class="keywordtype">int</span> minor, <span class="keyword">const</span> <span class="keywordtype">char</span>* name);
+<a name="l00067"></a>00067 }; <span class="comment">// class device</span>
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 } <span class="comment">// namespace cupp</span>
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 <span class="preprocessor">#endif</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jul 10 17:18:14 2007 for CuPP by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

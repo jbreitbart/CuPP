@@ -1,6 +1,2 @@
 base referer
-rect $classcupp_1_1exception_1_1exception.html 160,78 342,102
-rect $classcupp_1_1exception_1_1cuda__runtime__error.html 410,6 650,30
-rect $classcupp_1_1exception_1_1memory__access__violation.html 391,54 668,78
-rect $classcupp_1_1exception_1_1no__device.html 438,102 622,126
-rect $classcupp_1_1exception_1_1no__supporting__device.html 403,150 656,174
+rect $classcupp_1_1deviceT_1_1const__memory1d.html 7,6 252,30

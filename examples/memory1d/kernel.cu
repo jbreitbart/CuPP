@@ -5,9 +5,9 @@
  *
  */
 
-#include "memory1d.h"
+#include "deviceT/memory1d.h"
 
-__global__ void global_function (cupp::memory1d<int> p) {
+__global__ void global_function (cupp::deviceT::memory1d<int> p) {
 	#if defined (WE_WANT_OPENMP)
 		Loop over all grid cells
 			Loop over all blocks in parallel
@@ -21,7 +21,7 @@ __global__ void global_function (cupp::memory1d<int> p) {
 	p[threadIdx.x]*=2;
 }
 
-typedef void(*kernelT)(cupp::memory1d<int>);
+typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
 
 kernelT get_kernel() {
 	return global_function;

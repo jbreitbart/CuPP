@@ -6,6 +6,10 @@
 #ifndef CUPP_memory1d_H
 #define CUPP_memory1d_H
 
+#if defined(__CUDACC__)
+#error Not compatible with CUDA. Don't compile with nvcc.
+#endif
+
 // Include std::size_t
 #include <cstddef>
 
@@ -16,10 +20,8 @@
 
 #include "cupp_common.h"
 
-#if !defined(__CUDACC__)
-	#include "exception/cuda_runtime_error.h"
-	#include "exception/memory_access_violation.h"
-#endif
+#include "exception/cuda_runtime_error.h"
+#include "exception/memory_access_violation.h"
 
 #include <cuda_runtime.h>
 
@@ -35,6 +37,7 @@ class device;
  * @author Jens Breitbart
  * @version 0.2
  * @date 20.06.2007
+ * @platform Host only
  * @brief Represents a memory block on an associated CUDA device.
  *
  * askk
@@ -57,7 +60,6 @@ class memory1d {
 
 		// dev is a pure dummy, it is only used to force the user to configure a device
 		// before creating memory on it.
-#if !defined(__CUDACC__)
 		/**
 		 * @brief Associates memory for @a size elements on the device @a dev
 		 * @param dev The device on which you want to allocate memory
@@ -121,7 +123,6 @@ class memory1d {
 		 * @platform Host
 		 */
 		memory1d< T >& operator=( const memory1d< T > &other );
-#endif
 
 		/**
 		 * @brief Swaps the data between @a other and @a this.
@@ -129,7 +130,6 @@ class memory1d {
 		 * @platform Host
 		 * @platform Device
 		 */
-		CUPP_HOST CUPP_DEVICE
 		void swap( memory1d& other );
 		
 
@@ -138,7 +138,6 @@ class memory1d {
 		 * @platform Host
 		 * @platform Device
 		 */
-		CUPP_HOST CUPP_DEVICE
 		size_type size() const;
 		
 
@@ -147,7 +146,6 @@ class memory1d {
 		 * @param value The byte value to be set.
 		 * @platform Host only
 		 */
-#if !defined(__CUDACC__)
 		void set( int value );
 
 
@@ -218,7 +216,6 @@ class memory1d {
 		 */
 		template <typename OutputIterator>
 		void copy_to_host( OutputIterator out_iter );
-#endif
 
 #if 0
 		// Be strongly cautioned not to use this!!!!!!
@@ -227,29 +224,8 @@ class memory1d {
 		T* cuda_pointer() const {return device_pointer_;}
 #endif
 
-/// @code_review we should discuss this :-)
-#if defined(__CUDACC__)
-		/**
-		 * @brief Access the memory
-		 * @param index The index of the element you want to access
-		 * @platform Device
-		 * @todo How to implement this for the host? 
-		 */
-		CUPP_DEVICE
-		T& operator[]( size_type size_type );
-
-		/**
-		 * @brief Access the memory
-		 * @param index The index of the element you want to access
-		 * @warning @a out_iter must be able to hold at least @c size() elements.
-		 * @platform Device
-		 */
-		CUPP_DEVICE
-		T const& operator[]( size_type index ) const;
-#endif
 
 	private:
-#if !defined(__CUDACC__)
 		/**
 		 * @brief Allocates memory on the device
 		 * @exception cuda_runtime_error
@@ -261,7 +237,6 @@ class memory1d {
 		 * @exception cuda_runtime_error
 		 */
 		void free();
-#endif
 
 	private:
 		/**
@@ -275,7 +250,7 @@ class memory1d {
 		size_type size_;
 }; // class memory1d
 
-#if !defined(__CUDACC__)
+
 template <typename T>
 memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_(0), size_(size) {
 	malloc();
@@ -319,7 +294,6 @@ template <typename T>
 memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
 	copy_to_device(other);
 }
-
 
 
 template <typename T>
@@ -408,20 +382,7 @@ void memory1d<T>::copy_to_host(OutputIterator out_iter) {
 	std::copy(temp.begin(), temp.end(), out_iter);
 }
 
-#endif
 
-
-#if defined(__CUDACC__)
-template <typename T>
-T& memory1d<T>::operator[](size_type index) {
-	return device_pointer_[index];
-}
-
-template <typename T>
-T const& memory1d<T>::operator[](size_type index) const {
-	return device_pointer_[index];
-}
-#endif
 
 template <typename T>
 void memory1d<T>::swap( memory1d& other ) {

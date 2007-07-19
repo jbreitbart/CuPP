@@ -8,12 +8,12 @@
  * This software is provided "as is" without express or implied
  * warranty, and with no claim as to its suitability for any purpose.
  */
-#ifndef CUPP_KERNEL_MAGIC_forward_param_H
-#define CUPP_KERNEL_MAGIC_forward_param_H
+#ifndef CUPP_KERNEL_IMPL_forward_param_H
+#define CUPP_KERNEL_IMPL_forward_param_H
 
 
 namespace cupp {
-namespace kernel_magic {
+namespace kernel_impl {
 
 /**
  * @class forward_param

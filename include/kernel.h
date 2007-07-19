@@ -106,6 +106,8 @@ class kernel {
 		 */
 		void operator()(const device &d, typename forward_param<P1>::type a1, typename forward_param<P2>::type a2, typename forward_param<P3>::type a3);
 
+		virtual void operator()(...){};
+
 	private:
 		/**
 		 * @brief Put parameter @a a on the execution stack of the kernel
@@ -243,6 +245,7 @@ void kernel<P1, P2, P3>::configure_call() {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
+
 
 }
 

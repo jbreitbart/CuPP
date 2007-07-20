@@ -78,15 +78,18 @@ function_ptr<P1, P2, P3> make_fptr( void (*fp)(P1, P2, P3) ) {
 	return function_ptr<P1, P2, P3>();
 }
 
+
 template <typename P1, typename P2> inline 
 function_ptr<P1, P2> make_fptr( void (*fp)(P1, P2) ) {
 	return function_ptr<P1, P2>();
 }
 
+
 template <typename P1> inline 
 function_ptr<P1> make_fptr( void (*fp)(P1) ) {
 	return function_ptr<P1>();
 }
+
 
 inline
 function_ptr<void, void, void> make_fptr( void (*fp)() ) {

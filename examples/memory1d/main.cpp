@@ -3,12 +3,13 @@
 
 #include "device.h"
 #include "memory1d.h"
+#include "deviceT/memory1d.h"
 #include "kernel.h"
 
 using namespace std;
 using namespace cupp;
 
-typedef void(*kernelT)(cupp::memory1d<int>);
+typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
 
 kernelT get_kernel();
 
@@ -36,10 +37,10 @@ int main(int argc, char *argv[]) {
 	dim3 grid_dim  (1);
 
 	// generate the kernel
-	kernel<cupp::memory1d<int> > k (get_kernel(), grid_dim, block_dim);
+	kernel k (get_kernel()/*, grid_dim, block_dim*/);
 	
 	// call the kernel
-	k(d, mem);
+	//k(d, mem);
 
 	mem.copy_to_host(eight);
 	

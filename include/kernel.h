@@ -11,8 +11,6 @@
 #endif
 
 #include "device.h"
-#include "kernel_magic/forward_param.h"
-#include "kernel_magic/function_ptr.h"
 #include "exception/cuda_runtime_error.h"
 #include "exception/stack_overflow.h"
 
@@ -20,20 +18,104 @@
 #include <vector_types.h>
 #include <vector_functions.h>
 
+
+
+#include "kernel_impl/kernel_launcher_base.h"
+#include "kernel_impl/kernel_launcher_impl.h"
+#include <deque>
+
 namespace cupp {
 
-using namespace cupp::kernel_magic;
+using namespace cupp::kernel_impl;
 
 /**
  * @class kernel
  * @author Jens Breitbart
- * @version 0.1
+ * @version 0.2
  * @date 21.06.2007
  * @platform Host only!
  * @brief asdvasd
  *
  * asdvasdvasdv
  */
+
+class kernel {
+	public:
+		template< typename CudaKernelFunc>
+		kernel( CudaKernelFunc F) {
+			kb_ = new kernel_launcher_impl< CudaKernelFunc >(F);
+		}
+
+		template< typename P1, typename P2 >
+		void operator()( const P1 &p1, const P2 &p2 ) {
+		
+			if (kb_ -> number_of_param() != 2) {
+				// throw exception
+			}
+			
+			kb_->setup_argument( p1, 1 );
+			kb_->setup_argument( p2, 2 );
+
+			kb_->launch();
+			
+			const std::deque<bool> dirty = kb_->dirty_parameters();
+
+			// check if P1 is markable && deque[0]==true -> mark P1
+
+		}
+
+	private:
+		kernel_launcher_base* kb_;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
+
+
+
 
 /// @todo wie dokumentiert man eigentlich template parameter
 /// @todo a grid is only 2 dimensional!
@@ -246,6 +328,7 @@ void kernel<P1, P2, P3>::configure_call() {
 	}
 }
 
+#endif
 
 }
 

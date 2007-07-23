@@ -43,6 +43,8 @@ class device;
  * askk
  */
 
+/// @todo introduce the cupp_runtime here
+
 template< typename T >
 class memory1d {
 	public:

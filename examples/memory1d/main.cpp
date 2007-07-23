@@ -14,6 +14,7 @@ typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
 kernelT get_kernel();
 
 int main(int argc, char *argv[]) {
+#if 0
 	// lets get a simple CUDA device up and running
 	device d;
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
 		cout << eight[i] << ", ";
 	}
 	cout <<  endl;
-	
+#endif
 	// NDT
 	return EXIT_SUCCESS;
 }

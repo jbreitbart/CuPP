@@ -47,24 +47,24 @@ void free(T* device_pointer) {
 
 
 template <typename T>
-void copy_host_to_device(const T* destination, const T &source, size_t count=1) {
-	if ( cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
+void copy_host_to_device(T *destination, const T * const source, size_t count=1) {
+	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
 
 
 template <typename T>
-void copy_device_to_device(T* destination, const T &source, size_t count=1) {
-	if ( cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
+void copy_device_to_device(T* destination, const T * const source, size_t count=1) {
+	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const T &source, size_t count=1) {
-	if (cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+void copy_device_to_host(T* destination, const T * const source, size_t count=1) {
+	if (cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }

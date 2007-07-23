@@ -6,6 +6,7 @@
 #ifndef CUPP_kernel_call_traits_H
 #define CUPP_kernel_call_traits_H
 
+#include "cupp_runtime.h"
 
 namespace cupp {
 
@@ -47,20 +48,15 @@ class kernel_call_traits <type, type> {
 		*/
 		inline static void dirty (type& that, const type *device_copy) {
 			// do a dirty ugly bit copy from device memory to host memory
-			if (cudaMemcpy (&that, device_copy, sizeof(type), cudaMemcpyDeviceToHost) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
-			
-			if (cudaFree(device_copy) != cudaSuccess) {
-				throw exception::cuda_runtime_error(cudaGetLastError());
-			}
+			cupp::copy_device_to_host ( &that, device_copy );
+
+			cupp::free(device_copy);
 		}
 
 		/**
 		* Creates a copy of our data for the device
 		*/
 		inline static const type& get_device_copy (const type& that) {
-			
 			return that;
 		}
 

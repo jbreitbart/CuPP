@@ -10,9 +10,6 @@
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-// Include std::size_t
-#include <cstddef>
-
 #include "cupp_common.h"
 
 #include "exception/cuda_runtime_error.h"
@@ -24,7 +21,7 @@ namespace cupp {
 
 template <typename T>
 void mem_set(T* device_pointer, int value, const size_t size=1) {
-	if (cudaMemset( reinterpret_cast<void*>( device_pointer ), value, sizeof(T)*size() ) != cudaSuccess) {
+	if (cudaMemset( reinterpret_cast<void*>( device_pointer ), value, sizeof(T)*size ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
@@ -33,7 +30,7 @@ void mem_set(T* device_pointer, int value, const size_t size=1) {
 template <typename T>
 T* malloc(const size_t size=1) {
 	T* device_pointer;
-	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
+	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer ), sizeof(T)*size ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 
@@ -50,7 +47,7 @@ void free(T* device_pointer) {
 
 
 template <typename T>
-void copy_host_to_device(const T* destination, const T &source, size_type count=1) {
+void copy_host_to_device(const T* destination, const T &source, size_t count=1) {
 	if ( cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
@@ -58,7 +55,7 @@ void copy_host_to_device(const T* destination, const T &source, size_type count=
 
 
 template <typename T>
-void copy_device_to_device(T* destination, const T &source, size_type count=1) {
+void copy_device_to_device(T* destination, const T &source, size_t count=1) {
 	if ( cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
@@ -66,7 +63,7 @@ void copy_device_to_device(T* destination, const T &source, size_type count=1) {
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const T &source, size_type count=1) {
+void copy_device_to_host(T* destination, const T &source, size_t count=1) {
 	if (cudaMemcpy(destination, &source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}

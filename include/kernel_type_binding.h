@@ -23,7 +23,7 @@ namespace cupp {
 template <typename device_type>
 class kernel_host_type {
 	public:
-		typedef T host_type;
+		typedef device_type host_type;
 };
 
 
@@ -31,7 +31,7 @@ class kernel_host_type {
 template <typename host_type>
 class kernel_device_type {
 	public:
-		typedef T device_type;
+		typedef host_type device_type;
 };
 
 

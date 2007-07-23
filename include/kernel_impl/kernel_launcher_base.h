@@ -26,7 +26,7 @@ class kernel_launcher_base {
 		/**
 		 * See in @c kernel_launcher_impl.
 		 */
-		virtual void configure_launch() = 0;
+		virtual void configure_call() = 0;
 		
 		/**
 		 * See in @c kernel_launcher_impl.

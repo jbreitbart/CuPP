@@ -32,22 +32,22 @@ class real_setup_argument {
 	 * @param T is expected to be of type kernel_launcher_impl< whatever >
 	 */
 	template <typename T>
-	static boost::any set (const any &arg, const int pos, T &that);
+	static boost::any set (const boost::any &arg, const int pos, T &that);
 };
 
 template <>
 class real_setup_argument<0> {
 	template <typename T>
-	static boost::any set (const any &arg, const int pos, T &that) {}
+	static boost::any set (const boost::any &arg, const int pos, T &that) { return boost::any(); }
 };
 
 template <>
 class real_setup_argument<1> {
 	template <typename T>
-	static boost::any set (const any &arg, const int pos, T &that) {
+	static boost::any set (const boost::any &arg, const int pos, T &that) {
 		if (pos == 1) {
-			typedef typename function_traits <typename T::F> :: arg1_type ARG;
-			that.template setup_argument<ARG> (arg);
+			typedef typename boost::function_traits <typename T::F> :: arg1_type ARG;
+			return that.template setup_argument<ARG> (arg);
 		}
 	}
 };
@@ -55,24 +55,24 @@ class real_setup_argument<1> {
 template <>
 class real_setup_argument<2> {
 	template <typename T>
-	static boost::any set (const any &arg, const int pos, T &that) {
+	static boost::any set (const boost::any &arg, const int pos, T &that) {
 		if (pos == 2) {
-			typedef typename function_traits <typename T::F> :: arg2_type ARG;
-			that.template setup_argument<ARG> (arg);
+			typedef typename boost::function_traits <typename T::F> :: arg2_type ARG;
+			return that.template setup_argument<ARG> (arg);
 		}
-		real_setup_argument<1>::set(arg, pos, that);
+		return real_setup_argument<1>::set(arg, pos, that);
 	}
 };
 
 template <>
 class real_setup_argument<3> {
 	template <typename T>
-	static boost::any set (const any &arg, const int pos, T &that) {
+	static boost::any set (const boost::any &arg, const int pos, T &that) {
 		if (pos == 3) {
-			typedef typename function_traits <typename T::F> :: arg3_type ARG;
-			that.template setup_argument<ARG> (arg);
+			typedef typename boost::function_traits <typename T::F> :: arg3_type ARG;
+			return that.template setup_argument<ARG> (arg);
 		}
-		real_setup_argument<2>::set(arg, pos, that);
+		return real_setup_argument<2>::set(arg, pos, that);
 	}
 };
 

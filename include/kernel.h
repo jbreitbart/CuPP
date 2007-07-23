@@ -11,21 +11,21 @@
 #endif
 
 #include "device.h"
-#include "exception/cuda_runtime_error.h"
-#include "exception/stack_overflow.h"
 
-#include <cuda_runtime.h>
 #include <vector_types.h>
-#include <vector_functions.h>
 
 
 
 #include "kernel_impl/kernel_launcher_base.h"
 #include "kernel_impl/kernel_launcher_impl.h"
 
+#include "kernel_type_binding.h"
+#include "kernel_call_traits.h"
+
 #include <vector>
 
 #include <boost/any.hpp>
+
 
 namespace cupp {
 
@@ -46,8 +46,8 @@ using namespace cupp::kernel_impl;
 class kernel {
 	public:
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f) : number_of_parameters_(boost::function_traits < CudaKernelFunc >::arity) {
-			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f);
+		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) : number_of_parameters_(boost::function_traits < CudaKernelFunc >::arity) {
+			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f, grid_dim, block_dim, shared_mem, tokens);
 		}
 
 		~kernel() {
@@ -61,8 +61,9 @@ class kernel {
 				/// @todo throw exception
 			}
 
+			kb_ -> configure_call();
+
 			std::vector<boost::any> returnee_vec;
-			
 			returnee_vec.push_back ( kb_-> setup_argument( &p1, 1 ) );
 			returnee_vec.push_back ( kb_-> setup_argument( &p2, 2 ) );
 
@@ -71,15 +72,15 @@ class kernel {
 			const std::vector<bool> dirty = kb_->dirty_parameters();
 
 			if (dirty[0]) {
-				typename kernel_device_type<P1>::type *device_ptr = any_cast<kernel_device_type<P1>::type*>(returnee_vec[0]);
+				typename kernel_device_type<P1>::type *device_ptr = boost::any_cast<typename kernel_device_type<P1>::type *>(returnee_vec[0]);
 
-				kernel_call_traits<P1, typename kernel_device_type<P1>::type>::dirty(P1, device_ptr);
+				kernel_call_traits<P1, typename kernel_device_type<P1>::type>::dirty(p1, device_ptr);
 			}
 
 			if (dirty[1]) {
-				typename kernel_device_type<P1>::type *device_ptr = any_cast<kernel_device_type<P1>::type*>(returnee_vec[1]);
+				typename kernel_device_type<P2>::type *device_ptr = boost::any_cast<typename kernel_device_type<P2>::type *>(returnee_vec[1]);
 
-				kernel_call_traits<P1, typename kernel_device_type<P2>::type>::dirty(P2, device_ptr);
+				kernel_call_traits<P1, typename kernel_device_type<P2>::type>::dirty(p2, device_ptr);
 			}
 		}
 

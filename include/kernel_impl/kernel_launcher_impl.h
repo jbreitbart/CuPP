@@ -9,13 +9,19 @@
 
 #include "kernel_impl/kernel_launcher_base.h"
 #include "kernel_impl/is_second_level_const.h"
+#include "kernel_impl/real_setup_argument.h"
 
 #include "exception/cuda_runtime_error.h"
+#include "exception/stack_overflow.h"
 
+#include "kernel_call_traits.h"
+#include "kernel_type_binding.h"
+#include "cupp_runtime.h"
+
+#include <vector>
 
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>
-#include <vector>
 
 namespace cupp {
 namespace kernel_impl {
@@ -47,13 +53,13 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) : func_(func), grid_dim_(grid_dim), block_dim_(block_dim), tokens_(tokens), stack_in_use_(0) {};
+		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) : func_(func), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
 
 
 		/**
 		 * Configures the cuda launch.
 		 */
-		virtual void configure_launch();
+		virtual void configure_call();
 
 		
 		/**
@@ -86,7 +92,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param T The type of what is expected inside @a arg. May be different type if and only if the wrong type is passed to cupp::kernel::operator().
 		 */
 		template <typename T>
-		void setup_argument (const any &arg);
+		boost::any setup_argument (const boost::any &arg);
 
 		/**
 		 * @brief Put parameter @a a on the execution stack of the kernel
@@ -114,7 +120,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		/**
 		 * The size of the shared memory
 		 */
-		size_t shared_mem_size_;
+		size_t shared_mem_;
 
 		/**
 		 * The tokens ... whatever this may be, cuda docu ist kind of unspecific here
@@ -138,13 +144,14 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * This friend template is defined in another file(!). It is used by setup_argument (the virtual one).
 		 */
 		template <int i>
-		friend void real_setup_argument<i>::set (const any &arg, const int pos, T &that);
+		template <typename T>
+		friend void real_setup_argument<i>::set (const boost::any &arg, const int pos, T &that);
 };
 
 
 template< typename F_ >
 void kernel_launcher_impl<F_>::configure_call() {
-	if (cudaConfigureCall(grid_dim_, block_dim_, shared_mem, tokens_) != cudaSuccess) {
+	if (cudaConfigureCall(grid_dim_, block_dim_, shared_mem_, tokens_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
@@ -162,7 +169,7 @@ void kernel_launcher_impl<F_>::launch() {
 
 template< typename F_ >
 template <typename T>
-boost::any kernel_launcher_impl<F_>::setup_argument (const any &arg) {
+boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 	using namespace boost;
 	
 	// remove referene and possible cv qualifiers from T and typedef it to device_type
@@ -193,17 +200,17 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const any &arg) {
 		device_type* device_copy_ptr = cupp::malloc<device_type>();
 		cupp::copy_host_to_device(device_copy_ptr, device_copy);
 
-		// push address of device_copy in global memory of type add_pointer<device_type> on kernel_stack
+		// push address of device_copy in global memory of type device_type* on kernel_stack
 		put_argument_on_stack(device_copy_ptr);
 		
 		// return address of of type add_pointer<device_type>
-		return any(device_copy_ptr);
+		return boost::any(device_copy_ptr);
 	} else {
 		// push device_type auf kernel stack
 		put_argument_on_stack(temp);
 
 		// return an empty any, this should trigger when some will try to cast it
-		return any();
+		return boost::any();
 	}
 }
 
@@ -211,13 +218,13 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const any &arg) {
 template< typename F_ >
 template <typename T>
 void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
-	if (stack_used_+sizeof(T) > 256) {
+	if (stack_in_use_+sizeof(T) > 256) {
 		throw exception::stack_overflow();
 	}
-	if (cudaSetupArgument(&a, sizeof(T), stack_used_) != cudaSuccess) {
+	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
-	stack_used_+=sizeof(T);
+	stack_in_use_+=sizeof(T);
 }
 
 } // kernel_impl

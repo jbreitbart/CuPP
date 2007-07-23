@@ -9,13 +9,13 @@
 // Include std::size_t
 #include <cstddef>
 
-// Include std::swap
-#include <algorithm>
-
-
 #include "cupp_common.h"
 
 namespace cupp {
+
+template <typename T>
+class memory1d;
+
 namespace deviceT {
 
 /**
@@ -23,13 +23,13 @@ namespace deviceT {
  * @author Jens Breitbart
  * @version 0.1
  * @date 10.07.2007
- * @brief Represents a changeable memory block on an associated CUDA device.
+ * @brief Represents a memory block on an associated CUDA device.
  * @platform Device only
  *
  * askk
  */
 
-template< typename T >
+template< typename T, typename host_type=cupp::memory1d<T> >
 class memory1d {
 	public:
 		/**
@@ -82,22 +82,25 @@ class memory1d {
 		 * How many memory has been allocated
 		 */
 		size_type size_;
+
+		template <typename TT>
+		friend class cupp::memory1d;
 }; // class memory1d
 
 
-template <typename T>
-T& memory1d<T>::operator[](size_type index) {
+template <typename T, typename host_type>
+T& memory1d<T, host_type>::operator[](size_type index) {
 	return device_pointer_[index];
 }
 
-template <typename T>
-T const& memory1d<T>::operator[](size_type index) const {
+template <typename T, typename host_type>
+T const& memory1d<T, host_type>::operator[](size_type index) const {
 	return device_pointer_[index];
 }
 
 
-template <typename T>
-typename memory1d<T>::size_type memory1d<T>::size() const {
+template <typename T, typename host_type>
+typename memory1d<T, host_type>::size_type memory1d<T, host_type>::size() const {
 	return size_;
 }
 

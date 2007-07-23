@@ -14,7 +14,6 @@ typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
 kernelT get_kernel();
 
 int main(int argc, char *argv[]) {
-#if 0
 	// lets get a simple CUDA device up and running
 	device d;
 
@@ -38,10 +37,10 @@ int main(int argc, char *argv[]) {
 	dim3 grid_dim  (1);
 
 	// generate the kernel
-	kernel k (get_kernel()/*, grid_dim, block_dim*/);
+	kernel k (get_kernel(), grid_dim, block_dim );
 	
 	// call the kernel
-	//k(d, mem);
+	k(d, mem);
 
 	mem.copy_to_host(eight);
 	
@@ -50,8 +49,8 @@ int main(int argc, char *argv[]) {
 	for (int i=0; i<8; ++i) {
 		cout << eight[i] << ", ";
 	}
-	cout <<  endl;
-#endif
+	cout << endl;
+	
 	// NDT
 	return EXIT_SUCCESS;
 }

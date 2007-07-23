@@ -151,10 +151,10 @@ template <typename P>
 void kernel::handle_call_traits(const P &p, const int i) {
 	if (dirty[i-1]) {
 		typedef typename kernel_device_type<P>::type device_type;
-		typedef typename kernel_device_type<P>::type host_type;
+		typedef typename kernel_host_type<P>::type host_type;
 		device_type *device_ptr = boost::any_cast<device_type *>(returnee_vec[i-1]);
 
-		kernel_call_traits<device_type, host_type>::dirty(p, device_ptr);
+		kernel_call_traits<host_type, device_type>::dirty(p, device_ptr);
 	}
 }
 

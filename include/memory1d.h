@@ -10,23 +10,26 @@
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
-// Include std::size_t
-#include <cstddef>
-
-// Include std::swap
-#include <algorithm>
-
-#include <vector>
-
+// CUPP
 #include "cupp_common.h"
-
+#include "cupp_runtime.h"
+#include "kernel_type_binding.h"
+#include "kernel_call_traits.h"
+#include "deviceT/memory1d.h"
 #include "exception/cuda_runtime_error.h"
 #include "exception/memory_access_violation.h"
 
+// STD
+#include <cstddef> // Include std::size_t
+#include <algorithm> // Include std::swap
+#include <vector>
+
+// CUDA
 #include <cuda_runtime.h>
 
 
 namespace cupp {
+
 
 // Just used to force the user to configure and get a device.
 class device;
@@ -39,11 +42,7 @@ class device;
  * @date 20.06.2007
  * @platform Host only
  * @brief Represents a memory block on an associated CUDA device.
- *
- * askk
  */
-
-/// @todo introduce the cupp_runtime here
 
 template< typename T >
 class memory1d {
@@ -219,12 +218,23 @@ class memory1d {
 		template <typename OutputIterator>
 		void copy_to_host( OutputIterator out_iter );
 
-#if 0
-		// Be strongly cautioned not to use this!!!!!!
-		//Perhaps we should just use the functions below (your idea! I really like it!)
-		CUPP_HOST CUPP_DEVICE
-		T* cuda_pointer() const {return device_pointer_;}
-#endif
+		/**
+		 * @return The pointer to the memory on the device
+		 * @warning Treat it with care, this is a DEVICE-POINTER!
+		 */
+		T* cuda_pointer() const {  return device_pointer_;  }
+
+	
+		/**
+		 * @brief This function is called by the kernel_call_traits
+		 * @return A on the device useable memory1d reference
+		 */
+		deviceT::memory1d<T> get_device_copy() const {
+			deviceT::memory1d<T> returnee;
+			returnee.size_ = size();
+			returnee.device_pointer_ = cuda_pointer();
+			return returnee;
+		}
 
 
 	private:
@@ -252,6 +262,47 @@ class memory1d {
 		size_type size_;
 }; // class memory1d
 
+
+// create kernel call bindings
+template <typename T>
+class kernel_host_type<cupp::deviceT::memory1d<T> > {
+	public:
+		typedef typename cupp::memory1d<T> type;
+};
+
+template <typename T>
+class kernel_device_type < cupp::memory1d<T> > {
+	public:
+		typedef cupp::deviceT::memory1d<T> type;
+};
+
+// write the call traits
+template <typename T>
+class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
+	typedef cupp::memory1d<T>           host_type;
+	typedef cupp::deviceT::memory1d<T>  device_type;
+	public:
+		/**
+		* This function is called when a parameter of type @a host_type is passed as a not-const reference
+		* to a kernel.
+		* @param that the host representation of our data
+		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
+		*/
+		static void dirty (const host_type& that, device_type *device_copy) {
+			// if our data on the host is changed ...
+			// we don't care :-) We just point to it.
+
+			cupp::free(device_copy);
+		}
+
+		/**
+		* Creates a copy of our data for the device
+		*/
+		static const device_type get_device_copy (const host_type& that) {
+			return that.get_device_copy();
+		}
+
+};
 
 template <typename T>
 memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_(0), size_(size) {
@@ -300,25 +351,19 @@ memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
 
 template <typename T>
 void memory1d<T>::set(int value) {
-	if (cudaMemset( reinterpret_cast<void*>( device_pointer_ ), value, sizeof(T)*size() ) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	cupp::mem_set (device_pointer_, value, size());
 }
 
 
 template <typename T>
 void memory1d<T>::malloc() {
-	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer_ ), sizeof(T)*size() ) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	device_pointer_ = cupp::malloc<T> (size());
 }
 
 
 template <typename T>
 void memory1d<T>::free() {
-	if (cudaFree(device_pointer_) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	cupp::free(device_pointer_);
 }
 
 
@@ -343,9 +388,7 @@ void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offs
 		throw exception::memory_access_violation();
 	}
 	
-	if ( cudaMemcpy(device_pointer_+offset, data, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	cupp::copy_host_to_device (device_pointer_+offset, data, count);
 }
 
 template <typename T>
@@ -360,17 +403,13 @@ void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_t
 		throw exception::memory_access_violation();
 	}
 
-	if ( cudaMemcpy(device_pointer_+offset, other.device_pointer_, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	cupp::copy_device_to_device (device_pointer_+offset, other.device_pointer_, count);
 }
 
 
 template <typename T>
 void memory1d<T>::copy_to_host (T* destination) {
-	if (cudaMemcpy(destination, device_pointer_, size() * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
+	cupp::copy_device_to_host (destination, device_pointer_, size() );
 }
 
 

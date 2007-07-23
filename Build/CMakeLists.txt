@@ -1,4 +1,3 @@
-
 PROJECT(cupp)
 
 # SETUP THE CUDA SYSTEM

@@ -27,12 +27,12 @@ class kernel_call_traits {
 		* @param that the host representation of our data
 		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
 		*/
-		inline static void dirty (host_type& that, const device_type *device_copy);
+		static void dirty (const host_type& that, device_type *device_copy);
 
 		/**
 		* Creates a copy of our data for the device
 		*/
-		inline static const device_type get_device_copy (const host_type& that);
+		static const device_type get_device_copy (const host_type& that);
 
 };
 
@@ -46,9 +46,9 @@ class kernel_call_traits <type, type> {
 		* @param that the host representation of our data
 		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
 		*/
-		inline static void dirty (type& that, const type *device_copy) {
+		inline static void dirty (const type& that, type *device_copy) {
 			// do a dirty ugly bit copy from device memory to host memory
-			cupp::copy_device_to_host ( &that, device_copy );
+			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy );
 
 			cupp::free(device_copy);
 		}

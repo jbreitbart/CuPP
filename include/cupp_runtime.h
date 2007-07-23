@@ -27,14 +27,17 @@ void mem_set(T* device_pointer, int value, const size_t size=1) {
 }
 
 
-template <typename T>
-T* malloc(const size_t size=1) {
-	T* device_pointer;
-	if (cudaMalloc( reinterpret_cast<void**>( &device_pointer ), sizeof(T)*size ) != cudaSuccess) {
+void* malloc_ (const unsigned int size_in_b) {
+	void* temp;
+	if (cudaMalloc( &temp, size_in_b ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
+	return temp;
+}
 
-	return device_pointer;
+template <typename T>
+T* malloc(const size_t size=1) {
+	return static_cast<T*> (malloc_ (size*sizeof(T)));
 }
 
 
@@ -65,6 +68,13 @@ void copy_device_to_device(T* destination, const T * const source, size_t count=
 template <typename T>
 void copy_device_to_host(T* destination, const T * const source, size_t count=1) {
 	if (cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+void thread_synchronize() {
+	if (cudaThreadSynchronize() != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }

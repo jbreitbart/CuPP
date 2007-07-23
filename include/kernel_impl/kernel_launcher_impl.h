@@ -207,7 +207,6 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 
 	if (is_reference <T>()) {
 		using namespace std;
-		cout << "OK, here we go!" << endl;
 		// ok this means our kernel wants a reference
 
 		// copy device_copy into global memory
@@ -221,7 +220,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 		return boost::any(device_copy_ptr);
 	} else {
 		// push device_type auf kernel stack
-		put_argument_on_stack(temp);
+		put_argument_on_stack(device_copy);
 
 		// return an empty any, this should trigger when some will try to cast it
 		return boost::any();
@@ -238,7 +237,9 @@ void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
 	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
-	stack_in_use_+=sizeof(T);
+	// std::cout << a << std::endl;
+	// std::cout << stack_in_use_ << " => " << stack_in_use_ + sizeof(T) << std::endl;
+	stack_in_use_ += sizeof(T);
 }
 
 } // kernel_impl

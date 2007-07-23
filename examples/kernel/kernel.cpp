@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
 	
 	// call the kernel
 	k(i, j);
-
 	
 	cout << "after kernel call: (" << i << ", " << j << ")" << endl;
 	

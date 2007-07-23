@@ -6,7 +6,7 @@
  */
 
 __global__ void global_function (const int i, int &j) {
-	j = i;
+	j = j*2;
 }
 
 typedef void(*kernelT)(const int, int&);

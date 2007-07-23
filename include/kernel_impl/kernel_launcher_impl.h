@@ -70,7 +70,8 @@ class kernel_launcher_impl : public kernel_launcher_base {
 
 
 		/**
-		 * Configures the cuda launch.
+		 * Configures the cuda launch. Specifies the grid/block size for the next call.
+		 * @warning This must be called before you call put_argument_on_stack
 		 */
 		virtual void configure_call();
 

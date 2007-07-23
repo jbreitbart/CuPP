@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
 	// lets get a simple CUDA device up and running
 	device d;
 
-	int i = 5;
-	int j = 42;
+	int i = 42;
+	int j = 23;
 
 	cout << "before kernel call: (" << i << ", " << j << ")" << endl;
 	
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	kernel k (get_kernel(), grid_dim, block_dim);
 	
 	// call the kernel
-	k(i, j);
+	k(d, i, j);
 	
 	cout << "after kernel call: (" << i << ", " << j << ")" << endl;
 	

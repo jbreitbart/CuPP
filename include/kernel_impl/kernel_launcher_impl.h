@@ -14,6 +14,7 @@
 
 #include "exception/cuda_runtime_error.h"
 #include "exception/stack_overflow.h"
+#include "exception/kernel_parameter_type_mismatch.h"
 
 #include "kernel_call_traits.h"
 #include "kernel_type_binding.h"
@@ -161,14 +162,9 @@ void kernel_launcher_impl<F_>::configure_call() {
 
 template< typename F_ >
 void kernel_launcher_impl<F_>::launch() {
-	std::cout << "before" << std::endl;
-	thread_synchronize();
 	if (cudaLaunch((const char*)func_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
-	std::cout << "after" << std::endl;
-	thread_synchronize();
-	std::cout << "synced" << std::endl;
 	
 	stack_in_use_ = 0;
 }
@@ -177,29 +173,23 @@ void kernel_launcher_impl<F_>::launch() {
 template< typename F_ >
 template <typename T>
 boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
-	// 1.) T == int
-	// 2.) T == int&
 	using namespace boost;
 	
 	typedef typename kernel_device_type<T>::type device_type;
-	// 1.) device_type == int
-	// 2.) device_type == int
 
 	// get the host type matching our device_type
 	typedef typename kernel_host_type<device_type>::type host_type;
-	// 1.) host_type == int
-	// 2.) host_type == int
 
 	//get what is inside our any
 	host_type* temp = 0;
 
-	//try {
+	try {
 		temp = const_cast <host_type*> (any_cast< const host_type* > (arg));
-	//} catch (boost::bad_any_cast &e) {
+	} catch (boost::bad_any_cast &e) {
 		// ok, something is wrong with the types
 		// let's throw our own exception here
-		///@TODO
-	//}
+		throw exception::kernel_parameter_type_mismatch();
+	}
 
 	// get our copy to be passed to the device
 	/// @TODO can this be a reference?

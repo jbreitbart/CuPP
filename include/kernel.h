@@ -22,7 +22,10 @@
 
 #include "kernel_impl/kernel_launcher_base.h"
 #include "kernel_impl/kernel_launcher_impl.h"
-#include <deque>
+
+#include <vector>
+
+#include <boost/any.hpp>
 
 namespace cupp {
 
@@ -30,6 +33,7 @@ using namespace cupp::kernel_impl;
 
 /**
  * @class kernel
+ * @author Björn Knafla: Initial design and some enlightening comments.
  * @author Jens Breitbart
  * @version 0.2
  * @date 21.06.2007
@@ -42,29 +46,45 @@ using namespace cupp::kernel_impl;
 class kernel {
 	public:
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc F) {
-			kb_ = new kernel_launcher_impl< CudaKernelFunc >(F);
+		kernel( CudaKernelFunc f) : number_of_parameters_(boost::function_traits < CudaKernelFunc >::arity) {
+			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f);
+		}
+
+		~kernel() {
+			delete kb_;
 		}
 
 		template< typename P1, typename P2 >
 		void operator()( const P1 &p1, const P2 &p2 ) {
 		
-			if (kb_ -> number_of_param() != 2) {
-				// throw exception
+			if (number_of_parameters_ != 2) {
+				/// @todo throw exception
 			}
+
+			std::vector<boost::any> returnee_vec;
 			
-			kb_->setup_argument( p1, 1 );
-			kb_->setup_argument( p2, 2 );
+			returnee_vec.push_back ( kb_-> setup_argument( &p1, 1 ) );
+			returnee_vec.push_back ( kb_-> setup_argument( &p2, 2 ) );
 
 			kb_->launch();
 			
-			const std::deque<bool> dirty = kb_->dirty_parameters();
+			const std::vector<bool> dirty = kb_->dirty_parameters();
 
-			// check if P1 is markable && deque[0]==true -> mark P1
+			if (dirty[0]) {
+				typename kernel_device_type<P1>::type *device_ptr = any_cast<kernel_device_type<P1>::type*>(returnee_vec[0]);
 
+				kernel_call_traits<P1, typename kernel_device_type<P1>::type>::dirty(P1, device_ptr);
+			}
+
+			if (dirty[1]) {
+				typename kernel_device_type<P1>::type *device_ptr = any_cast<kernel_device_type<P1>::type*>(returnee_vec[1]);
+
+				kernel_call_traits<P1, typename kernel_device_type<P2>::type>::dirty(P2, device_ptr);
+			}
 		}
 
 	private:
+		const int number_of_parameters_;
 		kernel_launcher_base* kb_;
 };
 

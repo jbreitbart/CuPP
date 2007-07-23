@@ -15,6 +15,8 @@ namespace kernel_impl {
  * @version 0.1
  * @date 19.07.2007
  * @brief Determine if the passed parameter is a const reference or a const pointer
+ * @example is_second_level_const <int const*>::value == is_second_level_const <const int*>::value == false; this is top level const (use boost if you need this)
+ * @example is_second_level_const <int* const>::value==true
  */
 
 template <typename T>

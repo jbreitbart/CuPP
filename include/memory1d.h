@@ -245,7 +245,7 @@ class memory1d {
 		T* device_pointer_;
 
 		/**
-		 * How many memory has been allocated
+		 * How much memory has been allocated
 		 */
 		size_type size_;
 }; // class memory1d

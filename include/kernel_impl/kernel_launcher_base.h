@@ -31,7 +31,7 @@ class kernel_launcher_base {
 		/**
 		 * See in @c kernel_launcher_impl.
 		 */
-		virtual boost::any setup_argument( const boost::any &arg, const int pos ) = 0;
+		virtual boost::any setup_argument(const device &d, const boost::any &arg, const int pos ) = 0;
 
 		/**
 		 * See in @c kernel_launcher_impl.

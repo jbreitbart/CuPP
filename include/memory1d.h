@@ -14,7 +14,6 @@
 #include "cupp_common.h"
 #include "cupp_runtime.h"
 #include "kernel_type_binding.h"
-//#include "kernel_call_traits.h"
 #include "shared_device_pointer.h"
 
 #include "deviceT/memory1d.h"
@@ -37,6 +36,21 @@ namespace cupp {
 // Just used to force the user to configure and get a device.
 class device;
 
+
+// create kernel call bindings
+template <typename T>
+class kernel_host_type<cupp::deviceT::memory1d<T> > {
+	public:
+		typedef typename cupp::memory1d<T> type;
+};
+
+template <typename T>
+class kernel_device_type < cupp::memory1d<T> > {
+	public:
+		typedef cupp::deviceT::memory1d<T> type;
+};
+
+
 /**
  * @class memory1d
  * @author Björn Knafla: Initial design
@@ -49,6 +63,7 @@ class device;
 
 template< typename T >
 class memory1d {
+	typedef deviceT::memory1d<T> device_type;
 	public:
 		/**
 		 * @typedef size_type
@@ -231,36 +246,18 @@ class memory1d {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		deviceT::memory1d<T> get_host_based_device_copy() const {
-			deviceT::memory1d<T> returnee;
-			returnee.size_ = size();
-			returnee.device_pointer_ = cuda_pointer().get();
-			return returnee;
-		}
+		device_type get_host_based_device_copy() const ;
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		shared_device_pointer< deviceT::memory1d<T> > get_device_based_device_copy() const {
-			if (device_proxy_.get()==0) {
-				// copy device_copy into global memory
-				shared_device_pointer < deviceT::memory1d<T> > device_proxy ( cupp::malloc< deviceT::memory1d<T> >() );
-
-				device_proxy_ = device_proxy;
-
-				/// @todo is this legal?
-				cupp::copy_host_to_device(device_proxy_, &get_host_based_device_copy());
-			}
-
-			return device_proxy_;
-		}
+		shared_device_pointer< device_type > get_device_based_device_copy(const device &d) const;
 		
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (shared_device_pointer< deviceT::memory1d<T> > device_copy) const {
-		}
+		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {  }
 
 
 	private:
@@ -277,22 +274,33 @@ class memory1d {
 		/**
 		 * Our proxy on the device
 		 */
-		mutable shared_device_pointer<deviceT::memory1d<T> > device_proxy_;
+		mutable shared_device_pointer< device_type > device_proxy_;
 }; // class memory1d
 
 
-// create kernel call bindings
 template <typename T>
-class kernel_host_type<cupp::deviceT::memory1d<T> > {
-	public:
-		typedef typename cupp::memory1d<T> type;
-};
+typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy() const {
+	device_type returnee;
+	returnee.size_ = size();
+	returnee.device_pointer_ = cuda_pointer().get();
+	return returnee;
+}
 
 template <typename T>
-class kernel_device_type < cupp::memory1d<T> > {
-	public:
-		typedef cupp::deviceT::memory1d<T> type;
-};
+shared_device_pointer< typename memory1d<T>::device_type > memory1d<T>::get_device_based_device_copy(const device &d) const {
+	if (device_proxy_.get()==0) {
+		// copy device_copy into global memory
+		shared_device_pointer < device_type > device_proxy ( cupp::malloc< device_type >() );
+
+		device_proxy_ = device_proxy;
+
+		deviceT::memory1d<T> copy = get_host_based_device_copy();
+		/// @todo is this legal?
+		cupp::copy_host_to_device(device_proxy_, &copy);
+	}
+
+	return device_proxy_;
+}
 
 
 template <typename T>
@@ -317,6 +325,7 @@ template <typename InputIterator>
 memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) {
 	/// @todo is this ok?
 	size_ = last - first;
+	
 	device_pointer_( cupp::malloc<T>(size_) );
 	copy_to_device(first, last);
 }

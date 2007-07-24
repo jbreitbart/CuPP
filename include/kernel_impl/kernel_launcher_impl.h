@@ -83,8 +83,8 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param pos The position to which the passed @a arg matches to the parameter of the __global__ function. (NOTE: first position is 1 not 0, we follow the boost naming here!)
 		 * @return a pointer to the created device_copy of type kernel_type_binding<>::device_type
 		 */
-		virtual boost::any setup_argument( const boost::any &arg, const int pos ) {
-			return real_setup_argument< arity >::set (arg, pos, *this);
+		virtual boost::any setup_argument(const device &d, const boost::any &arg, const int pos ) {
+			return real_setup_argument< arity >::set (d, arg, pos, *this);
 		}
 
 
@@ -109,7 +109,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param T The type of what is expected inside @a arg. May be different type if and only if the wrong type is passed to cupp::kernel::operator().
 		 */
 		template <typename T>
-		boost::any setup_argument (const boost::any &arg);
+		boost::any setup_argument (const device &d, const boost::any &arg);
 
 		/**
 		 * @brief Put parameter @a a on the execution stack of the kernel
@@ -174,7 +174,7 @@ void kernel_launcher_impl<F_>::launch() {
 
 template< typename F_ >
 template <typename T>
-boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
+boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boost::any &arg) {
 	using namespace boost;
 	
 	typedef typename kernel_device_type<T>::type device_type;
@@ -196,7 +196,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 	if (is_reference <T>()) {
 		// ok this means our kernel wants a reference
 		// copy device_copy into global memory
-		shared_device_pointer<device_type> device_copy_ptr ( kernel_call_traits<host_type, device_type>::get_device_based_device_copy(*temp) );
+		shared_device_pointer<device_type> device_copy_ptr ( kernel_call_traits<host_type, device_type>::get_device_based_device_copy(d, *temp) );
 
 		// push address of device_copy in global memory of type device_type* on kernel_stack
 		put_argument_on_stack(device_copy_ptr.get());

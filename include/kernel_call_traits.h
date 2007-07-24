@@ -19,6 +19,8 @@ namespace cupp {
  * @brief These traits define the behavior of what happens when a kernel is called.
  */
 
+class device;
+
 template <typename host_type, typename device_type>
 class kernel_call_traits {
 	public:
@@ -34,8 +36,8 @@ class kernel_call_traits {
 		 * Creates a copy of our data for the device in host memory.
 		 * @note This function is called when you pass a parameter by reference to a kernel.
 		 */
-		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that) {
-			return that.get_device_based_device_copy();
+		static shared_device_pointer<device_type> get_device_based_device_copy (const device &d, const host_type& that) {
+			return that.get_device_based_device_copy(d);
 		}
 		
 		/**
@@ -44,8 +46,8 @@ class kernel_call_traits {
 		* @param device_copy The pointer you created with @a get_device_based_device_copy
 		* @note This function is only called if you pass a parameter by non-const reference to a kernel.
 		*/
-		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy) {
-			that.dirty(device_copy);
+		static void dirty (const device &d, const host_type& that, shared_device_pointer<device_type> device_copy) {
+			that.dirty(d, device_copy);
 		}
 };
 
@@ -63,7 +65,7 @@ class kernel_call_traits <type, type> {
 		/**
 		 * @see above
 		 */
-		inline static shared_device_pointer<type> get_device_based_device_copy (const type& that) {
+		inline static shared_device_pointer<type> get_device_based_device_copy (const device &d, const type& that) {
 			// copy device_copy into global memory
 			shared_device_pointer<type> device_copy_ptr ( cupp::malloc<type>() );
 
@@ -76,7 +78,7 @@ class kernel_call_traits <type, type> {
 		/**
 		* @see above
 		*/
-		inline static void dirty (const type& that, shared_device_pointer<type> device_copy) {
+		inline static void dirty (const device &d, const type& that, shared_device_pointer<type> device_copy) {
 			// do a dirty ugly bit copy from device memory to host memory
 			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy );
 		}

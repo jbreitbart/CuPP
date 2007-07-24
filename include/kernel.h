@@ -110,7 +110,7 @@ class kernel {
 		 * @param i The number of the parameter (1 == first parameter)
 		 */
 		template <typename P>
-		inline void handle_call_traits(const P &p, const int i);
+		inline void handle_call_traits(const P &p, const int i, const device &d );
 
 		/**
 		 * @brief Checks if @a number matches with @a number_of_parameters_
@@ -149,13 +149,13 @@ void kernel::check_number_of_parameters (const int number) {
 
 
 template <typename P>
-void kernel::handle_call_traits(const P &p, const int i) {
+void kernel::handle_call_traits(const P &p, const int i, const device &d) {
 	if (dirty[i-1]) {
 		typedef typename kernel_device_type<P>::type device_type;
 		typedef typename kernel_host_type<P>::type host_type;
 		shared_device_pointer<device_type> device_ptr = boost::any_cast< shared_device_pointer<device_type> >(returnee_vec[i-1]);
 
-		kernel_call_traits<host_type, device_type>::dirty(p, device_ptr);
+		kernel_call_traits<host_type, device_type>::dirty(d, p, device_ptr);
 	}
 }
 
@@ -175,11 +175,11 @@ void kernel::operator()(const device &d, const P1 &p1 ) {
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p1), 1 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1);
+	handle_call_traits (p1, 1, d);
 
 	returnee_vec.clear();
 }
@@ -190,13 +190,13 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2 ) {
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p2), 2 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1);
-	handle_call_traits (p2, 2);
+	handle_call_traits (p1, 1, d);
+	handle_call_traits (p2, 2, d);
 
 	returnee_vec.clear();
 }
@@ -207,15 +207,15 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p2), 2 ) );
-	returnee_vec.push_back ( kb_-> setup_argument( boost::any(&p3), 3 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1);
-	handle_call_traits (p2, 2);
-	handle_call_traits (p2, 3);
+	handle_call_traits (p1, 1, d);
+	handle_call_traits (p2, 2, d);
+	handle_call_traits (p2, 3, d);
 
 	returnee_vec.clear();
 }

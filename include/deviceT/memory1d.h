@@ -25,8 +25,6 @@ namespace deviceT {
  * @date 10.07.2007
  * @brief Represents a memory block on an associated CUDA device.
  * @platform Device only
- *
- * askk
  */
 
 template< typename T, typename host_type=cupp::memory1d<T> >
@@ -50,7 +48,7 @@ class memory1d {
 		 * @platform Host
 		 * @platform Device
 		 */
-		CUPP_HOST CUPP_DEVICE
+		CUPP_RUN_ON_HOST CUPP_RUN_ON_DEVICE
 		size_type size() const;
 
 
@@ -60,7 +58,7 @@ class memory1d {
 		 * @platform Device
 		 * @todo How to implement this for the host? 
 		 */
-		CUPP_DEVICE
+		CUPP_RUN_ON_DEVICE
 		T& operator[]( size_type size_type );
 
 		/**
@@ -69,7 +67,7 @@ class memory1d {
 		 * @warning @a out_iter must be able to hold at least @c size() elements.
 		 * @platform Device
 		 */
-		CUPP_DEVICE
+		CUPP_RUN_ON_DEVICE
 		T const& operator[]( size_type index ) const;
 
 	private:

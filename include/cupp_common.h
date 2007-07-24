@@ -12,8 +12,8 @@
 
 
 #if defined(__CUDACC__)
-	#define CUPP_HOST __host__
-	#define CUPP_DEVICE __device__
+	#define CUPP_RUN_ON_HOST __host__
+	#define CUPP_RUN_ON_DEVICE __device__
 	#define CUPP_GLOBAL __global__
 	#define CUPP_CONSTANT __constant__
 	#define CUPP_SHARED __shared__
@@ -22,13 +22,13 @@
 	 * @def CUPP_HOST
 	 * Specifies a function as accessible from the host.
 	 */
-	#define CUPP_HOST
+	#define CUPP_RUN_ON_HOST
 	
 	/**
 	 * @def CUPP_DEVICE
 	 * Specifies a function as accessible from the device.
 	 */
-	#define CUPP_DEVICE
+	#define CUPP_RUN_ON_DEVICE
 	
 	#define CUPP_GLOBAL
 	#define CUPP_CONSTANT

@@ -14,7 +14,7 @@
 #include "cupp_common.h"
 #include "cupp_runtime.h"
 #include "kernel_type_binding.h"
-#include "kernel_call_traits.h"
+//#include "kernel_call_traits.h"
 #include "shared_device_pointer.h"
 
 #include "deviceT/memory1d.h"
@@ -242,7 +242,7 @@ class memory1d {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		shared_device_pointer<deviceT::memory1d<T> > get_device_based_device_copy() const {
+		shared_device_pointer< deviceT::memory1d<T> > get_device_based_device_copy() const {
 			if (device_proxy_.get()==0) {
 				// copy device_copy into global memory
 				shared_device_pointer < deviceT::memory1d<T> > device_proxy ( cupp::malloc< deviceT::memory1d<T> >() );
@@ -254,6 +254,12 @@ class memory1d {
 			}
 
 			return device_proxy_;
+		}
+		
+		/**
+		 * @brief This function is called by the kernel_call_traits
+		 */
+		void dirty (shared_device_pointer< deviceT::memory1d<T> > device_copy) const {
 		}
 
 
@@ -288,39 +294,6 @@ class kernel_device_type < cupp::memory1d<T> > {
 		typedef cupp::deviceT::memory1d<T> type;
 };
 
-// write the call traits
-template <typename T>
-class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
-	typedef cupp::memory1d<T>           host_type;
-	typedef cupp::deviceT::memory1d<T>  device_type;
-	
-	public:
-		/**
-		* This function is called when a parameter of type @a host_type is passed as a not-const reference
-		* to a kernel.
-		* @param that the host representation of our data
-		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
-		*/
-		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy) {
-			// if our data on the host is changed ...
-			// we don't care :-) We just point to it anyway
-		}
-
-		/**
-		* Creates a copy of our data for the device
-		*/
-		static const device_type get_host_based_device_copy (const host_type& that) {
-			return that.get_host_based_device_copy();
-		}
-
-		/**
-		 * Creates a copy of our data for the device in host memory.
-		 * @note This function is called when you pass a parameter by reference to a kernel.
-		 */
-		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that) {
-			return that.get_device_based_device_copy();
-		}
-};
 
 template <typename T>
 memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {

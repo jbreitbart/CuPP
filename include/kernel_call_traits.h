@@ -26,24 +26,27 @@ class kernel_call_traits {
 		 * Creates a copy of our data for the device in host memory.
 		 * @note This function is called when you pass a parameter by value to a kernel.
 		 */
-		static device_type get_host_based_device_copy (const host_type& that);
+		static device_type get_host_based_device_copy (const host_type& that) {
+			return that.get_host_based_device_copy();
+		}
 		
 		/**
 		 * Creates a copy of our data for the device in host memory.
 		 * @note This function is called when you pass a parameter by reference to a kernel.
 		 */
-		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that);
+		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that) {
+			return that.get_device_based_device_copy();
+		}
 		
 		/**
-		* This function is called when a parameter of type @a host_type is passed as a not-const reference
-		* to a kernel.
+		* This function is when the value may have been changed on the device.
 		* @param that The host representation of your data
 		* @param device_copy The pointer you created with @a get_device_based_device_copy
 		* @note This function is only called if you pass a parameter by non-const reference to a kernel.
 		*/
-		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy);
-
-
+		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy) {
+			that.dirty(device_copy);
+		}
 };
 
 // this is the default trait for all types which require no special treatment

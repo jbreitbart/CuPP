@@ -10,14 +10,17 @@
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
+// CUPP
 #include "cupp_common.h"
-
 #include "exception/cuda_runtime_error.h"
 
+// CUDA
 #include <cuda_runtime.h>
 
 
 namespace cupp {
+
+template< typename T > class shared_device_pointer; // forward declaration
 
 template <typename T>
 void mem_set(T* device_pointer, int value, const size_t size=1) {
@@ -26,6 +29,10 @@ void mem_set(T* device_pointer, int value, const size_t size=1) {
 	}
 }
 
+template <typename T>
+void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t size=1) {
+	mem_set(device_pointer.get(), value, size);
+}
 
 void* malloc_ (const unsigned int size_in_b) {
 	void* temp;
@@ -58,6 +65,12 @@ void copy_host_to_device(T *destination, const T * const source, size_t count=1)
 
 
 template <typename T>
+void copy_host_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1) {
+	copy_host_to_device(destination.get(), source, count);
+}
+
+
+template <typename T>
 void copy_device_to_device(T* destination, const T * const source, size_t count=1) {
 	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
@@ -66,8 +79,34 @@ void copy_device_to_device(T* destination, const T * const source, size_t count=
 
 
 template <typename T>
+void copy_device_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1) {
+	copy_device_to_device (destination.get(), source, count);
+}
+
+
+template <typename T>
+void copy_device_to_device(T *destination, const shared_device_pointer<T> source, size_t count=1) {
+	copy_device_to_device (destination, source.get(), count);
+}
+
+
+template <typename T>
+void copy_device_to_device(shared_device_pointer<T> destination, const shared_device_pointer<T> source, size_t count=1) {
+	copy_device_to_device (destination.get(), source.get(), count);
+}
+
+
+template <typename T>
 void copy_device_to_host(T* destination, const T * const source, size_t count=1) {
 	if (cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
+		throw exception::cuda_runtime_error(cudaGetLastError());
+	}
+}
+
+
+template <typename T>
+void copy_device_to_host(T* destination, const shared_device_pointer<T> source, size_t count=1) {
+	if (cudaMemcpy(destination, source.get(), count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }

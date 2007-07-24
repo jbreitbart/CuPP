@@ -15,7 +15,10 @@
 #include "cupp_runtime.h"
 #include "kernel_type_binding.h"
 #include "kernel_call_traits.h"
+#include "shared_device_pointer.h"
+
 #include "deviceT/memory1d.h"
+
 #include "exception/cuda_runtime_error.h"
 #include "exception/memory_access_violation.h"
 
@@ -219,10 +222,9 @@ class memory1d {
 		void copy_to_host( OutputIterator out_iter );
 
 		/**
-		 * @return The pointer to the memory on the device
-		 * @warning Treat it with care, this is a DEVICE-POINTER!
+		 * @return A shared device pointer to the memory handled by @a this
 		 */
-		T* cuda_pointer() const {  return device_pointer_;  }
+		shared_device_pointer<T> cuda_pointer() const {  return device_pointer_;  }
 
 	
 		/**
@@ -232,29 +234,16 @@ class memory1d {
 		deviceT::memory1d<T> get_device_copy() const {
 			deviceT::memory1d<T> returnee;
 			returnee.size_ = size();
-			returnee.device_pointer_ = cuda_pointer();
+			returnee.device_pointer_ = cuda_pointer().get();
 			return returnee;
 		}
 
 
 	private:
 		/**
-		 * @brief Allocates memory on the device
-		 * @exception cuda_runtime_error
-		 */
-		void malloc();
-
-		/**
-		 * @brief Free the memory on the device
-		 * @exception cuda_runtime_error
-		 */
-		void free();
-
-	private:
-		/**
 		 * The pointer to the device memory
 		 */
-		T* device_pointer_;
+		shared_device_pointer<T> device_pointer_;
 
 		/**
 		 * How much memory has been allocated
@@ -303,42 +292,39 @@ class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
 };
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_(0), size_(size) {
-	malloc();
+memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
 }
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_(0), size_(size) {
-	malloc();
+memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
 	set(init_value);
 }
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_(0), size_(size) {
-	malloc();
+memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
 	copy_to_device(data);
 }
 
 
 template <typename T>
 template <typename InputIterator>
-memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) : device_pointer_(0), size_(size) {
-	malloc();
+memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) {
+	/// @todo is this ok?
+	size_ = last - first;
+	device_pointer_( cupp::malloc<T>(size_) );
 	copy_to_device(first, last);
 }
 
 template <typename T>
-memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_(0), size_(other.size()) {
-	malloc();
+memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_( cupp::malloc<T>(other.size()) ), size_(other.size()) {
 	copy_to_device(other);
 }
 
 
 template <typename T>
 memory1d<T>::~memory1d() {
-	free();
 }
 
 template <typename T>
@@ -350,18 +336,6 @@ memory1d< T >& memory1d<T>::operator=( const memory1d< T > &other ) {
 template <typename T>
 void memory1d<T>::set(int value) {
 	cupp::mem_set (device_pointer_, value, size());
-}
-
-
-template <typename T>
-void memory1d<T>::malloc() {
-	device_pointer_ = cupp::malloc<T> (size());
-}
-
-
-template <typename T>
-void memory1d<T>::free() {
-	cupp::free(device_pointer_);
 }
 
 
@@ -385,8 +359,9 @@ void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offs
 	if (count + offset > size()) {
 		throw exception::memory_access_violation();
 	}
-	
-	cupp::copy_host_to_device (device_pointer_+offset, data, count);
+
+	/// @todo is this legal c++? not sure
+	cupp::copy_host_to_device (device_pointer_.get()+offset, data, count);
 }
 
 template <typename T>
@@ -401,7 +376,8 @@ void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_t
 		throw exception::memory_access_violation();
 	}
 
-	cupp::copy_device_to_device (device_pointer_+offset, other.device_pointer_, count);
+	/// @todo again, legal?
+	cupp::copy_device_to_device (device_pointer_.get()+offset, other.device_pointer_, count);
 }
 
 
@@ -425,7 +401,7 @@ void memory1d<T>::copy_to_host(OutputIterator out_iter) {
 
 template <typename T>
 void memory1d<T>::swap( memory1d& other ) {
-	std::swap(this.device_pointer_, other.device_pointer_);
+	swap(this.device_pointer_, other.device_pointer_);
 	std::swap(this.size_, other.size_);
 }
 

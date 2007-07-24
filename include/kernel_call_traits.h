@@ -14,8 +14,8 @@ namespace cupp {
 /**
  * @class kernel_call_traits
  * @author Jens Breitbart
- * @version 0.1
- * @date 22.07.2007
+ * @version 0.2
+ * @date 24.07.2007
  * @brief These traits define the behavior of what happens when a kernel is called.
  */
 
@@ -23,17 +23,26 @@ template <typename host_type, typename device_type>
 class kernel_call_traits {
 	public:
 		/**
+		 * Creates a copy of our data for the device in host memory.
+		 * @note This function is called when you pass a parameter by value to a kernel.
+		 */
+		static device_type get_host_based_device_copy (const host_type& that);
+		
+		/**
+		 * Creates a copy of our data for the device in host memory.
+		 * @note This function is called when you pass a parameter by reference to a kernel.
+		 */
+		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that);
+		
+		/**
 		* This function is called when a parameter of type @a host_type is passed as a not-const reference
 		* to a kernel.
-		* @param that the host representation of our data
-		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
+		* @param that The host representation of your data
+		* @param device_copy The pointer you created with @a get_device_based_device_copy
+		* @note This function is only called if you pass a parameter by non-const reference to a kernel.
 		*/
 		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy);
 
-		/**
-		* Creates a copy of our data for the device
-		*/
-		static const device_type get_device_copy (const host_type& that);
 
 };
 
@@ -42,23 +51,32 @@ template <typename type>
 class kernel_call_traits <type, type> {
 	public:
 		/**
-		* This function is called when a parameter of type @a host_type is passed as a not-const reference
-		* to a kernel.
-		* @param that the host representation of our data
-		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
-		*/
-		inline static void dirty (const type& that, shared_device_pointer<type> device_copy) {
-			// do a dirty ugly bit copy from device memory to host memory
-			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy.get() );
+		 * @see above
+		 */
+		inline static const type& get_host_based_device_copy (const type& that) {
+			return that;
+		}
+		
+		/**
+		 * @see above
+		 */
+		inline static shared_device_pointer<type> get_device_based_device_copy (const type& that) {
+			// copy device_copy into global memory
+			shared_device_pointer<type> device_copy_ptr ( cupp::malloc<type>() );
+
+			/// @todo is this legal?
+			cupp::copy_host_to_device(device_copy_ptr, &get_host_based_device_copy(that));
+
+			return device_copy_ptr;
 		}
 
 		/**
-		* Creates a copy of our data for the device
+		* @see above
 		*/
-		inline static const type& get_device_copy (const type& that) {
-			return that;
+		inline static void dirty (const type& that, shared_device_pointer<type> device_copy) {
+			// do a dirty ugly bit copy from device memory to host memory
+			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy );
 		}
-
 };
 
 

@@ -193,17 +193,10 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 		throw exception::kernel_parameter_type_mismatch();
 	}
 
-	// get our copy to be passed to the device
-	/// @TODO can this be a reference?
-	const device_type &device_copy = kernel_call_traits<host_type, device_type>::get_device_copy(*temp);
-
 	if (is_reference <T>()) {
-		using namespace std;
 		// ok this means our kernel wants a reference
-
 		// copy device_copy into global memory
-		shared_device_pointer<device_type> device_copy_ptr ( cupp::malloc<device_type>() );
-		cupp::copy_host_to_device(device_copy_ptr.get(), &device_copy);
+		shared_device_pointer<device_type> device_copy_ptr ( kernel_call_traits<host_type, device_type>::get_device_based_device_copy(*temp) );
 
 		// push address of device_copy in global memory of type device_type* on kernel_stack
 		put_argument_on_stack(device_copy_ptr.get());
@@ -211,6 +204,9 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 		// return address of of type add_pointer<device_type>
 		return boost::any(device_copy_ptr);
 	} else {
+		/// @TODO can this be a reference?
+		const device_type &device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(*temp);
+		
 		// push device_type auf kernel stack
 		put_argument_on_stack(device_copy);
 

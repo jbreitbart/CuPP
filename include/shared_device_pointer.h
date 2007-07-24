@@ -25,6 +25,7 @@
 // Include assert
 #include <cassert>
 
+// cupp::free()
 #include "cupp_runtime.h"
 
 

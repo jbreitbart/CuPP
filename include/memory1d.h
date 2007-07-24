@@ -231,11 +231,29 @@ class memory1d {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		deviceT::memory1d<T> get_device_copy() const {
+		deviceT::memory1d<T> get_host_based_device_copy() const {
 			deviceT::memory1d<T> returnee;
 			returnee.size_ = size();
 			returnee.device_pointer_ = cuda_pointer().get();
 			return returnee;
+		}
+
+		/**
+		 * @brief This function is called by the kernel_call_traits
+		 * @return A on the device useable memory1d reference
+		 */
+		shared_device_pointer<deviceT::memory1d<T> > get_device_based_device_copy() const {
+			if (device_proxy_.get()==0) {
+				// copy device_copy into global memory
+				shared_device_pointer < deviceT::memory1d<T> > device_proxy ( cupp::malloc< deviceT::memory1d<T> >() );
+
+				device_proxy_ = device_proxy;
+
+				/// @todo is this legal?
+				cupp::copy_host_to_device(device_proxy_, &get_host_based_device_copy());
+			}
+
+			return device_proxy_;
 		}
 
 
@@ -249,6 +267,11 @@ class memory1d {
 		 * How much memory has been allocated
 		 */
 		size_type size_;
+
+		/**
+		 * Our proxy on the device
+		 */
+		mutable shared_device_pointer<deviceT::memory1d<T> > device_proxy_;
 }; // class memory1d
 
 
@@ -270,6 +293,7 @@ template <typename T>
 class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
 	typedef cupp::memory1d<T>           host_type;
 	typedef cupp::deviceT::memory1d<T>  device_type;
+	
 	public:
 		/**
 		* This function is called when a parameter of type @a host_type is passed as a not-const reference
@@ -285,10 +309,17 @@ class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
 		/**
 		* Creates a copy of our data for the device
 		*/
-		static const device_type get_device_copy (const host_type& that) {
-			return that.get_device_copy();
+		static const device_type get_host_based_device_copy (const host_type& that) {
+			return that.get_host_based_device_copy();
 		}
 
+		/**
+		 * Creates a copy of our data for the device in host memory.
+		 * @note This function is called when you pass a parameter by reference to a kernel.
+		 */
+		static shared_device_pointer<device_type> get_device_based_device_copy (const host_type& that) {
+			return that.get_device_based_device_copy();
+		}
 };
 
 template <typename T>

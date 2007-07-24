@@ -18,6 +18,7 @@
 #include "kernel_type_binding.h"
 #include "kernel_call_traits.h"
 #include "device.h"
+#include "shared_device_pointer.h"
 
 // STD
 #include <vector>
@@ -152,7 +153,7 @@ void kernel::handle_call_traits(const P &p, const int i) {
 	if (dirty[i-1]) {
 		typedef typename kernel_device_type<P>::type device_type;
 		typedef typename kernel_host_type<P>::type host_type;
-		device_type *device_ptr = boost::any_cast<device_type *>(returnee_vec[i-1]);
+		shared_device_pointer<device_type> device_ptr = boost::any_cast< shared_device_pointer<device_type> >(returnee_vec[i-1]);
 
 		kernel_call_traits<host_type, device_type>::dirty(p, device_ptr);
 	}

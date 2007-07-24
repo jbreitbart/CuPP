@@ -288,11 +288,9 @@ class kernel_call_traits <cupp::memory1d<T>, cupp::deviceT::memory1d<T> >  {
 		* @param that the host representation of our data
 		* @param device_copy a pointer to the dirty data on the device (this is a DEVICE POINTER, treat it with care!)
 		*/
-		static void dirty (const host_type& that, device_type *device_copy) {
+		static void dirty (const host_type& that, shared_device_pointer<device_type> device_copy) {
 			// if our data on the host is changed ...
-			// we don't care :-) We just point to it.
-
-			cupp::free(device_copy);
+			// we don't care :-) We just point to it anyway
 		}
 
 		/**

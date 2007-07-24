@@ -19,6 +19,7 @@
 #include "kernel_call_traits.h"
 #include "kernel_type_binding.h"
 #include "cupp_runtime.h"
+#include "shared_device_pointer.h"
 
 // STD
 #include <vector>
@@ -201,11 +202,11 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const boost::any &arg) {
 		// ok this means our kernel wants a reference
 
 		// copy device_copy into global memory
-		device_type* device_copy_ptr = cupp::malloc<device_type>();
-		cupp::copy_host_to_device(device_copy_ptr, &device_copy);
+		shared_device_pointer<device_type> device_copy_ptr ( cupp::malloc<device_type>() );
+		cupp::copy_host_to_device(device_copy_ptr.get(), &device_copy);
 
 		// push address of device_copy in global memory of type device_type* on kernel_stack
-		put_argument_on_stack(device_copy_ptr);
+		put_argument_on_stack(device_copy_ptr.get());
 		
 		// return address of of type add_pointer<device_type>
 		return boost::any(device_copy_ptr);

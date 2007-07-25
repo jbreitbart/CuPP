@@ -177,10 +177,9 @@ template <typename T>
 boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boost::any &arg) {
 	using namespace boost;
 	
-	typedef typename kernel_device_type<T>::type device_type;
-
 	// get the host type matching our device_type
-	typedef typename kernel_host_type<device_type>::type host_type;
+	typedef typename kernel_host_type<T>::type host_type;
+	typedef typename kernel_device_type<host_type>::type device_type;
 
 	//get what is inside our any
 	host_type* temp = 0;
@@ -195,7 +194,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 
 	if (is_reference <T>()) {
 		// ok this means our kernel wants a reference
-		// copy device_copy into global memory
+		
 		shared_device_pointer<device_type> device_copy_ptr ( kernel_call_traits<host_type, device_type>::get_device_based_device_copy(d, *temp) );
 
 		// push address of device_copy in global memory of type device_type* on kernel_stack
@@ -205,7 +204,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 		return boost::any(device_copy_ptr);
 	} else {
 		/// @TODO can this be a reference?
-		const device_type &device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(*temp);
+		const device_type &device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(d, *temp);
 		
 		// push device_type auf kernel stack
 		put_argument_on_stack(device_copy);

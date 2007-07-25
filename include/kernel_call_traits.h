@@ -28,8 +28,8 @@ class kernel_call_traits {
 		 * Creates a copy of our data for the device in host memory.
 		 * @note This function is called when you pass a parameter by value to a kernel.
 		 */
-		static device_type get_host_based_device_copy (const host_type& that) {
-			return that.get_host_based_device_copy();
+		static device_type get_host_based_device_copy (const device &d, const host_type& that) {
+			return that.get_host_based_device_copy(d);
 		}
 		
 		/**
@@ -58,7 +58,7 @@ class kernel_call_traits <type, type> {
 		/**
 		 * @see above
 		 */
-		inline static const type& get_host_based_device_copy (const type& that) {
+		inline static const type& get_host_based_device_copy (const device &d, const type& that) {
 			return that;
 		}
 		
@@ -70,7 +70,7 @@ class kernel_call_traits <type, type> {
 			shared_device_pointer<type> device_copy_ptr ( cupp::malloc<type>() );
 
 			/// @todo is this legal?
-			cupp::copy_host_to_device(device_copy_ptr, &get_host_based_device_copy(that));
+			cupp::copy_host_to_device(device_copy_ptr, &get_host_based_device_copy(d, that));
 
 			return device_copy_ptr;
 		}

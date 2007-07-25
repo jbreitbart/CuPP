@@ -63,7 +63,7 @@ class kernel_device_type < cupp::memory1d<T> > {
 
 template< typename T >
 class memory1d {
-	typedef deviceT::memory1d<T> device_type;
+	typedef typename kernel_device_type< memory1d<T> >::type  device_type;
 	public:
 		/**
 		 * @typedef size_type
@@ -246,7 +246,7 @@ class memory1d {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		device_type get_host_based_device_copy() const ;
+		device_type get_host_based_device_copy(const device &d) const ;
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
@@ -279,7 +279,7 @@ class memory1d {
 
 
 template <typename T>
-typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy() const {
+typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const device &d) const {
 	device_type returnee;
 	returnee.size_ = size();
 	returnee.device_pointer_ = cuda_pointer().get();
@@ -294,7 +294,7 @@ shared_device_pointer< typename memory1d<T>::device_type > memory1d<T>::get_devi
 
 		device_proxy_ = device_proxy;
 
-		deviceT::memory1d<T> copy = get_host_based_device_copy();
+		deviceT::memory1d<T> copy = get_host_based_device_copy(d);
 		/// @todo is this legal?
 		cupp::copy_host_to_device(device_proxy_, &copy);
 	}

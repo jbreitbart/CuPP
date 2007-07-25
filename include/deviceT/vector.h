@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef CUPP_DEVICET_memory1d_H
-#define CUPP_DEVICET_memory1d_H
+#ifndef CUPP_DEVICET_vector_H
+#define CUPP_DEVICET_vector_H
 
 // Include std::size_t
 #include <cstddef>
@@ -14,21 +14,20 @@
 namespace cupp {
 
 template <typename T>
-class memory1d;
+class vector;
 
 namespace deviceT {
 
 /**
- * @class memory1d
+ * @class vector
  * @author Jens Breitbart
  * @version 0.1
- * @date 10.07.2007
- * @brief Represents a memory block on an associated CUDA device.
+ * @date 24.07.2007
  * @platform Device only
  */
 
-template< typename T, typename host_type=cupp::memory1d<T> >
-class memory1d {
+template< typename T >
+class vector  {
 	public:
 		/**
 		 * @typedef size_type
@@ -42,9 +41,8 @@ class memory1d {
 		 */
 		typedef T value_type;
 
-
-		memory1d ( size_type size, T* device_pointer) : size_(size), device_pointer_(device_pointer) {}
-		memory1d() {}
+		vector () {}
+		vector ( size_type size, T* device_pointer) : size_(size), device_pointer_(device_pointer) {}
 		
 		/**
 		 * @brief Returns the size of the memory block
@@ -72,36 +70,36 @@ class memory1d {
 		 */
 		CUPP_RUN_ON_DEVICE
 		T const& operator[]( size_type index ) const;
-
+		
 	private:
-		/**
-		 * The pointer to the device memory
-		 */
-		T* device_pointer_;
 
 		/**
 		 * How many memory has been allocated
 		 */
 		size_type size_;
 
+		/**
+		 * The pointer to the device memory
+		 */
+		T* device_pointer_;
+		
 		template <typename TT>
-		friend class cupp::memory1d;
-}; // class memory1d
+		friend class cupp::vector;
+};
 
-
-template <typename T, typename host_type>
-T& memory1d<T, host_type>::operator[](size_type index) {
+template <typename T>
+T& vector<T>::operator[](size_type index) {
 	return device_pointer_[index];
 }
 
-template <typename T, typename host_type>
-T const& memory1d<T, host_type>::operator[](size_type index) const {
+template <typename T>
+T const& vector<T>::operator[](size_type index) const {
 	return device_pointer_[index];
 }
 
 
-template <typename T, typename host_type>
-typename memory1d<T, host_type>::size_type memory1d<T, host_type>::size() const {
+template <typename T>
+typename vector<T>::size_type vector<T>::size() const {
 	return size_;
 }
 

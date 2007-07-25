@@ -557,6 +557,8 @@ class vector {
 		 * @brief This function is called by the kernel_call_traits
 		 */
 		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {
+			UNUSED_PARAMETER(d);
+			UNUSED_PARAMETER(device_copy);
 			device_changes_ = true;
 		}
 

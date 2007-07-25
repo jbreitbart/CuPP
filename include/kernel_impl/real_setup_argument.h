@@ -6,6 +6,8 @@
 #ifndef CUPP_KERNEL_IMPL_real_setup_argument_H
 #define CUPP_KERNEL_IMPL_real_setup_argument_H
 
+#include "cupp_common.h"
+
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>
 
@@ -75,7 +77,7 @@ class real_setup_argument<1> {
 template <>
 class real_setup_argument<0> {
 	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that) { return boost::any(); }
+	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
 
 	template <typename T>
 	friend class kernel_launcher_impl;
@@ -86,6 +88,16 @@ class real_setup_argument<0> {
 
 
 /*** IMPLEMENTATION ***/
+
+template <typename T>
+boost::any real_setup_argument<0>::set (const device &d, const boost::any &arg, const int pos, T &that) {
+	UNUSED_PARAMETER(d);
+	UNUSED_PARAMETER(arg);
+	UNUSED_PARAMETER(that);
+	UNUSED_PARAMETER(pos);
+	return boost::any();
+}
+
 
 template <typename T>
 boost::any real_setup_argument<1>::set (const device &d, const boost::any &arg, const int pos, T &that) {

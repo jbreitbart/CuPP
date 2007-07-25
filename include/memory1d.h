@@ -257,7 +257,10 @@ class memory1d {
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {  }
+		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {
+			UNUSED_PARAMETER(d);
+			UNUSED_PARAMETER(device_copy);
+		}
 
 
 	private:
@@ -280,6 +283,7 @@ class memory1d {
 
 template <typename T>
 typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const device &d) const {
+	UNUSED_PARAMETER(d);
 	return device_type (size(), cuda_pointer().get());
 }
 
@@ -313,6 +317,7 @@ memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : dev
 
 template <typename T>
 memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
+	UNUSED_PARAMETER(dev);
 	copy_to_device(data);
 }
 

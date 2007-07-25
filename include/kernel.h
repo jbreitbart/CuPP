@@ -163,6 +163,7 @@ void kernel::handle_call_traits(const P &p, const int i, const device &d) {
 
 /***  OPERATPR()  ***/
 void kernel::operator()(const device &d) {
+	UNUSED_PARAMETER(d);
 	check_number_of_parameters(0);
 	
 	kb_ -> configure_call();

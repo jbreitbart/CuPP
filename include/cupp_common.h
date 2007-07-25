@@ -35,6 +35,9 @@
 	#define CUPP_SHARED
 #endif
 
-
+/**
+ * Macro to surpress warning that a function parameter isn't used.
+ */
+#define UNUSED_PARAMETER(expr) (void)sizeof(expr)
 
 #endif // CUPP_cupp_common_H

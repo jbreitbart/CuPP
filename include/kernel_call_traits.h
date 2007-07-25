@@ -66,6 +66,7 @@ class kernel_call_traits <type, type> {
 		 * @see above
 		 */
 		inline static const type& get_host_based_device_copy (const device &d, const type& that) {
+			UNUSED_PARAMETER(d);
 			return that;
 		}
 		
@@ -86,6 +87,7 @@ class kernel_call_traits <type, type> {
 		* @see above
 		*/
 		inline static void dirty (const device &d, const type& that, shared_device_pointer<type> device_copy) {
+			UNUSED_PARAMETER(d);
 			// do a dirty ugly bit copy from device memory to host memory
 			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy );
 		}

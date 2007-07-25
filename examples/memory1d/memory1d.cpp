@@ -13,7 +13,7 @@ typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
 
 kernelT get_kernel();
 
-int main(int argc, char *argv[]) {
+int main() {
 	// lets get a simple CUDA device up and running
 	device d;
 

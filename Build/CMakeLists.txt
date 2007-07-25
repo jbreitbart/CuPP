@@ -16,10 +16,10 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/../include/)
 CUDA_INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/../include/)
 
 # if you don't want the full compiler output, remove the following line
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+#SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 #add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -O2 -g)
+ADD_DEFINITIONS(-Wall -W -O2 -g)
 
 # build the CuPP library
 SUBDIRS(../src)

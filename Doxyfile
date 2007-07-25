@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = CuPP
-PROJECT_NUMBER         = $VERSION$
+PROJECT_NUMBER         = "0.1 - preview release"
 OUTPUT_DIRECTORY       = doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English

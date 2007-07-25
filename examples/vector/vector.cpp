@@ -38,14 +38,14 @@ int main(int argc, char *argv[]) {
 	// call the kernel
 	k (d, eight);
 
-	// show me what I have just filled into the array
+	// print the array with the new value
 	cout << "after the kernel call:" << endl;
 	for (cupp::vector<int>::iterator i=eight.begin(); i!=eight.end(); ++i) {
 		cout << *i << ", ";
 		*i = *i * 2;
 	}
 	cout << endl;
-	
+
 	cout << "multiply every value with 2:" << endl;
 	for (cupp::vector<int>::iterator i=eight.begin(); i!=eight.end(); ++i) {
 		cout << *i << ", ";

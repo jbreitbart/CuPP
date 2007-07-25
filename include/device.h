@@ -19,10 +19,8 @@ namespace cupp {
  * @version 0.1
  * @date 13.06.2007
  * @platform Host only!
- * @warning 
- * @brief asdvasd
- *
- * asdvasdvasdv
+ * @brief This class is a handle to a CUDA device. You need it to allocate data, run kernel, ...
+ * @warning If you destroy your device object, all data located on it will be destroyed.
  */
 class device {
 	public: /***  CONSTRUCTORS & DESTRUCTORS ***/

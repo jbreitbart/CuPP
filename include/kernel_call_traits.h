@@ -26,6 +26,8 @@ class kernel_call_traits {
 	public:
 		/**
 		 * Creates a copy of our data for the device in host memory.
+		 * @param d The device the kernel will be executed on
+		 * @param that The object that is about to be passed to the kernel
 		 * @note This function is called when you pass a parameter by value to a kernel.
 		 */
 		static device_type get_host_based_device_copy (const device &d, const host_type& that) {
@@ -34,6 +36,8 @@ class kernel_call_traits {
 		
 		/**
 		 * Creates a copy of our data for the device in host memory.
+		 * @param d The device the kernel will be executed on
+		 * @param that The object that is about to be passed to the kernel
 		 * @note This function is called when you pass a parameter by reference to a kernel.
 		 */
 		static shared_device_pointer<device_type> get_device_based_device_copy (const device &d, const host_type& that) {
@@ -41,17 +45,20 @@ class kernel_call_traits {
 		}
 		
 		/**
-		* This function is when the value may have been changed on the device.
-		* @param that The host representation of your data
-		* @param device_copy The pointer you created with @a get_device_based_device_copy
-		* @note This function is only called if you pass a parameter by non-const reference to a kernel.
-		*/
+		 * This function is when the value may have been changed on the device.
+		 * @param d The device the kernel will be executed on
+		 * @param that The host representation of your data
+		 * @param device_copy The pointer you created with @a get_device_based_device_copy
+		 * @note This function is only called if you pass a parameter by non-const reference to a kernel.
+		 */
 		static void dirty (const device &d, const host_type& that, shared_device_pointer<device_type> device_copy) {
 			that.dirty(d, device_copy);
 		}
 };
 
-// this is the default trait for all types which require no special treatment
+/**
+ * The default traits for all types that need no special handling (device_type == host_type)
+ */
 template <typename type>
 class kernel_call_traits <type, type> {
 	public:

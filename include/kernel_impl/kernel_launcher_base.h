@@ -39,10 +39,8 @@ class kernel_launcher_base {
 		virtual void launch() = 0;
 
 		/**
-		 * See in @c kernel_launcher_impl.
+		 * Virtual destructor
 		 */
-		virtual std::vector<bool> dirty_parameters() const = 0;
-		
 		virtual ~kernel_launcher_base() {};
 };
 

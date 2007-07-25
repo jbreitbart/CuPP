@@ -41,7 +41,16 @@ class vector  {
 		 */
 		typedef T value_type;
 
+		/**
+		 * Creates an empty and useless vector :-)
+		 */
 		vector () {}
+		
+		/**
+		 * Constructor
+		 * @param size The size of the memory to be pointed to
+		 * @param device_pointer The pointer to the memory (device pointer!)
+		 */
 		vector ( size_type size, T* device_pointer) : size_(size), device_pointer_(device_pointer) {}
 		
 		/**

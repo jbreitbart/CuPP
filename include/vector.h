@@ -58,7 +58,6 @@ class kernel_device_type < cupp::vector<T> > {
  * @date 24.07.2007
  * @platform Host only
  * @brief A std::vector wrapper, which can be transfered to the device incl. lazy memory copying.
- * @todo iterators can break everything ... need to write our own iterator here
  */
 
 template< typename T >
@@ -66,14 +65,21 @@ class vector {
 	public: /*** TYPEDEFS  ***/
 		typedef typename std::vector<T>::size_type               size_type;
 		typedef typename std::vector<T>::value_type              value_type;
-		//typedef typename std::vector<T>::iterator                iterator;
 		typedef typename std::vector<T>::const_iterator          const_iterator;
 		typedef typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
 
 		typedef typename kernel_device_type < vector<T> >::type  device_type;
 
 	public: /***  The proxy class  ***/
-	
+
+		/**
+		 * @class element_proxy
+		 * @author Jens Breitbart
+		 * @version 0.1
+		 * @date 24.07.2007
+		 * @brief This class is returned by some functions of @c cupp::vector to determine if an element inside the vector is changed.
+		 * @see More effective C++ (Scott Meyers) §30
+		 */
 		class element_proxy {
 			private: /***  Data elements  ***/
 				const size_type at_;
@@ -106,6 +112,14 @@ class vector {
 				}
 		};
 	
+		/**
+		 * @class iterator
+		 * @author Jens Breitbart
+		 * @version 0.1
+		 * @date 24.07.2007
+		 * @brief This class is returned by some functions of @c cupp::vector to determine if an element inside the vector is changed.
+		 * @see More effective C++ (Scott Meyers) §30
+		 */
 		class iterator {
 			private: /***  Data elements  ***/
 				typename std::vector<T>::iterator i_;
@@ -142,15 +156,31 @@ class vector {
 					vector_.host_changes_ = true;
 					return *i_;
 				}
-				
+
+				// prefix
 				void operator++ () {
 					++i_;
 				}
-				
+
+				// postfix
+				iterator operator++ (int) {
+					iterator returnee = *this;
+					++(*this);
+					return returnee;
+				}
+
+				// prefix
 				void operator-- () {
 					--i_;
 				}
 
+				// postfix
+				iterator operator-- (int) {
+					iterator returnee = *this;
+					--(*this);
+					return returnee;
+				}
+				
 				bool operator!= (const iterator &other) {
 					return i_ != other.i_;
 				}
@@ -165,12 +195,12 @@ class vector {
 	public: /***  CONSTRUCTORS AND DESTRUCTORS  ***/
 	
 		/**
-		 * Default constructor
+		 * @see @c std::vector
 		 */
 		vector() : data_(), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
 
 		/**
-		 * Copy constructor
+		 * @see @c std::vector
 		 */
 		vector( const vector& c ) : host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {
 			c.update_host();
@@ -178,18 +208,18 @@ class vector {
 		}
 
 		/**
-		 * Creates a vector with @a num elements with the value @a val
+		 * @see @c std::vector
 		 */
 		vector( size_type num, const T& val = T() ) : data_(num, val), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
 
 		/**
-		 * Fills the vector with the data defined by @a start and @a end
+		 * @see @c std::vector
 		 */
 		template <typename input_iterator>
 		vector( input_iterator start, input_iterator end ) : data_(start, end), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
 
 		/**
-		 * The destructor
+		 * @see @c std::vector
 		 */
 		~vector() {
 			delete memory_;
@@ -198,12 +228,15 @@ class vector {
 
 
 	public: /***  OPERATORS  ***/
+		/**
+		 * @see @c std::vector
+		 */
 		element_proxy operator[]( size_type index ) {
 			return element_proxy (index, *this);
 		}
 
 		/**
-		 * Access the element with @a index inside our vector
+		 * @see @c std::vector
 		 */
 		const T& operator[]( size_type index ) const {
 			update_host();
@@ -211,7 +244,7 @@ class vector {
 		}
 
 		/**
-		 * Assign another vector to our vector
+		 * @see @c std::vector
 		 */
 		vector& operator=(const vector& c2) {
 			c2.update_host();
@@ -225,6 +258,9 @@ class vector {
 		}
 
 	public: /***  NORMAL FUNCTIONS  ***/
+		/**
+		 * @see @c std::vector
+		 */
 		void assign( size_type num, const T& val ) {
 			data_.assign (num, val);
 			
@@ -233,6 +269,9 @@ class vector {
 			device_changes_ = false;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		template <typename input_iterator>
 		void assign( input_iterator start, input_iterator end ) {
 			data_.assign (start, end);
@@ -242,93 +281,147 @@ class vector {
 			device_changes_ = false;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		element_proxy at( size_type loc ) {
 			data_.at(loc);
 			return element_proxy (index, *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const T& at( size_type loc ) const {
 			update_host();
 			return data_.at(loc);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		element_proxy back() {
 			return (data_.size()-1, *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const T& back() const {
 			update_host();
 			return data_.back();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		iterator begin() {
 			update_host();
 			host_changes_ = true;
 			return iterator (data_.begin(), *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const_iterator begin() const {
 			return data_.begin();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		size_type capacity() const {
 			return data_.capacity();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void clear() {
 			data_.clear();
 			host_changes_ = true;
 			device_changes_ = false;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		bool empty() const {
 			return data_.empty();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		iterator end() {
 			update_host();
 			host_changes_ = true;
 			return iterator (data_.end(), *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const_iterator end() const {
 			update_host();
 			return data_.end();
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		iterator erase( iterator loc ) {
 			update_host();
 			host_changes_ = true;
 			return iterator (data_.erase(loc), *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		iterator erase( iterator start, iterator end ) {
 			update_host();
 			host_changes_ = true;
 			return iterator (data_.erase(start, end), *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		element_proxy front() {
 			return element_proxy(0, *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const T& front() const {
 			update_host();
 			return data_.front();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		iterator insert( iterator loc, const T& val ) {
 			update_host();
 			host_changes_ = true;
 			return iterator (data_.insert(loc, val), *this);
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		void insert( iterator loc, size_type num, const T& val ) {
 			update_host();
 			host_changes_ = true;
 			data_.insert(loc, num, val);
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		template <typename input_iterator>
 		void insert( iterator loc, input_iterator start, input_iterator end ) {
 			update_host();
@@ -336,58 +429,91 @@ class vector {
 			data_.insert(loc, start, end);
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		size_type max_size() const {
 			return data_.max_size();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void pop_back() {
 			update_host();
 			data_.pop_back();
 			host_changes_ = true;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void push_back( const T& val ) {
 			update_host();
 			data_.push_back(val);
 			host_changes_ = true;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		reverse_iterator rbegin() {
 			update_host();
 			host_changes_ = true;
 			return data_.rbegin();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		const_reverse_iterator rbegin() const {
 			update_host();
 			return data_.rbegin();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		reverse_iterator rend() {
 			update_host();
 			host_changes_ = true;
 			return data_.rend();
 		}
 		
+		/**
+		 * @see @c std::vector
+		 */
 		const_reverse_iterator rend() const {
 			update_host();
 			return data_.rend();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void reserve( size_type size ) {
 			data_.reserve(size);
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void resize( size_type num, const T& val = T() ) {
 			update_host();
 			data_resize (num, val);
 			host_changes_ = true;
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		size_type size() const {
 			return data_.size();
 		}
 
+		/**
+		 * @see @c std::vector
+		 */
 		void swap( vector<T>& from ) {
 			update_host();
 			

@@ -19,13 +19,13 @@
 	#define CUPP_SHARED __shared__
 #else
 	/**
-	 * @def CUPP_HOST
+	 * @def CUPP_RUN_ON_HOST
 	 * Specifies a function as accessible from the host.
 	 */
 	#define CUPP_RUN_ON_HOST
 	
 	/**
-	 * @def CUPP_DEVICE
+	 * @def CUPP_RUN_ON_DEVICE
 	 * Specifies a function as accessible from the device.
 	 */
 	#define CUPP_RUN_ON_DEVICE

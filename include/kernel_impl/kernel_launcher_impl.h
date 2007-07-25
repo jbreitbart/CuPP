@@ -53,8 +53,8 @@ class kernel_launcher_impl : public kernel_launcher_base {
 
 		/**
 		 * This is the arity of the function.
-		 * @example F = void (*)(int, int) => arity == 2
-		 * @example F = void (*)(void)     => arity == 0
+		 * @example F_ = void (*)(int, int) => arity == 2
+		 * @example F_ = void (*)(void)     => arity == 0
 		 */
 		enum { arity = boost::function_traits<F>::arity };
 		
@@ -67,21 +67,22 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) : func_(func), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
+		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		func_(func), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
 
 
 		/**
 		 * Configures the cuda launch. Specifies the grid/block size for the next call.
-		 * @warning This must be called before you call put_argument_on_stack
 		 */
 		virtual void configure_call();
 
 		
 		/**
-		 * @brief Checks if the type of the passed @a arg matches the parameter @a pos of the __global__ cuda function. If everything is ok it will check the @a push_on_function_stack trait, call some possible defined conversation and than pushes the parameter on the cuda function stack.
+		 * @brief Checks if the type of @a arg matches the parameter @a pos of the __global__ cuda function. If everything is ok it will put it on the __global__ function stack
 		 * @param arg A pointer to the to be pushed argument
 		 * @param pos The position to which the passed @a arg matches to the parameter of the __global__ function. (NOTE: first position is 1 not 0, we follow the boost naming here!)
 		 * @return a pointer to the created device_copy of type kernel_type_binding<>::device_type
+		 * @warning You must call configure_call() before you call this function!
 		 */
 		virtual boost::any setup_argument(const device &d, const boost::any &arg, const int pos ) {
 			return real_setup_argument< arity >::set (d, arg, pos, *this);
@@ -96,10 +97,10 @@ class kernel_launcher_impl : public kernel_launcher_base {
 
 		/**
 		 * @brief Checks which parameters could be changed by @a launch()
-		 * @return A vector with the size of arity. True at position 0 means the data which has been passed to the first parameter of the function could have been changed by the function call and should be marked dirty.
+		 * @return A vector with the size of arity. True at position 0 means the data which has been passed to the first parameter of the function could have been changed by the function call and should be marked dirty. ~ 1 only if a parameter is passed as reference
 		 */
-		virtual std::vector<bool> dirty_parameters() const {
-			return test_dirty< arity >::template dirty< F >();
+		static std::vector<bool> dirty_parameters() {
+			return test_dirty< boost::function_traits<F>::arity >::template dirty< F >();
 		}
 
 
@@ -224,8 +225,6 @@ void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
 	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
-	// std::cout << a << std::endl;
-	// std::cout << stack_in_use_ << " => " << stack_in_use_ + sizeof(T) << std::endl;
 	stack_in_use_ += sizeof(T);
 }
 

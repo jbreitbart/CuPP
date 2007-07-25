@@ -56,10 +56,11 @@ class kernel {
 		 * @param tokens
 		 */
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) : number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity) {
+		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
+		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
 		
 			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f, grid_dim, block_dim, shared_mem, tokens);
-			dirty = kb_->dirty_parameters();
 		}
 
 		/**
@@ -132,7 +133,7 @@ class kernel {
 		/**
 		 * @brief Stores if a parameter is passed be non-const reference to our __global__. If yes we need to call kernel_call_traits::dirty
 		 */
-		std::vector<bool> dirty;
+		const std::vector<bool> dirty;
 
 		/**
 		 * @brief Stores the valuse returned by kb_ -> setup_argument(). They are needed by ther kernel_call_traits.

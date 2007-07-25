@@ -20,7 +20,7 @@
 
 namespace cupp {
 
-template< typename T > class shared_device_pointer; // forward declaration
+template< typename T > class shared_device_pointer; // forward declaration to break cycle dependency
 
 template <typename T>
 void mem_set(T* device_pointer, int value, const size_t size=1) {
@@ -111,7 +111,9 @@ void copy_device_to_host(T* destination, const shared_device_pointer<T> source, 
 	}
 }
 
-
+/**
+ * Synchronizes the calling thread with the asynchronius CUDA calls. You should never need to call this manually
+ */
 void thread_synchronize() {
 	if (cudaThreadSynchronize() != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());

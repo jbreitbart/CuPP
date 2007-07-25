@@ -280,10 +280,7 @@ class memory1d {
 
 template <typename T>
 typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const device &d) const {
-	device_type returnee;
-	returnee.size_ = size();
-	returnee.device_pointer_ = cuda_pointer().get();
-	return returnee;
+	return device_type (size(), cuda_pointer().get());
 }
 
 template <typename T>

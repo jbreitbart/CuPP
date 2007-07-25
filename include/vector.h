@@ -37,19 +37,6 @@ namespace cupp {
 // Just used to force the user to configure and get a device.
 class device;
 
-// create kernel call bindings
-template <typename T>
-class kernel_host_type<cupp::deviceT::vector<T> > {
-	public:
-		typedef cupp::vector<T> type;
-};
-
-template <typename T>
-class kernel_device_type < cupp::vector<T> > {
-	public:
-		typedef cupp::deviceT::vector<T> type;
-};
-
 
 /**
  * @class vector
@@ -641,6 +628,21 @@ class vector {
 		 */
 		mutable device *device_ptr_;
 }; // class vector
+
+
+// create kernel call bindings
+template <typename T>
+class kernel_host_type<cupp::deviceT::vector<T> > {
+	public:
+		typedef cupp::vector<T> type;
+};
+
+template <typename T>
+class kernel_device_type < cupp::vector<T> > {
+	public:
+		typedef cupp::deviceT::vector<T> type;
+};
+
 
 template <typename T1, typename T2>
 bool operator==(const vector<T1>& c1, const vector<T2>& c2) {

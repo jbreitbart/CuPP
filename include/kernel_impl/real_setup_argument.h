@@ -167,7 +167,7 @@ boost::any real_setup_argument<3>::set (const device &d, const boost::any &arg, 
 template <typename T>
 boost::any real_setup_argument<4>::set (const device &d, const boost::any &arg, const int pos, T &that) {
 	if (pos == 4) {
-		typedef typename boost::function_traits <typename T::F> :: arg3_type ARG;
+		typedef typename boost::function_traits <typename T::F> :: arg4_type ARG;
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<3>::set(d, arg, pos, that);
@@ -176,7 +176,7 @@ boost::any real_setup_argument<4>::set (const device &d, const boost::any &arg, 
 template <typename T>
 boost::any real_setup_argument<5>::set (const device &d, const boost::any &arg, const int pos, T &that) {
 	if (pos == 5) {
-		typedef typename boost::function_traits <typename T::F> :: arg3_type ARG;
+		typedef typename boost::function_traits <typename T::F> :: arg5_type ARG;
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<4>::set(d, arg, pos, that);
@@ -185,7 +185,7 @@ boost::any real_setup_argument<5>::set (const device &d, const boost::any &arg, 
 template <typename T>
 boost::any real_setup_argument<6>::set (const device &d, const boost::any &arg, const int pos, T &that) {
 	if (pos == 6) {
-		typedef typename boost::function_traits <typename T::F> :: arg3_type ARG;
+		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<5>::set(d, arg, pos, that);

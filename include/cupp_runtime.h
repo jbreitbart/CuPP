@@ -34,12 +34,16 @@ void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t si
 	mem_set(device_pointer.get(), value, size);
 }
 
+namespace {
+///@todo put this in cpp file ... after björn found it :-p
 void* malloc_ (const unsigned int size_in_b) {
 	void* temp;
 	if (cudaMalloc( &temp, size_in_b ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 	return temp;
+}
+
 }
 
 template <typename T>
@@ -114,10 +118,13 @@ void copy_device_to_host(T* destination, const shared_device_pointer<T> source, 
 /**
  * Synchronizes the calling thread with the asynchronius CUDA calls. You should never need to call this manually
  */
+namespace {
+///@todo put this in cpp file ... after björn found it :-p
 void thread_synchronize() {
 	if (cudaThreadSynchronize() != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
+}
 }
 
 } // namespace cupp

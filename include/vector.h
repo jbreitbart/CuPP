@@ -97,6 +97,11 @@ class vector {
 					vector_.data_[at_] = rhs;
 					return *this;
 				}
+
+				T* operator&() {
+					vector_.update_host();
+					return &vector_.data_[at_];
+				}
 		};
 	
 		/**

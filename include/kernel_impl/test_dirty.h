@@ -37,6 +37,42 @@ class test_dirty {
 
 
 template <>
+class test_dirty<6> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend std::vector<bool> test_dirty<7>::dirty();
+};
+
+template <>
+class test_dirty<5> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend std::vector<bool> test_dirty<6>::dirty();
+};
+
+template <>
+class test_dirty<4> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend std::vector<bool> test_dirty<5>::dirty();
+};
+
+template <>
 class test_dirty<3> {
 	template <typename F>
 	static std::vector<bool> dirty ();
@@ -131,6 +167,32 @@ std::vector<bool> test_dirty<3>::dirty () {
 	return tmp;
 }
 
+template <typename F>
+std::vector<bool> test_dirty<4>::dirty () {
+	typedef typename boost::function_traits<F>::arg4_type ARG;
+	
+	std::vector< bool > tmp(test_dirty<3>::dirty<F>() );
+	tmp.push_back (check_arg<ARG>());
+	return tmp;
+}
+
+template <typename F>
+std::vector<bool> test_dirty<5>::dirty () {
+	typedef typename boost::function_traits<F>::arg5_type ARG;
+	
+	std::vector< bool > tmp(test_dirty<4>::dirty<F>() );
+	tmp.push_back (check_arg<ARG>());
+	return tmp;
+}
+
+template <typename F>
+std::vector<bool> test_dirty<6>::dirty () {
+	typedef typename boost::function_traits<F>::arg6_type ARG;
+	
+	std::vector< bool > tmp(test_dirty<5>::dirty<F>() );
+	tmp.push_back (check_arg<ARG>());
+	return tmp;
+}
 
 } // kernel_impl
 } // cupp

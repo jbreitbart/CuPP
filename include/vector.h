@@ -492,7 +492,7 @@ class vector {
 		 */
 		void resize( size_type num, const T& val = T() ) {
 			update_host();
-			data_resize (num, val);
+			data_.resize (num, val);
 			host_changes_ = true;
 		}
 

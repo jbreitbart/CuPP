@@ -306,7 +306,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6 ) {
-	check_number_of_parameters(5);
+	check_number_of_parameters(6);
 	
 	kb_ -> configure_call();
 

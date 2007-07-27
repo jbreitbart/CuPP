@@ -17,7 +17,7 @@
 namespace cupp {
 
 device::device() {
-	real_constructor(-1, -1, "Device Emulation");
+	real_constructor(-1, -1, 0);
 }
 
 device::device (const int major) {

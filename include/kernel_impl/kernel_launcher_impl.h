@@ -204,8 +204,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 		// return address of of type add_pointer<device_type>
 		return boost::any(device_copy_ptr);
 	} else {
-		/// @TODO can this be a reference?
-		const device_type &device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(d, *temp);
+		const device_type device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(d, *temp);
 		
 		// push device_type auf kernel stack
 		put_argument_on_stack(device_copy);

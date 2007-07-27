@@ -196,7 +196,7 @@ class vector {
 		 */
 		vector( const vector& c ) : host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {
 			c.update_host();
-			data_(c);
+			data_ = c.data_;
 		}
 
 		/**

@@ -68,7 +68,6 @@ class memory1d {
 		 * @brief Access the memory
 		 * @param index The index of the element you want to access
 		 * @platform Device
-		 * @todo How to implement this for the host? 
 		 */
 		CUPP_RUN_ON_DEVICE
 		T& operator[]( size_type size_type );
@@ -76,7 +75,6 @@ class memory1d {
 		/**
 		 * @brief Access the memory
 		 * @param index The index of the element you want to access
-		 * @warning @a out_iter must be able to hold at least @c size() elements.
 		 * @platform Device
 		 */
 		CUPP_RUN_ON_DEVICE

@@ -65,7 +65,7 @@ class kernel_call_traits <type, type> {
 		/**
 		 * @see above
 		 */
-		inline static const type& get_host_based_device_copy (const device &d, const type& that) {
+		inline static const type get_host_based_device_copy (const device &d, const type& that) {
 			UNUSED_PARAMETER(d);
 			return that;
 		}
@@ -74,11 +74,11 @@ class kernel_call_traits <type, type> {
 		 * @see above
 		 */
 		inline static shared_device_pointer<type> get_device_based_device_copy (const device &d, const type& that) {
+			UNUSED_PARAMETER(d);
 			// copy device_copy into global memory
 			shared_device_pointer<type> device_copy_ptr ( cupp::malloc<type>() );
 
-			/// @todo is this legal?
-			cupp::copy_host_to_device(device_copy_ptr, &get_host_based_device_copy(d, that));
+			cupp::copy_host_to_device(device_copy_ptr, &that);
 
 			return device_copy_ptr;
 		}
@@ -88,6 +88,7 @@ class kernel_call_traits <type, type> {
 		*/
 		inline static void dirty (const device &d, const type& that, shared_device_pointer<type> device_copy) {
 			UNUSED_PARAMETER(d);
+			
 			// do a dirty ugly bit copy from device memory to host memory
 			cupp::copy_device_to_host ( const_cast<type*>(&that), device_copy );
 		}

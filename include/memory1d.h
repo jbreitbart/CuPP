@@ -296,7 +296,6 @@ shared_device_pointer< typename memory1d<T>::device_type > memory1d<T>::get_devi
 		device_proxy_ = device_proxy;
 
 		deviceT::memory1d<T> copy = get_host_based_device_copy(d);
-		/// @todo is this legal?
 		cupp::copy_host_to_device(device_proxy_, &copy);
 	}
 

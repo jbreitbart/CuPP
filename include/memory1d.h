@@ -37,20 +37,6 @@ namespace cupp {
 class device;
 
 
-// create kernel call bindings
-template <typename T>
-class kernel_host_type<cupp::deviceT::memory1d<T> > {
-	public:
-		typedef typename cupp::memory1d<T> type;
-};
-
-template <typename T>
-class kernel_device_type < cupp::memory1d<T> > {
-	public:
-		typedef cupp::deviceT::memory1d<T> type;
-};
-
-
 /**
  * @class memory1d
  * @author Björn Knafla: Initial design
@@ -63,8 +49,13 @@ class kernel_device_type < cupp::memory1d<T> > {
 
 template< typename T >
 class memory1d {
-	typedef typename kernel_device_type< memory1d<T> >::type  device_type;
 	public:
+		/**
+		 * Set up the type bindings
+		 */
+		typedef deviceT::memory1d<T>  device_type;
+		typedef memory1d<T>           host_type;
+		
 		/**
 		 * @typedef size_type
 		 * @brief The type you should use to index this class

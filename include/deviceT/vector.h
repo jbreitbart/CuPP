@@ -11,6 +11,9 @@
 
 namespace cupp {
 
+template <typename T>
+class vector;
+
 namespace deviceT {
 
 /**
@@ -22,19 +25,19 @@ namespace deviceT {
  */
 
 template< typename T >
-class vector : public memory1d<T, vector<T> > {
+class vector : public memory1d<T, cupp::vector<T> > {
 	public:
 		/**
 		 * @typedef size_type
 		 * @brief The type you should use to index this class
 		 */
-		typedef typename memory1d<T, vector<T> >::size_type size_type;
+		typedef typename memory1d<T, cupp::vector<T> >::size_type size_type;
 
 		/**
 		 * @typedef value_type
 		 * @brief The type of data you want to store
 		 */
-		typedef typename memory1d<T, vector<T> >::value_type value_type;
+		typedef typename memory1d<T, cupp::vector<T> >::value_type value_type;
 
 		/**
 		 * Creates an empty and useless vector :-)
@@ -46,7 +49,7 @@ class vector : public memory1d<T, vector<T> > {
 		 * @param size The size of the memory to be pointed to
 		 * @param device_pointer The pointer to the memory (device pointer!)
 		 */
-		vector ( size_type size, T* device_pointer) : memory1d<T, vector<T> >(size, device_pointer) {}
+		vector ( size_type size, T* device_pointer) : memory1d<T, cupp::vector<T> >(size, device_pointer) {}
 };
 
 } // namespace deviceT

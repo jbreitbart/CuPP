@@ -27,9 +27,15 @@ namespace deviceT {
  * @platform Device only
  */
 
-template< typename T, typename host_type=cupp::memory1d<T> >
+template< typename T, typename host_type_=cupp::memory1d<T> >
 class memory1d {
 	public:
+		/**
+		 * Set up the type bindings
+		 */
+		typedef memory1d<T>   device_type;
+		typedef host_type_    host_type;
+
 		/**
 		 * @typedef size_type
 		 * @brief The type you should use to index this class

@@ -50,12 +50,13 @@ class device;
 template< typename T >
 class vector {
 	public: /*** TYPEDEFS  ***/
+		typedef deviceT::vector<T>  device_type;
+		typedef vector<T>           host_type;
+
 		typedef typename std::vector<T>::size_type               size_type;
 		typedef typename std::vector<T>::value_type              value_type;
 		typedef typename std::vector<T>::const_iterator          const_iterator;
 		typedef typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
-
-		typedef typename kernel_device_type < vector<T> >::type  device_type;
 
 	public: /***  The proxy class  ***/
 
@@ -633,20 +634,6 @@ class vector {
 		 */
 		mutable device *device_ptr_;
 }; // class vector
-
-
-// create kernel call bindings
-template <typename T>
-class kernel_host_type<cupp::deviceT::vector<T> > {
-	public:
-		typedef cupp::vector<T> type;
-};
-
-template <typename T>
-class kernel_device_type < cupp::vector<T> > {
-	public:
-		typedef cupp::deviceT::vector<T> type;
-};
 
 
 template <typename T1, typename T2>

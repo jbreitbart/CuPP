@@ -17,7 +17,7 @@
 namespace cupp {
 
 device::device() {
-	real_constructor(-1, -1, 0);
+	real_constructor(1, -1, 0);
 }
 
 device::device (const int major) {
@@ -65,7 +65,7 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 		//check major rev number
 		if (major!=-1) {
-			if (major==device_prop.major) {
+			if (major<=device_prop.major) {
 				take_it=true;
 			} else {
 				take_it=false;
@@ -74,7 +74,7 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 		//check minor rev number
 		if (minor!=-1) {
-			if (minor==device_prop.minor) {
+			if (minor<=device_prop.minor) {
 				take_it=true;
 			} else {
 				take_it=false;

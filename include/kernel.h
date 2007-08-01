@@ -177,7 +177,7 @@ class kernel {
 };
 
 
-void kernel::check_number_of_parameters (const int number) {
+inline void kernel::check_number_of_parameters (const int number) {
 	if (number_of_parameters_ != number) {
 		throw exception::kernel_number_of_parameters_mismatch(number_of_parameters_, number);
 	}
@@ -197,7 +197,7 @@ void kernel::handle_call_traits(const P &p, const int i, const device &d) {
 
 
 /***  OPERATPR()  ***/
-void kernel::operator()(const device &d) {
+inline void kernel::operator()(const device &d) {
 	UNUSED_PARAMETER(d);
 	check_number_of_parameters(0);
 	

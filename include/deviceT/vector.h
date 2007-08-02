@@ -42,14 +42,14 @@ class vector : public memory1d<T, cupp::vector<T> > {
 		/**
 		 * Creates an empty and useless vector :-)
 		 */
-		vector () {}
+		//vector () {}
 		
 		/**
 		 * Constructor
 		 * @param size The size of the memory to be pointed to
 		 * @param device_pointer The pointer to the memory (device pointer!)
 		 */
-		vector ( size_type size, T* device_pointer) : memory1d<T, cupp::vector<T> >(size, device_pointer) {}
+		//vector ( size_type size, T* device_pointer) : memory1d<T, cupp::vector<T> >(size, device_pointer) {}
 };
 
 } // namespace deviceT

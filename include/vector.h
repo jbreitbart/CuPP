@@ -526,7 +526,10 @@ class vector {
 		device_type get_host_based_device_copy(const device &d) const {
 			update_device(d);
 
-			return device_type(size(), memory_->cuda_pointer().get());
+			device_type temp;
+			temp.set_size ( size());
+			temp.set_device_pointer (memory_->cuda_pointer().get());
+			return temp;
 		}
 
 		/**

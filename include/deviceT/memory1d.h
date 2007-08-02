@@ -54,12 +54,12 @@ class memory1d {
 		 * @param size The size of the memory to be pointed to
 		 * @param device_pointer The pointer to the memory (device pointer!)
 		 */
-		memory1d ( size_type size, T* device_pointer) : device_pointer_(device_pointer), size_(size) {}
+		//memory1d ( size_type size, T* device_pointer) : device_pointer_(device_pointer), size_(size) {}
 
 		/**
 		 * Creates an empty and useless memory1d :-)
 		 */
-		memory1d() : size_(0), device_pointer_(0) {}
+		//memory1d() : size_(0), device_pointer_(0) {}
 		
 		/**
 		 * @brief Returns the size of the memory block
@@ -76,7 +76,7 @@ class memory1d {
 		 * @platform Device
 		 */
 		CUPP_RUN_ON_DEVICE
-		T& operator[]( size_type size_type );
+		T& operator[]( const size_type size_type );
 
 		/**
 		 * @brief Access the memory
@@ -84,8 +84,13 @@ class memory1d {
 		 * @platform Device
 		 */
 		CUPP_RUN_ON_DEVICE
-		T const& operator[]( size_type index ) const;
+		T const& operator[]( const size_type index ) const;
 
+		CUPP_RUN_ON_HOST
+		void set_device_pointer( T* device_pointer );
+
+		CUPP_RUN_ON_HOST
+		void set_size(const size_type size);
 	private:
 		/**
 		 * The pointer to the device memory
@@ -101,12 +106,12 @@ class memory1d {
 
 
 template <typename T, typename host_type>
-T& memory1d<T, host_type>::operator[](size_type index) {
+T& memory1d<T, host_type>::operator[](const size_type index) {
 	return device_pointer_[index];
 }
 
 template <typename T, typename host_type>
-T const& memory1d<T, host_type>::operator[](size_type index) const {
+T const& memory1d<T, host_type>::operator[](const size_type index) const {
 	return device_pointer_[index];
 }
 
@@ -116,6 +121,15 @@ typename memory1d<T, host_type>::size_type memory1d<T, host_type>::size() const 
 	return size_;
 }
 
+template <typename T, typename host_type>
+void memory1d<T, host_type>::set_device_pointer(T* device_pointer) {
+	device_pointer_ = device_pointer;
+}
+
+template <typename T, typename host_type>
+void memory1d<T, host_type>::set_size(const size_type size) {
+	size_ = size;
+}
 
 } // namespace deviceT
 } // namespace cupp

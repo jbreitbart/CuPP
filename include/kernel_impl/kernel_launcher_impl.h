@@ -21,6 +21,9 @@
 #include "cupp_runtime.h"
 #include "shared_device_pointer.h"
 
+// CUDA
+#include <vector_types.h>
+
 // STD
 #include <vector>
 #include <iostream>
@@ -36,8 +39,8 @@ namespace kernel_impl {
  * @class kernel_launcher_impl
  * @author Björn Knafla: Initial design and some enlightening comments.
  * @author Jens Breitbart
- * @version 0.2
- * @date 21.07.2007
+ * @version 0.3
+ * @date 03.08.2007
  * @brief Use by cupp::kernel to push arguments on the cuda function stack, call the __global__ cuda function.
  */
 
@@ -103,6 +106,35 @@ class kernel_launcher_impl : public kernel_launcher_base {
 			return test_dirty< boost::function_traits<F>::arity >::template dirty< F >();
 		}
 
+		/**
+		 * @brief Change the grid dimension
+		 */
+		virtual void set_grid_dim ( const dim3& grid_dim ) { grid_dim_ = grid_dim; }
+
+		/**
+		 * @return The current grid dimension
+		 */
+		virtual dim3 grid_dim ( ) { return grid_dim_; }
+		
+		/**
+		 * @brief Change the block dimension
+		 */
+		virtual void set_block_dim ( const dim3& block_dim ) { block_dim_ = block_dim; }
+
+		/**
+		 * @return The current block dimension
+		 */
+		virtual dim3 block_dim  ( ) { return block_dim_; }
+		
+		/**
+		 * @brief Change the size of the dynamic shared memory
+		 */
+		virtual void set_shared_mem ( const size_t& shared_mem ) { shared_mem_ = shared_mem; }
+
+		/**
+		 * @return The current size of dynamic shared memory
+		 */
+		virtual size_t shared_mem ( ) { return shared_mem_; }
 
 	private:
 		/**

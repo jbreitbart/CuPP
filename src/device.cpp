@@ -50,13 +50,12 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 	int dev = 0;
 	for (dev = 0; dev < device_cnt; ++dev) {
-		cudaDeviceProp device_prop;
-		cudaGetDeviceProperties(&device_prop, dev);
+		cudaGetDeviceProperties(&device_prop_, dev);
 		bool take_it = false;
 
 		//check major rev number
 		if (name!=0) {
-			if (std::string(name)==std::string(device_prop.name)) {
+			if (std::string(name)==std::string(device_prop_.name)) {
 				take_it=true;
 			} else {
 				take_it=false;
@@ -65,7 +64,7 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 		//check major rev number
 		if (major!=-1) {
-			if (major<=device_prop.major) {
+			if (major<=device_prop_.major) {
 				take_it=true;
 			} else {
 				take_it=false;
@@ -74,7 +73,7 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 		//check minor rev number
 		if (minor!=-1) {
-			if (minor<=device_prop.minor) {
+			if (minor<=device_prop_.minor) {
 				take_it=true;
 			} else {
 				take_it=false;

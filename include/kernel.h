@@ -39,8 +39,8 @@ using namespace cupp::kernel_impl;
  * @class kernel
  * @author Björn Knafla: Initial design and some enlightening comments.
  * @author Jens Breitbart
- * @version 0.2
- * @date 21.06.2007
+ * @version 0.3
+ * @date 03.08.2007
  * @platform Host only!
  * @brief Represents a __global__ function
  */
@@ -69,6 +69,36 @@ class kernel {
 		~kernel() {  delete kb_;  }
 
 
+		/**
+		 * @brief Change the grid dimension
+		 */
+		void set_grid_dim ( const dim3& grid_dim ) { kb_ -> set_grid_dim (grid_dim); }
+
+		/**
+		 * @return The current grid dimension
+		 */
+		dim3 grid_dim ( ) { return kb_ -> grid_dim(); }
+		
+		/**
+		 * @brief Change the block dimension
+		 */
+		void set_block_dim ( const dim3& block_dim ) { kb_ -> set_block_dim (block_dim); }
+
+		/**
+		 * @return The current block dimension
+		 */
+		dim3 block_dim  ( ) { return kb_ -> block_dim(); }
+		
+		/**
+		 * @brief Change the size of the dynamic shared memory
+		 */
+		void set_shared_mem ( const size_t& shared_mem ) { kb_ -> set_shared_mem (shared_mem); }
+
+		/**
+		 * @return The current size of dynamic shared memory
+		 */
+		size_t shared_mem ( ) { return kb_ -> shared_mem(); }
+		
 		/**
 		 * @brief Calls the kernel.
 		 * @param d The device where you want the kernel to be executed on

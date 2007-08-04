@@ -78,12 +78,6 @@ class vector {
 					at_(at), vector_(vector) {}
 
 			public: /***  Operators  ***/
-				operator T() {
-					vector_.update_host();
-					vector_.host_changes_ = true;
-					return vector_.data_[at_];
-				}
-
 				operator T() const {
 					vector_.update_host();
 					return vector_.data_[at_];

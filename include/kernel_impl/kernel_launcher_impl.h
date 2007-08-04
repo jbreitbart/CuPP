@@ -200,7 +200,6 @@ void kernel_launcher_impl<F_>::launch() {
 	if (cudaLaunch((const char*)func_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
-	
 	stack_in_use_ = 0;
 }
 

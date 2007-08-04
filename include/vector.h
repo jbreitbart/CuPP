@@ -294,7 +294,7 @@ class vector {
 		 * @see @c std::vector
 		 */
 		element_proxy back() {
-			return (data_.size()-1, *this);
+			return element_proxy(data_.size()-1, *this);
 		}
 		
 		/**

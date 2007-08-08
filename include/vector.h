@@ -78,6 +78,11 @@ class vector {
 					at_(at), vector_(vector) {}
 
 			public: /***  Operators  ***/
+				operator T() const {
+					vector_.update_host();
+					return vector_.data_[at_];
+				}
+				
 				operator T&() const {
 					vector_.update_host();
 					return vector_.data_[at_];
@@ -538,7 +543,7 @@ class vector {
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
-		 * @return A on the device useable memory1d reference
+		 * @return A on the device useable vector reference
 		 */
 		device_type get_host_based_device_copy(const device &d) const {
 			update_device(d);
@@ -551,7 +556,7 @@ class vector {
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
-		 * @return A on the device useable memory1d reference
+		 * @return A on the device useable vector reference
 		 */
 		shared_device_pointer< device_type > get_device_based_device_copy(const device &d) const {
 

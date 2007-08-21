@@ -13,6 +13,7 @@
 #include "exception/cuda_runtime_error.h"
 
 #include <cuda_runtime.h>
+#include "cupp_runtime.h"
 
 namespace cupp {
 
@@ -90,6 +91,10 @@ void device::real_constructor(const int major, const int minor, const char* name
 	}
 
 	cudaSetDevice(dev);
+}
+
+void device::sync() {
+	cupp::thread_synchronize();
 }
 
 int device::device_count() {

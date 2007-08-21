@@ -50,6 +50,12 @@ class device {
 		 */
 		~device();
 
+	public:
+		/**
+		 * @brief This functions blocks until all requested tasks/kernels have been completed
+		 */
+		 void sync();
+
 	public: /***  GET INFORMATION ABOUT THE DEVICE  ***/
 		/**
 		 * @return ASCII string identifying this device

@@ -26,9 +26,6 @@
 #include <algorithm> // Include std::swap
 #include <vector>
 
-// CUDA
-#include <cuda_runtime.h>
-
 
 namespace cupp {
 

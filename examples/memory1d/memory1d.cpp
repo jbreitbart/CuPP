@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cupp;
 
-typedef void(*kernelT)(cupp::deviceT::memory1d<int>);
+typedef void(*kernelT)(cupp::deviceT::memory1d<int>&);
 
 kernelT get_kernel();
 
@@ -35,13 +35,13 @@ int main() {
 	
 	dim3 block_dim (8);
 	dim3 grid_dim  (1);
-
+	
 	// generate the kernel
 	kernel k (get_kernel(), grid_dim, block_dim );
 	
 	// call the kernel
 	k(d, mem);
-
+	
 	mem.copy_to_host(eight);
 	
 	// show me what I have just filled into the array

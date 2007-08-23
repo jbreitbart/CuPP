@@ -201,12 +201,12 @@ class vector {
 		/**
 		 * @see @c std::vector
 		 */
-		vector() : data_(), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
+		vector() : data_(), host_changes_(true), device_changes_(false), ref_invalid_(true), memory_ptr_(0), device_ref_ptr_(0) {}
 
 		/**
 		 * @see @c std::vector
 		 */
-		vector( const vector& c ) : host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {
+		vector( const vector& c ) : host_changes_(true), device_changes_(false), ref_invalid_(true), memory_ptr_(0), device_ref_ptr_(0) {
 			c.update_host();
 			data_ = c.data_;
 		}
@@ -214,20 +214,20 @@ class vector {
 		/**
 		 * @see @c std::vector
 		 */
-		vector( size_type num, const T& val = T() ) : data_(num, val), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
+		vector( size_type num, const T& val = T() ) : data_(num, val), host_changes_(true), device_changes_(false), ref_invalid_(true), memory_ptr_(0), device_ref_ptr_(0) {}
 
 		/**
 		 * @see @c std::vector
 		 */
 		template <typename input_iterator>
-		vector( input_iterator start, input_iterator end ) : data_(start, end), host_changes_(true), device_changes_(false), proxy_invalid_(false), memory_(0), device_proxy_(0) {}
+		vector( input_iterator start, input_iterator end ) : data_(start, end), host_changes_(true), device_changes_(false), ref_invalid_(true), memory_ptr_(0), device_ref_ptr_(0) {}
 
 		/**
 		 * @see @c std::vector
 		 */
 		~vector() {
-			delete memory_;
-			delete device_proxy_;
+			delete memory_ptr_;
+			delete device_ref_ptr_;
 		}
 
 
@@ -321,7 +321,6 @@ class vector {
 		 */
 		iterator begin() {
 			update_host();
-			host_changes_ = true;
 			return iterator (data_.begin(), *this);
 		}
 		
@@ -360,7 +359,6 @@ class vector {
 		 */
 		iterator end() {
 			update_host();
-			host_changes_ = true;
 			return iterator (data_.end(), *this);
 		}
 		
@@ -528,18 +526,18 @@ class vector {
 			from.host_changes_ = true;
 		}
 
-	public: /*** CUPP FUNCTIONALITY  ***/
+	public: /*** CuPP kernel call traits implementation ***/
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
-		 * @return A on the device useable vector reference
+		 * @return The device type for our vector
 		 */
-		device_type get_host_based_device_copy(const device &d) const {
+		device_type transform (const device &d) const {
 			update_device(d);
 
 			device_type temp;
 			temp.set_size ( size());
-			temp.set_device_pointer (memory_->cuda_pointer().get());
+			temp.set_device_pointer (memory_ptr_->cuda_pointer().get());
 			return temp;
 		}
 
@@ -547,24 +545,27 @@ class vector {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable vector reference
 		 */
-		shared_device_pointer< device_type > get_device_based_device_copy(const device &d) const {
+		device_reference< device_type > get_device_reference(const device &d) const {
 
-			device_type returnee = get_host_based_device_copy(d);
+			update_device(d);
 			
-			if (proxy_invalid_) {
-				delete device_proxy_;
-				device_proxy_ = new memory1d<device_type> (d, &returnee, 1);
-				proxy_invalid_ = false;
+			if (ref_invalid_) {
+				delete device_ref_ptr_;
+
+				device_ref_ptr_ = new device_reference<device_type> (d, transform(d));
+				
+				ref_invalid_ = false;
 			}
 
-			return device_proxy_->cuda_pointer();
+			assert (device_ref_ptr_!=0);
+
+			return *device_ref_ptr_;
 		}
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {
-			UNUSED_PARAMETER(d);
+		void dirty (device_reference< device_type > device_copy) const {
 			UNUSED_PARAMETER(device_copy);
 			device_changes_ = true;
 		}
@@ -575,8 +576,9 @@ class vector {
 		void update_host() const {
 			if (device_changes_) {
 				assert(!host_changes_);
+				assert(memory_ptr_!=0);
 				
-				memory_ -> copy_to_host (&data_[0]);
+				memory_ptr_ -> copy_to_host (&data_[0]);
 				
 				device_changes_ = false;
 			}
@@ -586,27 +588,27 @@ class vector {
 		 * If there is newer data on the host, this function will update the device data with it
 		 */
 		void update_device(const device &d) const {
-		
 			// changes on the host side or we are executed on a new device
-			if (host_changes_ || &d != device_ptr_) {
-				assert (!device_changes_);
+			if (host_changes_ || d.id() != device_id_) {
+				//assert (!device_changes_); uncommented because we may just be on a different device
+				
 				// we don't have any space on the device, or the we have more/less space on the device than we neeed
 				// or we are executed on a new device
-				if (memory_ == 0 || memory_ -> size()!=data_.size() || &d != device_ptr_) {
+				if (memory_ptr_ == 0 || memory_ptr_ -> size()!=data_.size() || d.id() != device_id_) {
 					// free the memory
-					delete memory_;
+					delete memory_ptr_;
 					
 					// get new memory and copy the data
-					memory_ = new memory1d<T>(d, &data_[0], data_.size() );
+					memory_ptr_ = new memory1d<T>(d, &data_[0], data_.size() );
 
 					// we need to create a new proxy because our memory has a new address
-					proxy_invalid_ = true;
+					ref_invalid_ = true;
 				} else {
 					// copy the data to the device
-					memory_ -> copy_to_device (&data_[0]);
+					memory_ptr_ -> copy_to_device (&data_[0]);
 				}
 
-				device_ptr_ = const_cast<device*> (&d);
+				device_id_ = d.id();
 				host_changes_ = false;
 			}
 		}
@@ -631,22 +633,22 @@ class vector {
 		/**
 		 * True means we have to recreate our proxy
 		 */
-		mutable bool proxy_invalid_;
+		mutable bool ref_invalid_;
 
 		/**
 		 * Our device memory :-)
 		 */
-		mutable memory1d<T> *memory_;
+		mutable memory1d<T> *memory_ptr_;
 
 		/**
 		 * The proxy on our device
 		 */
-		mutable memory1d<device_type> *device_proxy_;
+		mutable device_reference<device_type> *device_ref_ptr_;
 
 		/**
 		 * A pointer to the device on which our data is stored
 		 */
-		mutable device *device_ptr_;
+		mutable device::idT device_id_;
 }; // class vector
 
 

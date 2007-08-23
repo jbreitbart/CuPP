@@ -26,6 +26,8 @@ namespace cupp {
  * @warning If you destroy your device object, all data located on it will be destroyed.
  */
 class device {
+	public:
+		typedef int idT;
 	public: /***  CONSTRUCTORS & DESTRUCTORS ***/
 		/**
 		 * @brief Generates a default device with no special requirements

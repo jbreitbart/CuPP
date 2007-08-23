@@ -18,7 +18,8 @@
 #include "kernel_type_binding.h"
 #include "kernel_call_traits.h"
 #include "device.h"
-#include "shared_device_pointer.h"
+//#include "shared_device_pointer.h"
+#include "device_reference.h"
 
 // STD
 #include <vector>
@@ -176,7 +177,7 @@ class kernel {
 		 * @param i The number of the parameter (1 == first parameter)
 		 */
 		template <typename P>
-		inline void handle_call_traits(const P &p, const int i, const device &d );
+		inline void handle_call_traits(const P &p, const int i);
 
 		/**
 		 * @brief Checks if @a number matches with @a number_of_parameters_
@@ -215,13 +216,14 @@ inline void kernel::check_number_of_parameters (const int number) {
 
 
 template <typename P>
-void kernel::handle_call_traits(const P &p, const int i, const device &d) {
+void kernel::handle_call_traits(const P &p, const int i) {
 	if (dirty[i-1]) {
 		typedef typename kernel_device_type<P>::type device_type;
 		typedef typename kernel_host_type<P>::type host_type;
-		shared_device_pointer<device_type> device_ptr = boost::any_cast< shared_device_pointer<device_type> >(returnee_vec[i-1]);
+		
+		device_reference<device_type> device_ptr = boost::any_cast< device_reference<device_type> >(returnee_vec[i-1]);
 
-		kernel_call_traits<host_type, device_type>::dirty(d, p, device_ptr);
+		kernel_call_traits<host_type, device_type>::dirty(p, device_ptr);
 	}
 }
 
@@ -246,7 +248,7 @@ void kernel::operator()(const device &d, const P1 &p1 ) {
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
+	handle_call_traits (p1, 1);
 
 	returnee_vec.clear();
 }
@@ -262,8 +264,8 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2 ) {
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
-	handle_call_traits (p2, 2, d);
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
 
 	returnee_vec.clear();
 }
@@ -280,9 +282,9 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
-	handle_call_traits (p2, 2, d);
-	handle_call_traits (p3, 3, d);
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
 
 	returnee_vec.clear();
 }
@@ -301,10 +303,10 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
-	handle_call_traits (p2, 2, d);
-	handle_call_traits (p3, 3, d);
-	handle_call_traits (p4, 4, d);
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
+	handle_call_traits (p4, 4);
 
 	returnee_vec.clear();
 }
@@ -324,11 +326,11 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
-	handle_call_traits (p2, 2, d);
-	handle_call_traits (p3, 3, d);
-	handle_call_traits (p4, 4, d);
-	handle_call_traits (p5, 5, d);
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
+	handle_call_traits (p4, 4);
+	handle_call_traits (p5, 5);
 
 	returnee_vec.clear();
 }
@@ -349,12 +351,12 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 	kb_->launch();
 
-	handle_call_traits (p1, 1, d);
-	handle_call_traits (p2, 2, d);
-	handle_call_traits (p3, 3, d);
-	handle_call_traits (p4, 4, d);
-	handle_call_traits (p5, 5, d);
-	handle_call_traits (p6, 6, d);
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
+	handle_call_traits (p4, 4);
+	handle_call_traits (p5, 5);
+	handle_call_traits (p6, 6);
 
 	returnee_vec.clear();
 }

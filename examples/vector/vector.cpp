@@ -42,12 +42,12 @@ int main() {
 	cout << "after the kernel call:" << endl;
 	for (cupp::vector<int>::iterator i=eight.begin(); i!=eight.end(); ++i) {
 		cout << *i << ", ";
-		*i = *i * 2;
 	}
 	cout << endl;
 
 	cout << "multiply every value with 2:" << endl;
 	for (cupp::vector<int>::iterator i=eight.begin(); i!=eight.end(); ++i) {
+		*i = *i * 2;
 		cout << *i << ", ";
 	}
 	cout << endl;
@@ -59,7 +59,6 @@ int main() {
 	cout << "after the next kernel call:" << endl;
 	for (cupp::vector<int>::iterator i=eight.begin(); i!=eight.end(); ++i) {
 		cout << *i << ", ";
-		*i = *i * 2;
 	}
 	cout << endl;
 	

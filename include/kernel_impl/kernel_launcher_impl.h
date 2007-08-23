@@ -20,6 +20,7 @@
 #include "kernel_type_binding.h"
 #include "cupp_runtime.h"
 #include "shared_device_pointer.h"
+#include "device_reference.h"
 
 // CUDA
 #include <vector_types.h>
@@ -227,24 +228,27 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 	if (is_reference <T>()) {
 		// ok this means our kernel wants a reference
 		
-		shared_device_pointer<device_type> device_copy_ptr ( kernel_call_traits<host_type, device_type>::get_device_based_device_copy(d, *temp) );
-
+		device_reference<device_type> device_ref ( kernel_call_traits<host_type, device_type>::get_device_reference (d, *temp) );
+		
 		// push address of device_copy in global memory of type device_type* on kernel_stack
-		put_argument_on_stack(device_copy_ptr.get());
+		put_argument_on_stack(device_ref.get_device_ptr().get());
 		
 		// return address of of type add_pointer<device_type>
-		return boost::any(device_copy_ptr);
-	} else {
-		//invoke the copy constructor ...
-		host_type k (*temp);
+		return boost::any(device_ref);
 		
-		const device_type device_copy = kernel_call_traits<host_type, device_type>::get_host_based_device_copy(d, k);
+	} else {
+	
+		//invoke the copy constructor ...
+		host_type host_copy (*temp);
+		
+		const device_type device_copy = kernel_call_traits<host_type, device_type>::transform(d, host_copy);
 		
 		// push device_type auf kernel stack
 		put_argument_on_stack(device_copy);
 
 		// return an empty any, this should trigger when some will try to cast it
 		return boost::any();
+		
 	}
 }
 

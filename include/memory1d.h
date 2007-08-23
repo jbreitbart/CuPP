@@ -15,6 +15,7 @@
 #include "cupp_runtime.h"
 #include "kernel_type_binding.h"
 #include "shared_device_pointer.h"
+#include "device_reference.h"
 
 #include "deviceT/memory1d.h"
 
@@ -229,25 +230,25 @@ class memory1d {
 		 */
 		shared_device_pointer<T> cuda_pointer() const {  return device_pointer_;  }
 
-	
+
+	public: /*** CuPP kernel call traits implementation ***/
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		device_type get_host_based_device_copy(const device &d) const ;
+		device_type transform(const device &d) const;
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		shared_device_pointer< device_type > get_device_based_device_copy(const device &d) const;
+		device_reference<device_type> get_device_reference(const device &d) const;
 		
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (const device &d, shared_device_pointer< device_type > device_copy) const {
-			UNUSED_PARAMETER(d);
-			UNUSED_PARAMETER(device_copy);
+		void dirty (device_reference<device_type> device_ref) const {
+			UNUSED_PARAMETER(device_ref);
 		}
 
 
@@ -265,12 +266,13 @@ class memory1d {
 		/**
 		 * Our proxy on the device
 		 */
-		mutable shared_device_pointer< device_type > device_proxy_;
+		mutable device_reference< device_type > *device_ref_;
+
 }; // class memory1d
 
 
 template <typename T>
-typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const device &d) const {
+typename memory1d<T>::device_type memory1d<T>::transform(const device &d) const {
 	UNUSED_PARAMETER(d);
 	
 	device_type temp;
@@ -282,34 +284,28 @@ typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const 
 }
 
 template <typename T>
-shared_device_pointer< typename memory1d<T>::device_type > memory1d<T>::get_device_based_device_copy(const device &d) const {
-	if (device_proxy_.get()==0) {
+device_reference< typename memory1d<T>::device_type > memory1d<T>::get_device_reference(const device &d) const {
+	if (device_ref_ == 0) {
 		// copy device_copy into global memory
-		shared_device_pointer < device_type > device_proxy ( cupp::malloc< device_type >() );
-
-		device_proxy_ = device_proxy;
-
-		deviceT::memory1d<T> copy = get_host_based_device_copy(d);
-		cupp::copy_host_to_device(device_proxy_, &copy);
+		device_ref_ = new device_reference < device_type > (d, transform(d) );
 	}
 
-	return device_proxy_;
+	return *device_ref_;
 }
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
-}
+memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {}
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
+memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {
 	set(init_value);
 }
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size) {
+memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {
 	UNUSED_PARAMETER(dev);
 	copy_to_device(data);
 }
@@ -317,7 +313,7 @@ memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : devi
 
 template <typename T>
 template <typename InputIterator>
-memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ) {
+memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ): device_ref_(0) {
 	/// @todo is this ok?
 	size_ = last - first;
 	
@@ -326,13 +322,14 @@ memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator las
 }
 
 template <typename T>
-memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_( cupp::malloc<T>(other.size()) ), size_(other.size()) {
+memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_( cupp::malloc<T>(other.size()) ), size_(other.size()), device_ref_(0) {
 	copy_to_device(other);
 }
 
 
 template <typename T>
 memory1d<T>::~memory1d() {
+	delete device_ref_;
 }
 
 template <typename T>

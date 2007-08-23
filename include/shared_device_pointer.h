@@ -38,7 +38,7 @@ struct SharedPointerReferenceCount {
 	typedef size_t size_type;
 
 	explicit SharedPointerReferenceCount(): referenceCount_( 1 ) {
-	// Nothing to do.
+		// Nothing to do.
 	}
 
 	size_type referenceCount_;

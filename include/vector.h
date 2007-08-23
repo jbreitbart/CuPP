@@ -50,8 +50,8 @@ class device;
 template< typename T >
 class vector {
 	public: /*** TYPEDEFS  ***/
-		typedef deviceT::vector<T>  device_type;
-		typedef vector<T>           host_type;
+		typedef deviceT::vector< typename get_type< T>::device_type >  device_type;
+		typedef vector<T>                                              host_type;
 
 		typedef typename std::vector<T>::size_type               size_type;
 		typedef typename std::vector<T>::value_type              value_type;
@@ -63,8 +63,8 @@ class vector {
 		/**
 		 * @class element_proxy
 		 * @author Jens Breitbart
-		 * @version 0.1
-		 * @date 24.07.2007
+		 * @version 0.2
+		 * @date 21.07.2007
 		 * @brief This class is returned by some functions of @c cupp::vector to determine if an element inside the vector is changed.
 		 * @see More effective C++ (Scott Meyers) §30
 		 */

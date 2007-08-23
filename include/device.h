@@ -54,7 +54,12 @@ class device {
 		/**
 		 * @brief This functions blocks until all requested tasks/kernels have been completed
 		 */
-		 void sync();
+		void sync() const;
+
+		/**
+		 * @return a unique id for @a this device
+		 */
+		int id() const;
 
 	public: /***  GET INFORMATION ABOUT THE DEVICE  ***/
 		/**
@@ -147,6 +152,8 @@ class device {
 		 * The properties of this device
 		 */
 		cudaDeviceProp device_prop_;
+
+	private:
 }; // class device
 
 } // namespace cupp

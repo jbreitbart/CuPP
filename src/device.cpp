@@ -11,6 +11,7 @@
 #include "exception/no_device.h"
 #include "exception/no_supporting_device.h"
 #include "exception/cuda_runtime_error.h"
+//#include "exception/too_many_devices_per_thread.h"
 
 #include <cuda_runtime.h>
 #include "cupp_runtime.h"
@@ -38,9 +39,10 @@ void device::real_constructor(const int major, const int minor, const char* name
 
 	// check if there is already a device
 	int cur_device;
-	if (cudaGetDevice(&cur_device)== cudaSuccess) {
+	if (cudaGetDevice(&cur_device) == cudaSuccess) {
 		cudaSetDevice(cur_device);
 		return;
+		//throw too_many_devices_per_thread();
 	}
 
 	const int device_cnt = device_count();
@@ -91,10 +93,17 @@ void device::real_constructor(const int major, const int minor, const char* name
 	}
 
 	cudaSetDevice(dev);
+
 }
 
-void device::sync() {
+void device::sync() const {
 	cupp::thread_synchronize();
+}
+
+int device::id() const {
+	int cur_device;
+	cudaGetDevice(&cur_device);
+	return cur_device;
 }
 
 int device::device_count() {

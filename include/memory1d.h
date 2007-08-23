@@ -50,8 +50,8 @@ class memory1d {
 		/**
 		 * Set up the type bindings
 		 */
-		typedef deviceT::memory1d<T>  device_type;
-		typedef memory1d<T>           host_type;
+		typedef deviceT::memory1d<typename get_type<T>::device_type >  device_type;
+		typedef memory1d<T>                                            host_type;
 		
 		/**
 		 * @typedef size_type
@@ -272,9 +272,12 @@ class memory1d {
 template <typename T>
 typename memory1d<T>::device_type memory1d<T>::get_host_based_device_copy(const device &d) const {
 	UNUSED_PARAMETER(d);
+	
 	device_type temp;
+
 	temp.set_size (size());
 	temp.set_device_pointer (cuda_pointer().get());
+	
 	return temp;
 }
 

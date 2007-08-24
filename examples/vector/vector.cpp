@@ -5,12 +5,11 @@
 #include "vector.h"
 #include "kernel.h"
 
+#include "kernel_t.h"
+
 using namespace std;
 using namespace cupp;
 
-typedef void(*kernelT)(cupp::deviceT::vector<int> &);
-
-kernelT get_kernel();
 
 int main() {
 	// lets get a simple CUDA device up and running

@@ -14,7 +14,7 @@
 #include "cupp_common.h"
 #include "cupp_runtime.h"
 #include "kernel_type_binding.h"
-#include "shared_device_pointer.h"
+#include "kernel_call_traits.h"
 #include "device.h"
 #include "memory1d.h"
 
@@ -41,8 +41,8 @@ class device;
 /**
  * @class vector
  * @author Jens Breitbart
- * @version 0.1
- * @date 24.07.2007
+ * @version 0.2
+ * @date 24.08.2007
  * @platform Host only
  * @brief A std::vector wrapper, which can be transfered to the device incl. lazy memory copying.
  */
@@ -50,13 +50,16 @@ class device;
 template< typename T >
 class vector {
 	public: /*** TYPEDEFS  ***/
-		typedef deviceT::vector< typename get_type< T>::device_type >  device_type;
-		typedef vector<T>                                              host_type;
+		typedef deviceT::vector< typename get_type< T >::device_type >  device_type;
+		typedef vector<T>                                               host_type;
 
 		typedef typename std::vector<T>::size_type               size_type;
 		typedef typename std::vector<T>::value_type              value_type;
 		typedef typename std::vector<T>::const_iterator          const_iterator;
 		typedef typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
+
+	private:
+		typedef typename get_type<T>::device_type                T_device_type;
 
 	public: /***  The proxy class  ***/
 
@@ -577,8 +580,14 @@ class vector {
 			if (device_changes_) {
 				assert(!host_changes_);
 				assert(memory_ptr_!=0);
+
+				std::vector< T_device_type > temp( data_.size() );
 				
-				memory_ptr_ -> copy_to_host (&data_[0]);
+				memory_ptr_ -> copy_to_host (&temp[0]);
+
+				for (std::size_t i = 0; i<temp.size(); ++i) {
+					data_[i] = kernel_call_traits< T, T_device_type >::transform (memory_ptr_ -> get_device(), temp[i]);
+				}
 				
 				device_changes_ = false;
 			}
@@ -590,7 +599,11 @@ class vector {
 		void update_device(const device &d) const {
 			// changes on the host side or we are executed on a new device
 			if (host_changes_ || d.id() != device_id_) {
-				//assert (!device_changes_); uncommented because we may just be on a different device
+
+				std::vector< T_device_type > temp;
+				for (typename std::vector< T >::const_iterator it = data_.begin(); it != data_.end(); ++it) {
+					temp.push_back ( kernel_call_traits< T, T_device_type >::transform (d, *it) );
+				}
 				
 				// we don't have any space on the device, or the we have more/less space on the device than we neeed
 				// or we are executed on a new device
@@ -599,13 +612,13 @@ class vector {
 					delete memory_ptr_;
 					
 					// get new memory and copy the data
-					memory_ptr_ = new memory1d<T>(d, &data_[0], data_.size() );
+					memory_ptr_ = new memory1d<T>(d, &temp[0], temp.size() );
 
 					// we need to create a new proxy because our memory has a new address
 					ref_invalid_ = true;
 				} else {
 					// copy the data to the device
-					memory_ptr_ -> copy_to_device (&data_[0]);
+					memory_ptr_ -> copy_to_device (&temp[0]);
 				}
 
 				device_id_ = d.id();
@@ -648,7 +661,7 @@ class vector {
 		/**
 		 * A pointer to the device on which our data is stored
 		 */
-		mutable device::idT device_id_;
+		mutable device::id_t device_id_;
 }; // class vector
 
 

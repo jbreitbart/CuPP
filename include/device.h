@@ -27,7 +27,7 @@ namespace cupp {
  */
 class device {
 	public:
-		typedef int idT;
+		typedef int id_t;
 	public: /***  CONSTRUCTORS & DESTRUCTORS ***/
 		/**
 		 * @brief Generates a default device with no special requirements

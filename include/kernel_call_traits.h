@@ -15,7 +15,7 @@ namespace cupp {
 /**
  * @class kernel_call_traits
  * @author Jens Breitbart
- * @version 0.3
+ * @version 0.3.1
  * @date 23.08.2007
  * @brief These traits define the behavior of what happens when a kernel is called.
  */
@@ -33,6 +33,16 @@ struct kernel_call_traits {
 		return that.transform (d);
 	}
 
+	/**
+	 * Transforms the device type to the host type
+	 * @param d The device the kernel was executed on
+	 * @param that The object that was passed to the kernel
+	 * @note This function is called when you pass a parameter by value to a kernel and the kernel has been started.
+	 */
+	static device_type transform (const device &d, const device_type& that) {
+		return that.transform (d);
+	}
+	
 	/**
 	 * Creates a device reference to be passed to the kernel
 	 * @param d The device the kernel will be executed on
@@ -64,7 +74,8 @@ struct kernel_call_traits <type, type> {
 	/**
 	 * @see above
 	 */
-	static const type transform (const device &d, const type& that) {
+	static const type& transform (const device &d, const type& that) {
+		/// @todo is there a reason why we should not return by ref?
 		UNUSED_PARAMETER(d);
 		return that;
 	}

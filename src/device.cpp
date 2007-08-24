@@ -100,7 +100,7 @@ void device::sync() const {
 	cupp::thread_synchronize();
 }
 
-int device::id() const {
+device::id_t device::id() const {
 	int cur_device;
 	cudaGetDevice(&cur_device);
 	return cur_device;

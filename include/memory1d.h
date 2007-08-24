@@ -230,6 +230,11 @@ class memory1d {
 		 */
 		shared_device_pointer<T> cuda_pointer() const {  return device_pointer_;  }
 
+		/**
+		 * @return the device the memory is allocated on
+		 */
+		const device& get_device() const { return d_; }
+
 
 	public: /*** CuPP kernel call traits implementation ***/
 		/**
@@ -268,6 +273,11 @@ class memory1d {
 		 */
 		mutable device_reference< device_type > *device_ref_;
 
+		/**
+		 * The device we live on
+		 */
+		const device& d_;
+
 }; // class memory1d
 
 
@@ -295,17 +305,17 @@ device_reference< typename memory1d<T>::device_type > memory1d<T>::get_device_re
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {}
+memory1d<T>::memory1d( device const& dev, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0), d_(dev) {}
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {
+memory1d<T>::memory1d( device const& dev, int init_value, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0), d_(dev) {
 	set(init_value);
 }
 
 
 template <typename T>
-memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0) {
+memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : device_pointer_( cupp::malloc<T>(size) ), size_(size), device_ref_(0), d_(dev) {
 	UNUSED_PARAMETER(dev);
 	copy_to_device(data);
 }
@@ -313,7 +323,7 @@ memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : devi
 
 template <typename T>
 template <typename InputIterator>
-memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ): device_ref_(0) {
+memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ): device_ref_(0), d_(dev) {
 	/// @todo is this ok?
 	size_ = last - first;
 	
@@ -322,7 +332,7 @@ memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator las
 }
 
 template <typename T>
-memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_( cupp::malloc<T>(other.size()) ), size_(other.size()), device_ref_(0) {
+memory1d<T>::memory1d( memory1d<T> const& other ) : device_pointer_( cupp::malloc<T>(other.size()) ), size_(other.size()), device_ref_(0), d_(other.get_device()) {
 	copy_to_device(other);
 }
 

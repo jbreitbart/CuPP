@@ -7,11 +7,11 @@
 
 #include "deviceT/memory1d.h"
 
+#include "kernel_t.h"
+
 __global__ void global_function (cupp::deviceT::memory1d<int>& p) {
 	p[threadIdx.x]*=2;
 }
-
-typedef void(*kernelT)(cupp::deviceT::memory1d<int>&);
 
 kernelT get_kernel() {
 	return global_function;

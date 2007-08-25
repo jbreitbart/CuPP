@@ -7,6 +7,7 @@
 #define CUPP_DEVICET_vector_H
 
 #include "cupp_common.h"
+#include "kernel_type_binding.h"
 #include "deviceT/memory1d.h"
 
 namespace cupp {
@@ -28,6 +29,12 @@ template< typename T >
 class vector : public memory1d<T, cupp::vector<T> > {
 	public:
 		/**
+		 * Set up the type bindings
+		 */
+		typedef vector<T>                                          device_type;
+		typedef cupp::vector< typename get_type<T>::host_type >    host_type;
+		
+		/**
 		 * @typedef size_type
 		 * @brief The type you should use to index this class
 		 */
@@ -38,18 +45,6 @@ class vector : public memory1d<T, cupp::vector<T> > {
 		 * @brief The type of data you want to store
 		 */
 		typedef typename memory1d<T, cupp::vector<T> >::value_type value_type;
-
-		/**
-		 * Creates an empty and useless vector :-)
-		 */
-		//vector () {}
-		
-		/**
-		 * Constructor
-		 * @param size The size of the memory to be pointed to
-		 * @param device_pointer The pointer to the memory (device pointer!)
-		 */
-		//vector ( size_type size, T* device_pointer) : memory1d<T, cupp::vector<T> >(size, device_pointer) {}
 };
 
 } // namespace deviceT

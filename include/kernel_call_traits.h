@@ -10,6 +10,8 @@
 #include "device.h"
 #include "device_reference.h"
 
+#include <iostream>
+
 namespace cupp {
 
 /**
@@ -39,8 +41,8 @@ struct kernel_call_traits {
 	 * @param that The object that was passed to the kernel
 	 * @note This function is called when you pass a parameter by value to a kernel and the kernel has been started.
 	 */
-	static device_type transform (const device &d, const device_type& that) {
-		return that.transform (d);
+	static void update (const host_type& that, const device_type &value) {
+		that.update (value);
 	}
 	
 	/**
@@ -83,6 +85,14 @@ struct kernel_call_traits <type, type> {
 	/**
 	 * @see above
 	 */
+	static void update (const type& that, const type &value) {
+		type& temp = const_cast<type&>(that);
+		temp = value;
+	}
+	
+	/**
+	 * @see above
+	 */
 	static device_reference<type> get_device_reference (const device &d, const type& that) {
 		return device_reference<type> (d, that);
 	}
@@ -91,8 +101,7 @@ struct kernel_call_traits <type, type> {
 	 * @see above
 	 */
 	static void dirty (const type& that, device_reference<type> device_ref) {
-		type& temp = const_cast<type&>(that);
-		temp = device_ref.get();
+		update (that, device_ref.get());
 	}
 };
 

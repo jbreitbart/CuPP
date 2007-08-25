@@ -49,17 +49,18 @@ class device;
 
 template< typename T >
 class vector {
+	private:
+		typedef typename get_type<T>::device_type                T_device_type;
+		
 	public: /*** TYPEDEFS  ***/
-		typedef deviceT::vector< typename get_type< T >::device_type >  device_type;
-		typedef vector<T>                                               host_type;
+		typedef deviceT::vector< T_device_type >                 device_type;
+		typedef vector<T>                                        host_type;
 
 		typedef typename std::vector<T>::size_type               size_type;
 		typedef typename std::vector<T>::value_type              value_type;
 		typedef typename std::vector<T>::const_iterator          const_iterator;
 		typedef typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
 
-	private:
-		typedef typename get_type<T>::device_type                T_device_type;
 
 	public: /***  The proxy class  ***/
 
@@ -293,7 +294,7 @@ class vector {
 		 */
 		element_proxy at( size_type loc ) {
 			data_.at(loc);
-			return element_proxy (index, *this);
+			return element_proxy (loc, *this);
 		}
 		
 		/**
@@ -530,7 +531,6 @@ class vector {
 		}
 
 	public: /*** CuPP kernel call traits implementation ***/
-
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 * @return The device type for our vector
@@ -551,7 +551,7 @@ class vector {
 		device_reference< device_type > get_device_reference(const device &d) const {
 
 			update_device(d);
-			
+
 			if (ref_invalid_) {
 				delete device_ref_ptr_;
 
@@ -570,6 +570,13 @@ class vector {
 		 */
 		void dirty (device_reference< device_type > device_copy) const {
 			UNUSED_PARAMETER(device_copy);
+			
+			device_changes_ = true;
+		}
+
+		void update (const device_type &value) const {
+			UNUSED_PARAMETER(value);
+
 			device_changes_ = true;
 		}
 
@@ -586,7 +593,7 @@ class vector {
 				memory_ptr_ -> copy_to_host (&temp[0]);
 
 				for (std::size_t i = 0; i<temp.size(); ++i) {
-					data_[i] = kernel_call_traits< T, T_device_type >::transform (memory_ptr_ -> get_device(), temp[i]);
+					kernel_call_traits< T, T_device_type >::update (data_[i], temp[i]);
 				}
 				
 				device_changes_ = false;
@@ -612,7 +619,7 @@ class vector {
 					delete memory_ptr_;
 					
 					// get new memory and copy the data
-					memory_ptr_ = new memory1d<T>(d, &temp[0], temp.size() );
+					memory_ptr_ = new memory1d<T_device_type>(d, &temp[0], temp.size() );
 
 					// we need to create a new proxy because our memory has a new address
 					ref_invalid_ = true;
@@ -651,7 +658,7 @@ class vector {
 		/**
 		 * Our device memory :-)
 		 */
-		mutable memory1d<T> *memory_ptr_;
+		mutable memory1d< T_device_type > *memory_ptr_;
 
 		/**
 		 * The proxy on our device

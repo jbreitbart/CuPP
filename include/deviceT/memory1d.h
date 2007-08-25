@@ -50,18 +50,6 @@ class memory1d {
 
 
 		/**
-		 * Constructor
-		 * @param size The size of the memory to be pointed to
-		 * @param device_pointer The pointer to the memory (device pointer!)
-		 */
-		//memory1d ( size_type size, T* device_pointer) : device_pointer_(device_pointer), size_(size) {}
-
-		/**
-		 * Creates an empty and useless memory1d :-)
-		 */
-		//memory1d() : size_(0), device_pointer_(0) {}
-		
-		/**
 		 * @brief Returns the size of the memory block
 		 * @platform Host
 		 * @platform Device

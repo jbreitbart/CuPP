@@ -17,8 +17,8 @@ namespace cupp {
 /**
  * @class kernel_call_traits
  * @author Jens Breitbart
- * @version 0.3.1
- * @date 23.08.2007
+ * @version 0.4
+ * @date 27.08.2007
  * @brief These traits define the behavior of what happens when a kernel is called.
  */
 

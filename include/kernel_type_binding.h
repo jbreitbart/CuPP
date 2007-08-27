@@ -10,6 +10,8 @@
 
 namespace cupp {
 
+namespace impl {
+
 /**
  * @class get_type_impl
  * @author Jens Breitbart
@@ -19,7 +21,7 @@ namespace cupp {
  * This is the generic template.
  */
 template <bool POD, typename T>
-struct get_type_impl {
+struct get_type {
 	typedef typename T::host_type    host_type;
 	typedef typename T::device_type  device_type;
 };
@@ -28,11 +30,12 @@ struct get_type_impl {
  * Specialisation for pod-types.
  */
 template <typename T>
-struct get_type_impl<true, T> {
+struct get_type<true, T> {
 	typedef T    host_type;
 	typedef T    device_type;
 };
 
+}
 
 /**
  * @class get_type
@@ -43,8 +46,8 @@ struct get_type_impl<true, T> {
  */
 template <typename T>
 struct get_type {
-	typedef typename get_type_impl <boost::is_pod< T >::value, T>::host_type      host_type;
-	typedef typename get_type_impl <boost::is_pod< T >::value, T>::device_type    device_type;
+	typedef typename impl::get_type <boost::is_pod< T >::value, T>::host_type      host_type;
+	typedef typename impl::get_type <boost::is_pod< T >::value, T>::device_type    device_type;
 };
 
 

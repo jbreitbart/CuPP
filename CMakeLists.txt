@@ -1,24 +1,28 @@
 PROJECT(cupp)
 
-# SETUP THE CUDA SYSTEM
+# consig the cuda system
 SET (CUDA_INSTALL_PREFIX /usr/local/cuda/)
 SET (CUDA_BUILD_TYPE Device)
 
-# Load cuda macros
+# load cuda macros
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
-# INCLUDE AND LINK WITH CUDA
+# include and link with CUDA
 INCLUDE_DIRECTORIES(/usr/local/cuda/include/)
 LINK_DIRECTORIES(/usr/local/cuda/lib)
+
+# Include the local boost copy
+INCLUDE_DIRECTORIES(vendor/boost/)
+CUDA_INCLUDE_DIRECTORIES(vendor/boost/)
 
 # set the include path
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 CUDA_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
-# if you don't want the full compiler output, remove the following line
+# if you don want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-#add definitions, compiler switches, etc.
+# add definitions, compiler switches, etc.
 ADD_DEFINITIONS(-Wall -W -O2 -g)
 
 # build the CuPP library

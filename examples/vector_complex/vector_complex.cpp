@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "device.h"
-#include "vector.h"
-#include "kernel.h"
+#include "cupp/device.h"
+#include "cupp/vector.h"
+#include "cupp/kernel.h"
 
 #include "kernel_t.h"
 

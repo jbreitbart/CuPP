@@ -6,9 +6,9 @@
 #ifndef CUPP_kernel_call_traits_H
 #define CUPP_kernel_call_traits_H
 
-#include "cupp_runtime.h"
-#include "device.h"
-#include "device_reference.h"
+#include "cupp/cupp_runtime.h"
+#include "cupp/device.h"
+#include "cupp/device_reference.h"
 
 #include <iostream>
 

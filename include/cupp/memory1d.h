@@ -11,16 +11,16 @@
 #endif
 
 // CUPP
-#include "cupp_common.h"
-#include "cupp_runtime.h"
-#include "kernel_type_binding.h"
-#include "shared_device_pointer.h"
-#include "device_reference.h"
+#include "cupp/cupp_common.h"
+#include "cupp/cupp_runtime.h"
+#include "cupp/kernel_type_binding.h"
+#include "cupp/shared_device_pointer.h"
+#include "cupp/device_reference.h"
 
-#include "deviceT/memory1d.h"
+#include "cupp/deviceT/memory1d.h"
 
-#include "exception/cuda_runtime_error.h"
-#include "exception/memory_access_violation.h"
+#include "cupp/exception/cuda_runtime_error.h"
+#include "cupp/exception/memory_access_violation.h"
 
 // STD
 #include <cstddef> // Include std::size_t

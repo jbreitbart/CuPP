@@ -11,8 +11,8 @@
 #endif
 
 // CUPP
-#include "cupp_common.h"
-#include "exception/cuda_runtime_error.h"
+#include "cupp/cupp_common.h"
+#include "cupp/exception/cuda_runtime_error.h"
 
 // CUDA
 #include <cuda_runtime.h>

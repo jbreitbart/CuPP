@@ -5,7 +5,7 @@
  *
  */
 
-#include "deviceT/vector.h"
+#include "cupp/deviceT/vector.h"
 #include "kernel_t.h"
 
 __global__ void global_function (cupp::deviceT::vector<int> &i) {

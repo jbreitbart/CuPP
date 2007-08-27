@@ -11,17 +11,17 @@
 #endif
 
 // CUPP
-#include "cupp_common.h"
-#include "cupp_runtime.h"
-#include "kernel_type_binding.h"
-#include "kernel_call_traits.h"
-#include "device.h"
-#include "memory1d.h"
+#include "cupp/cupp_common.h"
+#include "cupp/cupp_runtime.h"
+#include "cupp/kernel_type_binding.h"
+#include "cupp/kernel_call_traits.h"
+#include "cupp/device.h"
+#include "cupp/memory1d.h"
 
-#include "deviceT/vector.h"
+#include "cupp/deviceT/vector.h"
 
-#include "exception/cuda_runtime_error.h"
-#include "exception/memory_access_violation.h"
+#include "cupp/exception/cuda_runtime_error.h"
+#include "cupp/exception/memory_access_violation.h"
 
 // STD
 #include <cstddef> // Include std::size_t

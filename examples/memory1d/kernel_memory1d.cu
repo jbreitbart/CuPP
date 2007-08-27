@@ -5,7 +5,7 @@
  *
  */
 
-#include "deviceT/memory1d.h"
+#include "cupp/deviceT/memory1d.h"
 
 #include "kernel_t.h"
 

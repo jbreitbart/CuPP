@@ -1,10 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "device.h"
-#include "memory1d.h"
-#include "deviceT/memory1d.h"
-#include "kernel.h"
+#include "cupp/device.h"
+#include "cupp/memory1d.h"
+#include "cupp/kernel.h"
 
 #include "kernel_t.h"
 

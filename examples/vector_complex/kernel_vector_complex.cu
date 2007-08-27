@@ -5,7 +5,7 @@
  *
  */
 
-#include "deviceT/vector.h"
+#include "cupp/deviceT/vector.h"
 #include "kernel_t.h"
 
 using namespace cupp;

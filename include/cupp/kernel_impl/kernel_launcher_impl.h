@@ -7,20 +7,20 @@
 #define CUPP_KERNEL_IMPL_kernel_launcher_impl_H
 
 // CUPP
-#include "kernel_impl/kernel_launcher_base.h"
-#include "kernel_impl/is_second_level_const.h"
-#include "kernel_impl/real_setup_argument.h"
-#include "kernel_impl/test_dirty.h"
+#include "cupp/kernel_impl/kernel_launcher_base.h"
+#include "cupp/kernel_impl/is_second_level_const.h"
+#include "cupp/kernel_impl/real_setup_argument.h"
+#include "cupp/kernel_impl/test_dirty.h"
 
-#include "exception/cuda_runtime_error.h"
-#include "exception/stack_overflow.h"
-#include "exception/kernel_parameter_type_mismatch.h"
+#include "cupp/exception/cuda_runtime_error.h"
+#include "cupp/exception/stack_overflow.h"
+#include "cupp/exception/kernel_parameter_type_mismatch.h"
 
-#include "kernel_call_traits.h"
-#include "kernel_type_binding.h"
-#include "cupp_runtime.h"
-#include "shared_device_pointer.h"
-#include "device_reference.h"
+#include "cupp/kernel_call_traits.h"
+#include "cupp/kernel_type_binding.h"
+#include "cupp/cupp_runtime.h"
+#include "cupp/shared_device_pointer.h"
+#include "cupp/device_reference.h"
 
 // CUDA
 #include <vector_types.h>

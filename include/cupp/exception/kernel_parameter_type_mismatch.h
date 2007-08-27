@@ -12,7 +12,7 @@
 #endif
 
 
-#include "exception/exception.h"
+#include "cupp/exception/exception.h"
 
 namespace cupp {
 namespace exception {

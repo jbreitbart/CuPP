@@ -6,9 +6,9 @@
 #ifndef CUPP_DEVICET_vector_H
 #define CUPP_DEVICET_vector_H
 
-#include "cupp_common.h"
-#include "kernel_type_binding.h"
-#include "deviceT/memory1d.h"
+#include "cupp/cupp_common.h"
+#include "cupp/kernel_type_binding.h"
+#include "cupp/deviceT/memory1d.h"
 
 namespace cupp {
 

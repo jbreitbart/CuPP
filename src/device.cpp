@@ -4,17 +4,19 @@
  */
 
 
-#include "device.h"
+#include "cupp/device.h"
 
-#include <string>
 
-#include "exception/no_device.h"
-#include "exception/no_supporting_device.h"
-#include "exception/cuda_runtime_error.h"
-//#include "exception/too_many_devices_per_thread.h"
+#include "cupp/exception/no_device.h"
+#include "cupp/exception/no_supporting_device.h"
+#include "cupp/exception/cuda_runtime_error.h"
+//#include "cupp/exception/too_many_devices_per_thread.h"
+
+#include "cupp/cupp_runtime.h"
 
 #include <cuda_runtime.h>
-#include "cupp_runtime.h"
+
+#include <string>
 
 namespace cupp {
 

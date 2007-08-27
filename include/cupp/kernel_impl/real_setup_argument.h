@@ -6,7 +6,7 @@
 #ifndef CUPP_KERNEL_IMPL_real_setup_argument_H
 #define CUPP_KERNEL_IMPL_real_setup_argument_H
 
-#include "cupp_common.h"
+#include "cupp/cupp_common.h"
 
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>

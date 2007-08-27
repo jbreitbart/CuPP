@@ -11,9 +11,9 @@
 #endif
 
 // CUPP
-#include "cupp_common.h"
-#include "cupp_runtime.h"
-#include "shared_device_pointer.h"
+#include "cupp/cupp_common.h"
+#include "cupp/cupp_runtime.h"
+#include "cupp/shared_device_pointer.h"
 
 namespace cupp {
 

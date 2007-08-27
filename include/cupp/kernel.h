@@ -12,14 +12,13 @@
 
 
 // CUPP
-#include "exception/kernel_number_of_parameters_mismatch.h"
-#include "kernel_impl/kernel_launcher_base.h"
-#include "kernel_impl/kernel_launcher_impl.h"
-#include "kernel_type_binding.h"
-#include "kernel_call_traits.h"
-#include "device.h"
-//#include "shared_device_pointer.h"
-#include "device_reference.h"
+#include "cupp/exception/kernel_number_of_parameters_mismatch.h"
+#include "cupp/kernel_impl/kernel_launcher_base.h"
+#include "cupp/kernel_impl/kernel_launcher_impl.h"
+#include "cupp/kernel_type_binding.h"
+#include "cupp/kernel_call_traits.h"
+#include "cupp/device.h"
+#include "cupp/device_reference.h"
 
 // STD
 #include <vector>

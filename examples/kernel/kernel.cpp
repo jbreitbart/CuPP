@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "device.h"
-#include "kernel.h"
+#include "cupp/device.h"
+#include "cupp/kernel.h"
 
 #include "kernel_t.h"
 

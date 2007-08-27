@@ -12,7 +12,7 @@
 #endif
 
 
-#include "exception/exception.h"
+#include "cupp/exception/exception.h"
 
 #include <cuda_runtime.h>
 

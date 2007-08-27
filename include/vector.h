@@ -140,7 +140,13 @@ class vector {
 			public: /***  Operators  ***/
 				operator typename std::vector<T>::iterator() const {
 					vector_.update_host();
+					vector_.host_changes_ = true;
 					return i_;
+				}
+
+				operator const_iterator() const {
+					vector_.update_host();
+					return static_cast< const_iterator > (i_);
 				}
 
 				const T& operator* () const {
@@ -172,7 +178,7 @@ class vector {
 
 				// postfix
 				iterator operator++ (int) {
-					iterator returnee = *this;
+					const iterator returnee = *this;
 					++(*this);
 					return returnee;
 				}
@@ -568,16 +574,23 @@ class vector {
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (device_reference< device_type > device_copy) const {
+		void dirty (device_reference< device_type > device_copy) {
 			UNUSED_PARAMETER(device_copy);
 			
 			device_changes_ = true;
 		}
 
-		void update (const device_type &value) const {
+		/*void update (const device_type &value) {
 			UNUSED_PARAMETER(value);
 
 			device_changes_ = true;
+		}*/
+
+		vector< T >&  operator= (const device_type& value) {
+			UNUSED_PARAMETER(value);
+			
+			device_changes_ = true;
+			return *this;
 		}
 
 		/**
@@ -593,14 +606,15 @@ class vector {
 				memory_ptr_ -> copy_to_host (&temp[0]);
 
 				for (std::size_t i = 0; i<temp.size(); ++i) {
-					kernel_call_traits< T, T_device_type >::update (data_[i], temp[i]);
+					//kernel_call_traits< T, T_device_type >::update (data_[i], temp[i]);
+					data_[i] = temp[i];
 				}
 				
 				device_changes_ = false;
 			}
 		}
 
-		/**
+		/**returnee_vec
 		 * If there is newer data on the host, this function will update the device data with it
 		 */
 		void update_device(const device &d) const {

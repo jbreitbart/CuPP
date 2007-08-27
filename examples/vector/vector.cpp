@@ -36,6 +36,7 @@ int main() {
 	
 	// call the kernel
 	k (d, eight);
+	d.sync();
 
 	// print the array with the new value
 	cout << "after the kernel call:" << endl;

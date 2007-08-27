@@ -41,9 +41,9 @@ struct kernel_call_traits {
 	 * @param that The object that was passed to the kernel
 	 * @note This function is called when you pass a parameter by value to a kernel and the kernel has been started.
 	 */
-	static void update (const host_type& that, const device_type &value) {
+	/*static void update (host_type& that, const device_type &value) {
 		that.update (value);
-	}
+	}*/
 	
 	/**
 	 * Creates a device reference to be passed to the kernel
@@ -62,7 +62,7 @@ struct kernel_call_traits {
 	 * @param device_copy The pointer you created with @a get_device_based_device_copy
 	 * @note This function is only called if you pass a parameter by non-const reference to a kernel.
 	 */
-	static void dirty (const host_type& that, device_reference<device_type> device_ref) {
+	static void dirty (host_type& that, device_reference<device_type> device_ref) {
 		that.dirty(device_ref);
 	}
 };
@@ -85,10 +85,9 @@ struct kernel_call_traits <type, type> {
 	/**
 	 * @see above
 	 */
-	static void update (const type& that, const type &value) {
-		type& temp = const_cast<type&>(that);
+	/*static void update (type& that, const type &value) {
 		temp = value;
-	}
+	}*/
 	
 	/**
 	 * @see above
@@ -100,8 +99,9 @@ struct kernel_call_traits <type, type> {
 	/**
 	 * @see above
 	 */
-	static void dirty (const type& that, device_reference<type> device_ref) {
-		update (that, device_ref.get());
+	static void dirty (type& that, device_reference<type> device_ref) {
+		//update (that, device_ref.get());
+		that = device_ref.get();
 	}
 };
 

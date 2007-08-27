@@ -204,7 +204,7 @@ class kernel {
 		/**
 		 * @brief Stores the valuse returned by kb_ -> setup_argument(). They are needed by ther kernel_call_traits.
 		 */
-		std::vector<boost::any> returnee_vec;
+		std::vector<boost::any> returnee_vec_;
 };
 
 
@@ -221,9 +221,12 @@ void kernel::handle_call_traits(const P &p, const int i) {
 		typedef typename kernel_device_type<P>::type device_type;
 		typedef typename kernel_host_type<P>::type host_type;
 		
-		device_reference<device_type> device_ptr = boost::any_cast< device_reference<device_type> >(returnee_vec[i-1]);
+		device_reference<device_type> device_ref = boost::any_cast< device_reference<device_type> >(returnee_vec_[i-1]);
 
-		kernel_call_traits<host_type, device_type>::dirty(p, device_ptr);
+		// we can are allowed to make this cast
+		// because this function is only called, when p is passed by reference to the kernel
+		P &temp_p = const_cast<P&>(p);
+		kernel_call_traits<host_type, device_type>::dirty(temp_p, device_ref);
 	}
 }
 
@@ -244,13 +247,13 @@ void kernel::operator()(const device &d, const P1 &p1 ) {
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 
 	kb_->launch();
 
 	handle_call_traits (p1, 1);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 template< typename P1, typename P2 >
@@ -259,15 +262,15 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2 ) {
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
 
 	kb_->launch();
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 template< typename P1, typename P2, typename P3 >
@@ -276,9 +279,9 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
 
 	kb_->launch();
 
@@ -286,7 +289,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	handle_call_traits (p2, 2);
 	handle_call_traits (p3, 3);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 
@@ -296,10 +299,10 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
 
 	kb_->launch();
 
@@ -308,7 +311,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	handle_call_traits (p3, 3);
 	handle_call_traits (p4, 4);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 
@@ -318,11 +321,11 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
 
 	kb_->launch();
 
@@ -332,7 +335,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	handle_call_traits (p4, 4);
 	handle_call_traits (p5, 5);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 
@@ -342,12 +345,12 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	
 	kb_ -> configure_call();
 
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
-	returnee_vec.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
 
 	kb_->launch();
 
@@ -358,7 +361,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	handle_call_traits (p5, 5);
 	handle_call_traits (p6, 6);
 
-	returnee_vec.clear();
+	returnee_vec_.clear();
 }
 
 }

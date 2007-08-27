@@ -252,7 +252,7 @@ class memory1d {
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 */
-		void dirty (device_reference<device_type> device_ref) const {
+		void dirty (device_reference<device_type> device_ref) {
 			UNUSED_PARAMETER(device_ref);
 		}
 

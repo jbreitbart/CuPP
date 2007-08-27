@@ -26,7 +26,7 @@
 #include <cassert>
 
 // cupp::free()
-#include "cupp/cupp_runtime.h"
+#include "cupp/runtime.h"
 
 
 namespace cupp {

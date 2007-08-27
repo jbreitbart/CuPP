@@ -6,8 +6,8 @@
  * Copyright: See COPYING file that comes with this distribution
  */
 
-#ifndef CUPP_cupp_common_H
-#define CUPP_cupp_common_H
+#ifndef CUPP_common_H
+#define CUPP_common_H
 
 
 

@@ -12,7 +12,7 @@
 #include "cupp/exception/cuda_runtime_error.h"
 //#include "cupp/exception/too_many_devices_per_thread.h"
 
-#include "cupp/cupp_runtime.h"
+#include "cupp/runtime.h"
 
 #include <cuda_runtime.h>
 

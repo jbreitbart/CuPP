@@ -11,8 +11,8 @@
 #endif
 
 // CUPP
-#include "cupp/cupp_common.h"
-#include "cupp/cupp_runtime.h"
+#include "cupp/common.h"
+#include "cupp/runtime.h"
 #include "cupp/kernel_type_binding.h"
 #include "cupp/shared_device_pointer.h"
 #include "cupp/device_reference.h"

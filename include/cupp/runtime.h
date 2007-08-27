@@ -3,15 +3,15 @@
  *
  */
 
-#ifndef CUPP_cupp_runtime_H
-#define CUPP_cupp_runtime_H
+#ifndef CUPP_runtime_H
+#define CUPP_runtime_H
 
 #if defined(__CUDACC__)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
 // CUPP
-#include "cupp/cupp_common.h"
+#include "cupp/common.h"
 #include "cupp/exception/cuda_runtime_error.h"
 
 // CUDA

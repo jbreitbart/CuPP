@@ -6,5 +6,5 @@ BUILD:
 1. Call "cmake ." or "ccmake ." to generator the build script
 2. Build using your local build tool (eg. call make)
 
-You will find the CuPP library in "lib" and the examples in "examples"
+You will find the CuPP library in "lib" and the examples in "bin"
 

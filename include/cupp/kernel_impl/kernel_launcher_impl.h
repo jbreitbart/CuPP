@@ -18,7 +18,7 @@
 
 #include "cupp/kernel_call_traits.h"
 #include "cupp/kernel_type_binding.h"
-#include "cupp/cupp_runtime.h"
+#include "cupp/runtime.h"
 #include "cupp/shared_device_pointer.h"
 #include "cupp/device_reference.h"
 

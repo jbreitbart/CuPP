@@ -9,7 +9,7 @@
 // Include std::size_t
 #include <cstddef>
 
-#include "cupp/cupp_common.h"
+#include "cupp/common.h"
 
 namespace cupp {
 

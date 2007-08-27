@@ -6,7 +6,7 @@
 #ifndef CUPP_DEVICET_vector_H
 #define CUPP_DEVICET_vector_H
 
-#include "cupp/cupp_common.h"
+#include "cupp/common.h"
 #include "cupp/kernel_type_binding.h"
 #include "cupp/deviceT/memory1d.h"
 

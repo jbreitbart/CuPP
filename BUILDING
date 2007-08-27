@@ -3,9 +3,8 @@ Be sure you start with a clean checkout ~ there are no CMake cache files floatin
 
 
 BUILD:
-1. Change into directory "Build"
-2. Call "cmake ." or "ccmake ." to generator the build script
-3. Build using your local build toll (eg. call make)
+1. Call "cmake ." or "ccmake ." to generator the build script
+2. Build using your local build tool (eg. call make)
 
-You will find the CuPP library in "Build/lib" and the examples in "Build/examples"
+You will find the CuPP library in "lib" and the examples in "examples"
 

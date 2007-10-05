@@ -14,10 +14,8 @@ int main() {
 	// lets get a simple CUDA device up and running
 	device d;
 
-	const int i = 42;
+	int i = 42;
 	int j = 23;
-	
-	device_reference<int> refee(d, j);
 
 	cout << "before kernel call: (" << i << ", " << j << ")" << endl;
 	
@@ -27,10 +25,8 @@ int main() {
 	// generate the kernel
 	kernel k (get_kernel(), grid_dim, block_dim);
 	
-	cout << refee.get_device_ptr().get() << std::endl;
-	
 	// call the kernel
-	k(d, i, refee.get_device_ptr().get());
+	k(d, i, j);
 	
 	cout << "after kernel call: (" << i << ", " << j << ")" << endl;
 	

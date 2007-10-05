@@ -6,11 +6,9 @@
  */
 
 #include "kernel_t.h"
-#include <stdio.h>
 
-__global__ void global_function (const int i, int *j) {
-//printf("%p\n", j);
-	*j = i;
+__global__ void global_function (const int i, int &j) {
+	j = i;
 }
 
 kernelT get_kernel() {

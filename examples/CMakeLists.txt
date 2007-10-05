@@ -1,6 +1,8 @@
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/)
 
-SUBDIRS(memory1d)
+#SUBDIRS(memory1d)
 SUBDIRS(kernel)
-SUBDIRS(vector)
-SUBDIRS(vector_complex) 
+#SUBDIRS(vector)
+#SUBDIRS(vector_complex) 
+SUBDIRS(64bit_test)
+

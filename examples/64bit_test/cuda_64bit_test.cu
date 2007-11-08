@@ -86,7 +86,7 @@ int main( int, char** )
 
 
 __global__ void kernel_function(int i, int* j) {
-    *j = expected_result;
+    *j = expected_kernel_result;
 }
 
 char const* get_kernel_function() {

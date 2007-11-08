@@ -1,3 +1,16 @@
+/**
+ * Test program for calling a CUDA kernel using the CUDA runtime API 
+ * (@c cudaLaunch, @c cudaSetupArgument, @c cudaConfigureCall).
+ *
+ * A kernel is called and gets two arguments, The first one is ignored (but us needed to trigger
+ * the error we are observing). The second argument is a device pointer to memory allocated on
+ * the device.
+ * The kernel should set the first memory address pointed to to 666.
+ * This is checked by copying the memory from the device to the host after the kernel call.
+ *
+ * However on our 64bit Open SuSE Linux 10.2 we always get an "unspecified launch failure".
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -11,8 +24,10 @@ int const expected_kernel_result = EXPECTED_KERNEL_RESULT;
 
 /**
  * CUDA kernel that sets the first memory value @a j os pointing to to @c expected_kernel_result.
+ *
+ * @param i Dummy parameter but needed to trigger the problem we are observing.
  */
-__global__ void kernel_function (int i, int* j);
+__global__ void kernel_function ( int* j);
 
 
 /**
@@ -58,12 +73,11 @@ int main( int, char** )
     dim3 grid_dim(1);
     
     bool const use_native_cuda_kernel_call = false;
-    
     if ( use_native_cuda_kernel_call ) {
         
         // CUDA native kernel call.
         
-        kernel_function<<< grid_dim, block_dim >>>( i, d_jp);
+        kernel_function<<< grid_dim, block_dim >>>( /* i, */ d_jp);
         
     } else {
     
@@ -72,8 +86,8 @@ int main( int, char** )
         cudaConfigureCall(grid_dim, block_dim);
         check_cuda_error();
         
-        cudaSetupArgument( &i, sizeof(i), 0);
-        check_cuda_error();	 
+        // cudaSetupArgument( &i, sizeof(i), 0);
+        // check_cuda_error();	 
     
         cudaSetupArgument( &d_jp,sizeof( d_jp), sizeof(i) );
         check_cuda_error();
@@ -99,7 +113,7 @@ int main( int, char** )
 }
 
 
-__global__ void kernel_function(int i, int* j) {
+__global__ void kernel_function( /* int i, */ int* j) {
     *j = EXPECTED_KERNEL_RESULT;
 }
 

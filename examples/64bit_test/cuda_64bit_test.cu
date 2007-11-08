@@ -55,17 +55,18 @@ int main( int, char** )
     
     dim3 block_dim (1);
     dim3 grid_dim  (1);
-    cudaConfigureCall(grid_dim, block_dim);
+    // cudaConfigureCall(grid_dim, block_dim);
     check_cuda_error();
     
-    cudaSetupArgument(i, 0);
+    // cudaSetupArgument(i, 0);
     check_cuda_error();  
 
-    cudaSetupArgument(d_jp,sizeof(int) );
+    // cudaSetupArgument(d_jp,sizeof(int) );
     check_cuda_error();
     
-    cudaLaunch( kernel_function );
+    // cudaLaunch( kernel_function );
     // cudaLaunch(get_kernel_function());
+    kernel_function<<<grid_dim, block_dim >>>( i, d_jp);
     check_cuda_error();
 
 

@@ -9,6 +9,8 @@
  * This is checked by copying the memory from the device to the host after the kernel call.
  *
  * However on our 64bit Open SuSE Linux 10.2 we always get an "unspecified launch failure".
+ * If we remove the first kernel function parameter (and the associated cudaSetupArgument calls)
+ * there is no problem.
  */
 
 #include <stdlib.h>
@@ -29,12 +31,6 @@ int const expected_kernel_result = EXPECTED_KERNEL_RESULT;
  * @param j Pointer to device memory which can at least hold one @c int value.
  */
 __global__ void kernel_function ( int i, int* j);
-
-
-/**
- * Returns the CUDA kernel function casted to a <code>char const*</code>.
- */
-char const* get_kernel_function();
 
 
 /**
@@ -69,31 +65,29 @@ int main( int, char** )
     cudaMemset( d_jp, 0, sizeof( int ) ); 
     check_cuda_error();
     
-    // Setup CUDA kernel arguments
+    /* Setup CUDA kernel arguments */
     dim3 block_dim( 1 );
     dim3 grid_dim( 1 );
     
     bool const use_native_cuda_kernel_call = false;
     if ( use_native_cuda_kernel_call ) {
         
-        // CUDA native kernel call.
-        
+        /* CUDA native kernel call. */
         kernel_function<<< grid_dim, block_dim >>>( i, d_jp);
         
     } else {
     
-        // CUDA runtime API kernel call.
+        /* CUDA runtime API kernel call. */
         
-        cudaConfigureCall(grid_dim, block_dim);
+        cudaConfigureCall( grid_dim, block_dim );
         check_cuda_error();
         
         int offset = 0;
-        
-        cudaSetupArgument( &i, sizeof(i), offset);
+        cudaSetupArgument( i, offset);
         check_cuda_error();	 
         offset += sizeof( i );
     
-        cudaSetupArgument( &d_jp, sizeof( d_jp), offset );
+        cudaSetupArgument( d_jp, offset );
         check_cuda_error();
         offset += sizeof( d_jp );
         
@@ -118,45 +112,41 @@ int main( int, char** )
 }
 
 
+
+
 __global__ void kernel_function( int i, int* j ) {
     *j = EXPECTED_KERNEL_RESULT;
 }
 
-char const* get_kernel_function() {
-    return ((char const*) kernel_function);
-}
-
-
-
 
 bool setup_cuda()
 {
-    int deviceCount = 0;
-    cudaGetDeviceCount(&deviceCount); 
-    if (deviceCount == 0) { 
+    int device_count = 0;
+    cudaGetDeviceCount( &device_count ); 
+    if ( device_count == 0) { 
         printf( "There is no device.\n" );
         return false;
     } 
     
     int dev = 0;
-    for (dev = 0; dev < deviceCount; ++dev) {
-        cudaDeviceProp deviceProp;
-        cudaGetDeviceProperties(&deviceProp, dev);
-        if (deviceProp.major >= 1) {
+    for (dev = 0; dev < device_count; ++dev) {
+        cudaDeviceProp device_prop;
+        cudaGetDeviceProperties(&device_prop, dev);
+        if (device_prop.major >= 1) {
             break;
         }
     }
     
-    if (dev == deviceCount) {
+    if (dev == device_count) {
         printf( "There is no device supporting CUDA.\n" );
         return false;
     }
     
     
-    cudaSetDevice(dev);
+    cudaSetDevice( dev );
     
     return true;
-} // bool setup_cuda()
+} /* bool setup_cuda() */
 
 
 
@@ -169,5 +159,5 @@ cudaError_t check_cuda_error()
     }
     
     return error;
-} // bool check_cuda_error()
+} /* bool check_cuda_error() */
 

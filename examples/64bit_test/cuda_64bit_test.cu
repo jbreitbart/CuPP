@@ -5,7 +5,8 @@
 #include "cuda_runtime.h"
 
 
-int const expected_kernel_result = 666;
+#define EXPECTED_KERNEL_RESULT 666;
+int const expected_kernel_result = EXPECTED_KERNEL_RESULT;
 
 
 /**
@@ -86,7 +87,7 @@ int main( int, char** )
 
 
 __global__ void kernel_function(int i, int* j) {
-    *j = expected_kernel_result;
+    *j = EXPECTED_KERNEL_RESULT;
 }
 
 char const* get_kernel_function() {

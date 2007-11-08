@@ -52,26 +52,30 @@ int main( int, char** )
     
     cudaMemset( d_jp, 0, sizeof(int)); 
     check_cuda_error();
+     
+    cudaSetupArgument(i, 0);
+    check_cuda_error();  
+
+    cudaSetupArgument(d_jp,sizeof(i) );
+    check_cuda_error();
     
+    
+     // Setup CUDA kernel arguments
     dim3 block_dim (1);
     dim3 grid_dim  (1);
     cudaConfigureCall(grid_dim, block_dim);
     check_cuda_error();
     
-    cudaSetupArgument(i, 0);
-    check_cuda_error();  
-
-    cudaSetupArgument(d_jp,sizeof(int) );
-    check_cuda_error();
     
-    // cudaLaunch( kernel_function );
-    cudaLaunch(get_kernel_function());
+    
+    cudaLaunch( kernel_function );
+    // cudaLaunch(get_kernel_function());
     // kernel_function<<<grid_dim, block_dim >>>( i, d_jp);
     check_cuda_error();
 
 
 
-    int result;
+    int result = 0;
     cudaMemcpy(&result, d_jp, sizeof(int), cudaMemcpyDeviceToHost);
     check_cuda_error();
     

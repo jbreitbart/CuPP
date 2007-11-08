@@ -1,5 +1,5 @@
-#include <cstdlib>
-#include <iostream>
+#include <stdlib>
+
 
 #include "cuda_runtime.h"
 
@@ -72,7 +72,8 @@ int main( int, char** )
     cudaMemcpy(&result, d_jp, sizeof(int), cudaMemcpyDeviceToHost);
     check_cuda_error();
     
-    std::cout <<"result " << result << " (should be 666)" << std::endl;
+    printf("result %d", result );
+    printf( " (should be 666)\n");
 
 
     if ( expected_kernel_result != result ) {
@@ -99,7 +100,7 @@ bool setup_cuda()
     int deviceCount = 0;
     cudaGetDeviceCount(&deviceCount); 
     if (deviceCount == 0) { 
-        std::cerr << "There is no device." << std::endl;
+        printf( "There is no device.\n" );
         return false;
     } 
     
@@ -113,7 +114,7 @@ bool setup_cuda()
     }
     
     if (dev == deviceCount) {
-        std::cerr << "There is no device supporting CUDA." << std::endl;
+        printf( "There is no device supporting CUDA.\n" );
         return false;
     }
     
@@ -130,7 +131,7 @@ cudaError_t check_cuda_error()
     cudaError_t error = cudaGetLastError();
     
     if ( cudaSuccess != error ) {
-        std::cerr << cudaGetErrorString( error ) << std::endl;
+        printf( "%s \n", cudaGetErrorString( error ) );
     }
     
     return error;

@@ -32,21 +32,31 @@ int main( int, char** ) {
 
     int i = 42;	
     int *d_jp = 0;
+    
     cudaMalloc((void**)&d_jp, sizeof(int));
-
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;
+    
+    cudaMemset( d_jp, 0, sizeof(int)); 
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;
+    
     dim3 block_dim (1);
     dim3 grid_dim  (1);
     cudaConfigureCall(grid_dim, block_dim);
-
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;
+    
     cudaSetupArgument(i, 0);
-    cudaSetupArgument(d_jp, sizeof(int) );
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;    
 
+    cudaSetupArgument(d_jp,sizeof(int) );
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;
+    
     cudaLaunch(get_kernel());
     cout << cudaGetErrorString(cudaGetLastError()) << endl;
 
     int result;
     cudaMemcpy(&result, d_jp, sizeof(int), cudaMemcpyDeviceToHost);
-
+    cout << cudaGetErrorString(cudaGetLastError()) << endl;
+    
     cout <<"result " << result << " (should be 666)" << endl;
 
     return EXIT_SUCCESS;

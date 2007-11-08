@@ -5,7 +5,7 @@ __global__ void global_function (int i, int *j) {
 }
 
 const char* get_kernel() {
-    return (const char*)global_function;
+    return ((const char*) global_function);
 }
 
 

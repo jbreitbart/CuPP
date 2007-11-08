@@ -54,24 +54,34 @@ int main( int, char** )
     check_cuda_error();
     
     // Setup CUDA kernel arguments
-    dim3 block_dim (1);
-    dim3 grid_dim  (1);
-    cudaConfigureCall(grid_dim, block_dim);
-    check_cuda_error();
+    dim3 block_dim(1);
+    dim3 grid_dim(1);
     
-    cudaSetupArgument(i, 0);
-    check_cuda_error();  
-
-    cudaSetupArgument(d_jp,sizeof(i) );
-    check_cuda_error();
+    bool const use_native_cuda_kernel_call = false;
     
+    if ( use_native_cuda_kernel_call ) {
+        
+        // CUDA native kernel call.
+        
+        kernel_function<<< grid_dim, block_dim >>>( i, d_jp);
+        
+    } else {
     
-    cudaLaunch( kernel_function );
-    // cudaLaunch(get_kernel_function());
-    // kernel_function<<<grid_dim, block_dim >>>( i, d_jp);
-    check_cuda_error();
+        // CUDA runtime API kernel call.
+        
+        cudaConfigureCall(grid_dim, block_dim);
+        check_cuda_error();
+        
+        cudaSetupArgument( &i, sizeof(i), 0);
+        check_cuda_error();	 
+    
+        cudaSetupArgument( d_jp,sizeof( d_jp), sizeof(i) );
+        check_cuda_error();
+        
+        cudaLaunch( kernel_function );
+        check_cuda_error();
 
-
+    }
 
     int result = 0;
     cudaMemcpy(&result, d_jp, sizeof(int), cudaMemcpyDeviceToHost);

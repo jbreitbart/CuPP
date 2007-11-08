@@ -75,7 +75,7 @@ int main( int, char** )
         cudaSetupArgument( &i, sizeof(i), 0);
         check_cuda_error();	 
     
-        cudaSetupArgument( d_jp,sizeof( d_jp), sizeof(i) );
+        cudaSetupArgument( &d_jp,sizeof( d_jp), sizeof(i) );
         check_cuda_error();
         
         cudaLaunch( kernel_function );

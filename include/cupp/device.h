@@ -6,7 +6,7 @@
 #ifndef CUPP_device_H
 #define CUPP_device_H
 
-#if defined(__CUDACC__)
+#if defined(NVCC)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
@@ -28,6 +28,7 @@ namespace cupp {
 class device {
 	public:
 		typedef int id_t;
+	
 	public: /***  CONSTRUCTORS & DESTRUCTORS ***/
 		/**
 		 * @brief Generates a default device with no special requirements

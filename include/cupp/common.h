@@ -11,7 +11,7 @@
 
 
 
-#if defined(__CUDACC__)
+#if defined(NVCC)
 	#define CUPP_RUN_ON_HOST __host__
 	#define CUPP_RUN_ON_DEVICE __device__
 	#define CUPP_GLOBAL __global__
@@ -30,8 +30,22 @@
 	 */
 	#define CUPP_RUN_ON_DEVICE
 	
+	/**
+	 * @def CUPP_GLOBAL
+	 * Specifies a kernel
+	 */
 	#define CUPP_GLOBAL
+	
+	/**
+	 * @def CUPP_CONSTANT
+	 * Defines a variable to life in constant memory space
+	 */
 	#define CUPP_CONSTANT
+	
+	/**
+	 * @def CUPP_CONSTANT
+	 * Defines a variable to life in shared memory space
+	 */
 	#define CUPP_SHARED
 #endif
 

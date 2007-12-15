@@ -7,7 +7,7 @@
 #define CUPP_EXCEPTION_too_many_devices_per_thread_H
 
 
-#if defined(__CUDACC__)
+#if defined(NVCC)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 

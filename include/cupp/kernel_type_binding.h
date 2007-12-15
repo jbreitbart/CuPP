@@ -6,11 +6,50 @@
 #ifndef CUPP_kernel_type_binding_H
 #define CUPP_kernel_type_binding_H
 
+// not used with CUDA
+#if !defined(NVCC)
+
 #include <boost/type_traits.hpp>
+
+#endif
 
 namespace cupp {
 
 namespace impl {
+
+/**
+ * @class is_pod
+ * @author Jens Breitbart
+ * @version 0.1
+ * @date 15.12.2007
+ * is_pod::value is true for all POD types
+ */
+template <typename T>
+struct is_pod {
+	enum {value = false};
+};
+
+#define MK_is_pod(T) \
+template <> struct is_pod<T> { \
+	enum {value = true}; \
+};
+
+MK_is_pod(void)
+
+MK_is_pod(bool)
+MK_is_pod(char)
+MK_is_pod(signed char)
+MK_is_pod(unsigned char)
+
+MK_is_pod(signed short)
+MK_is_pod(unsigned short)
+MK_is_pod(signed int)
+MK_is_pod(unsigned int)
+MK_is_pod(signed long)
+MK_is_pod(unsigned long)
+
+MK_is_pod(float)
+MK_is_pod(double)
 
 /**
  * @class get_type_impl
@@ -40,16 +79,18 @@ struct get_type<true, T> {
 /**
  * @class get_type
  * @author Jens Breitbart
- * @version 0.2
- * @date 22.08.2007
+ * @version 0.3
+ * @date 15.12.2007
  * This can be used to get the host or device type a template. POD-types have T as there device and there host type.
  */
 template <typename T>
 struct get_type {
-	typedef typename impl::get_type <boost::is_pod< T >::value, T>::host_type      host_type;
-	typedef typename impl::get_type <boost::is_pod< T >::value, T>::device_type    device_type;
+	typedef typename impl::get_type <impl::is_pod < T >::value, T>::host_type      host_type;
+	typedef typename impl::get_type <impl::is_pod < T >::value, T>::device_type    device_type;
 };
 
+
+#if !defined(NVCC)
 
 /**
  * @class kernel_host_type
@@ -124,6 +165,8 @@ template <typename host_type>
 struct kernel_device_type<host_type volatile> {
 	typedef typename kernel_device_type<typename boost::remove_volatile<host_type>::type>::type type;
 };
+
+#endif
 
 
 } // cupp

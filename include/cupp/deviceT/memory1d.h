@@ -7,7 +7,7 @@
 #define CUPP_DEVICET_memory1d_H
 
 // Include std::size_t
-#include <cstddef>
+#include <stddef.h>
 
 #include "cupp/common.h"
 

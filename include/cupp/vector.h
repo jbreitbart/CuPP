@@ -6,7 +6,7 @@
 #ifndef CUPP_vector_H
 #define CUPP_vector_H
 
-#if defined(__CUDACC__)
+#if defined(NVCC)
 #error Not compatible with CUDA. Don't compile with nvcc.
 #endif
 
@@ -610,11 +610,12 @@ class vector {
 					data_[i] = temp[i];
 				}
 				
+				
 				device_changes_ = false;
 			}
 		}
 
-		/**returnee_vec
+		/**
 		 * If there is newer data on the host, this function will update the device data with it
 		 */
 		void update_device(const device &d) const {
@@ -622,6 +623,7 @@ class vector {
 			if (host_changes_ || d.id() != device_id_) {
 
 				std::vector< T_device_type > temp;
+				/// @todo use a std algo
 				for (typename std::vector< T >::const_iterator it = data_.begin(); it != data_.end(); ++it) {
 					temp.push_back ( kernel_call_traits< T, T_device_type >::transform (d, *it) );
 				}

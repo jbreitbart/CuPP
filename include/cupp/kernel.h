@@ -50,6 +50,22 @@ class kernel {
 		/**
 		 * @brief Constructor used to generate a kernel
 		 * @param f A pointer to the kernel function
+		 * @param shared_mem The number of dynamic shared memory needed by this kernel (in bytes)
+		 * @param tokens
+		 */
+		template< typename CudaKernelFunc>
+		kernel( CudaKernelFunc f, const size_t shared_mem=0, const int tokens = 0) :
+		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
+		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
+
+			dim3 grid_dim;
+			dim3 block_dim;
+			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f, grid_dim, block_dim, shared_mem, tokens);
+		}
+		
+		/**
+		 * @brief Constructor used to generate a kernel
+		 * @param f A pointer to the kernel function
 		 * @param grid_dim The dimension of the grid, the kernel we be executed on
 		 * @param block_dim The dimension of the block, the kernel we be executed on
 		 * @param shared_mem The number of dynamic shared memory needed by this kernel (in bytes)

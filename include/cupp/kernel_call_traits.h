@@ -45,7 +45,7 @@ class has_member_transform<R C::*> {
 		template<class T> static two check(...);
 
 	public:
-		static const bool value = (sizeof(check<C>(0)) == sizeof(char));
+		enum {value = (sizeof(check<C>(0)) == sizeof(char))};
 };
 
 /**
@@ -111,7 +111,7 @@ class has_member_get_device_ref<R C::*> {
 		template<class T> static two check(...);
 
 	public:
-		static const bool value = (sizeof(check<C>(0)) == sizeof(char));
+		enum {value = (sizeof(check<C>(0)) == sizeof(char))};
 };
 
 /**
@@ -174,7 +174,7 @@ class has_member_dirty<R C::*> {
 		template<class T> static two check(...);
 
 	public:
-		static const bool value = (sizeof(check<C>(0)) == sizeof(char));
+		enum {value = (sizeof(check<C>(0)) == sizeof(char))};
 };
 
 /**

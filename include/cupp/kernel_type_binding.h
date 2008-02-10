@@ -18,46 +18,34 @@ namespace cupp {
 namespace impl {
 
 /**
- * @class is_pod
+ * @class has_typdefs
  * @author Jens Breitbart
  * @version 0.1
- * @date 15.12.2007
- * is_pod::value is true for all POD types
+ * @date 10.02.2008
+ * Used by the @c cupp::get_type to detect wether @c T has @c T::host_type and @c T::device_type typedefs or not.
  */
 template <typename T>
-struct is_pod {
-	enum {value = false};
+class has_typdefs {
+	private:
+		typedef char one;
+		typedef char (&two)[2];
+		
+		template<typename R> struct helper;
+
+		template<class S> static one check(helper<typename S::host_type>*, helper<typename S::device_type>*);
+		template<class S> static two check(...);
+
+	public:
+		enum {value = (sizeof(check<T>(0, 0)) == sizeof(char))};
 };
 
-#define MK_is_pod(T) \
-template <> struct is_pod<T> { \
-	enum {value = true}; \
-};
-
-MK_is_pod(void)
-
-MK_is_pod(bool)
-MK_is_pod(char)
-MK_is_pod(signed char)
-MK_is_pod(unsigned char)
-
-MK_is_pod(signed short)
-MK_is_pod(unsigned short)
-MK_is_pod(signed int)
-MK_is_pod(unsigned int)
-MK_is_pod(signed long)
-MK_is_pod(unsigned long)
-
-MK_is_pod(float)
-MK_is_pod(double)
 
 /**
- * @class get_type_impl
+ * @class get_type
  * @author Jens Breitbart
- * @version 0.1
- * @date 22.08.2007
- * Used by the @c get_type to get the type. There is a specialisation pod-types (where device_type == host_type).
- * This is the generic template.
+ * @version 0.2
+ * @date 10.02.2008
+ * Used by the @c cupp::get_type to get the type. There is a specialisation for types not offering @c T::host_type or @c T::device_type.
  */
 template <bool POD, typename T>
 struct get_type {
@@ -66,10 +54,10 @@ struct get_type {
 };
 
 /**
- * Specialisation for pod-types.
+ * Specialisation for types without the host/device type typedefs..
  */
 template <typename T>
-struct get_type<true, T> {
+struct get_type<false, T> {
 	typedef T    host_type;
 	typedef T    device_type;
 };
@@ -79,14 +67,14 @@ struct get_type<true, T> {
 /**
  * @class get_type
  * @author Jens Breitbart
- * @version 0.3
- * @date 15.12.2007
+ * @version 0.4
+ * @date 10.02.2008
  * This can be used to get the host or device type a template. POD-types have T as there device and there host type.
  */
 template <typename T>
 struct get_type {
-	typedef typename impl::get_type <impl::is_pod < T >::value, T>::host_type      host_type;
-	typedef typename impl::get_type <impl::is_pod < T >::value, T>::device_type    device_type;
+	typedef typename impl::get_type <impl::has_typdefs < T >::value, T>::host_type      host_type;
+	typedef typename impl::get_type <impl::has_typdefs < T >::value, T>::device_type    device_type;
 };
 
 

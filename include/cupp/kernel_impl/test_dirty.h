@@ -30,7 +30,7 @@ class test_dirty {
 	/**
 	 * @param F is the type of the __global__ function to be introspected
 	 * @return The vector will have the size of the arity of the __global__ function. @a true at pos 0 means the first parameter is passed as non-const reference.
-	 * @warning If you come here with a compiler warning about dirty beeing private, you probably hit the maximum number of parameters supported by cupp::kernel. If you need more parameters, just extend test_dirty below and cupp::kernel::operator() ... mostly just a copy and paste work.
+	 * @warning If you come here with a compiler warning about dirty beeing private, you probably hit the maximum number of parameters supported by @c cupp::kernel. If you need more parameters, just extend @c cupp::kernel_imp::test_dirty, @c cupp::kernel::operator() and @c cupp::kernel_imp::real_setup_argument ... mostly just a copy and paste work.
 	 */
 	template <typename F>
 	static std::vector<bool> dirty ();

@@ -38,6 +38,31 @@ class real_setup_argument {
 
 };
 
+
+template <>
+class real_setup_argument<8> {
+	template <typename T>
+	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend boost::any real_setup_argument<9>::set(const device &d, const boost::any&, const int, T&);
+};
+
+template <>
+class real_setup_argument<7> {
+	template <typename T>
+	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend boost::any real_setup_argument<8>::set(const device &d, const boost::any&, const int, T&);
+};
+
 template <>
 class real_setup_argument<6> {
 	template <typename T>
@@ -49,7 +74,6 @@ class real_setup_argument<6> {
 	template <typename T>
 	friend boost::any real_setup_argument<7>::set(const device &d, const boost::any&, const int, T&);
 };
-
 
 template <>
 class real_setup_argument<5> {
@@ -189,6 +213,24 @@ boost::any real_setup_argument<6>::set (const device &d, const boost::any &arg, 
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<5>::set(d, arg, pos, that);
+}
+
+template <typename T>
+boost::any real_setup_argument<7>::set (const device &d, const boost::any &arg, const int pos, T &that) {
+	if (pos == 7) {
+		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
+		return that.template setup_argument<ARG> (d, arg);
+	}
+	return real_setup_argument<6>::set(d, arg, pos, that);
+}
+
+template <typename T>
+boost::any real_setup_argument<8>::set (const device &d, const boost::any &arg, const int pos, T &that) {
+	if (pos == 8) {
+		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
+		return that.template setup_argument<ARG> (d, arg);
+	}
+	return real_setup_argument<7>::set(d, arg, pos, that);
 }
 
 

@@ -230,7 +230,7 @@ std::vector<bool> test_dirty<7>::dirty () {
 
 template <typename F>
 std::vector<bool> test_dirty<8>::dirty () {
-	typedef typename boost::function_traits<F>::arg7_type ARG;
+	typedef typename boost::function_traits<F>::arg8_type ARG;
 	
 	std::vector< bool > tmp(test_dirty<7>::dirty<F>() );
 	tmp.push_back (check_arg<ARG>());

@@ -218,7 +218,7 @@ boost::any real_setup_argument<6>::set (const device &d, const boost::any &arg, 
 template <typename T>
 boost::any real_setup_argument<7>::set (const device &d, const boost::any &arg, const int pos, T &that) {
 	if (pos == 7) {
-		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
+		typedef typename boost::function_traits <typename T::F> :: arg7_type ARG;
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<6>::set(d, arg, pos, that);
@@ -227,7 +227,7 @@ boost::any real_setup_argument<7>::set (const device &d, const boost::any &arg, 
 template <typename T>
 boost::any real_setup_argument<8>::set (const device &d, const boost::any &arg, const int pos, T &that) {
 	if (pos == 8) {
-		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
+		typedef typename boost::function_traits <typename T::F> :: arg8_type ARG;
 		return that.template setup_argument<ARG> (d, arg);
 	}
 	return real_setup_argument<7>::set(d, arg, pos, that);

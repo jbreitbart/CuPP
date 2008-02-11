@@ -606,7 +606,6 @@ class vector {
 				memory_ptr_ -> copy_to_host (&temp[0]);
 
 				for (std::size_t i = 0; i<temp.size(); ++i) {
-					//kernel_call_traits< T, T_device_type >::update (data_[i], temp[i]);
 					data_[i] = temp[i];
 				}
 				

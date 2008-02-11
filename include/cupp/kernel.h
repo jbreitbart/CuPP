@@ -55,7 +55,7 @@ class kernel {
 		 */
 		template< typename CudaKernelFunc>
 		kernel( CudaKernelFunc f, const size_t shared_mem=0, const int tokens = 0) :
-		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
+		number_of_parameters_ ( boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity ),
 		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
 
 			dim3 grid_dim;
@@ -185,6 +185,35 @@ class kernel {
 		template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
 		void operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6 );
 		
+		/**
+		 * @brief Calls the kernel.
+		 * @param d The device where you want the kernel to be executed on
+		 * @param p1 The first parameter to be passed to the kernel
+		 * @param p2 The second parameter to be passed to the kernel
+		 * @param p3 The third parameter to be passed to the kernel
+		 * @param p4 ...
+		 * @param p5 ...
+		 * @param p6 ...
+		 * @param p7 ...
+		 */
+		template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
+		void operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7 );
+
+		/**
+		 * @brief Calls the kernel.
+		 * @param d The device where you want the kernel to be executed on
+		 * @param p1 The first parameter to be passed to the kernel
+		 * @param p2 The second parameter to be passed to the kernel
+		 * @param p3 The third parameter to be passed to the kernel
+		 * @param p4 ...
+		 * @param p5 ...
+		 * @param p6 ...
+		 * @param p7 ...
+		 * @param p8 ...
+		 */
+		template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >
+		void operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8 );
+
 	private:
 		/**
 		 * @brief Calls the dirty kernel_call_traits function if needed
@@ -378,6 +407,64 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 
 	returnee_vec_.clear();
 }
+
+
+template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
+void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7 ) {
+	check_number_of_parameters(7);
+	
+	kb_ -> configure_call();
+
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p7), 7 ) );
+
+	kb_->launch();
+
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
+	handle_call_traits (p4, 4);
+	handle_call_traits (p5, 5);
+	handle_call_traits (p6, 6);
+	handle_call_traits (p7, 7);
+
+	returnee_vec_.clear();
+}
+
+template< typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >
+void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8 ) {
+	check_number_of_parameters(8);
+	
+	kb_ -> configure_call();
+
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p7), 7 ) );
+	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p8), 8 ) );
+
+	kb_->launch();
+
+	handle_call_traits (p1, 1);
+	handle_call_traits (p2, 2);
+	handle_call_traits (p3, 3);
+	handle_call_traits (p4, 4);
+	handle_call_traits (p5, 5);
+	handle_call_traits (p6, 6);
+	handle_call_traits (p7, 7);
+	handle_call_traits (p8, 8);
+
+	returnee_vec_.clear();
+}
+
 
 }
 

@@ -30,11 +30,36 @@ class test_dirty {
 	/**
 	 * @param F is the type of the __global__ function to be introspected
 	 * @return The vector will have the size of the arity of the __global__ function. @a true at pos 0 means the first parameter is passed as non-const reference.
+	 * @warning If you come here with a compiler warning about dirty beeing private, you probably hit the maximum number of parameters supported by cupp::kernel. If you need more parameters, just extend test_dirty below and cupp::kernel::operator() ... mostly just a copy and paste work.
 	 */
 	template <typename F>
 	static std::vector<bool> dirty ();
 };
 
+
+template <>
+class test_dirty<8> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend std::vector<bool> test_dirty<9>::dirty();
+};
+
+template <>
+class test_dirty<7> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	template <typename T>
+	friend std::vector<bool> test_dirty<8>::dirty();
+};
 
 template <>
 class test_dirty<6> {
@@ -190,6 +215,24 @@ std::vector<bool> test_dirty<6>::dirty () {
 	typedef typename boost::function_traits<F>::arg6_type ARG;
 	
 	std::vector< bool > tmp(test_dirty<5>::dirty<F>() );
+	tmp.push_back (check_arg<ARG>());
+	return tmp;
+}
+
+template <typename F>
+std::vector<bool> test_dirty<7>::dirty () {
+	typedef typename boost::function_traits<F>::arg7_type ARG;
+	
+	std::vector< bool > tmp(test_dirty<6>::dirty<F>() );
+	tmp.push_back (check_arg<ARG>());
+	return tmp;
+}
+
+template <typename F>
+std::vector<bool> test_dirty<8>::dirty () {
+	typedef typename boost::function_traits<F>::arg7_type ARG;
+	
+	std::vector< bool > tmp(test_dirty<7>::dirty<F>() );
 	tmp.push_back (check_arg<ARG>());
 	return tmp;
 }

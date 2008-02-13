@@ -18,8 +18,8 @@ namespace kernel_impl {
  * @class real_setup_argument
  * @author Björn Knafla Some very useful writting of the word "template". :-)
  * @author Jens Breitbart
- * @version 0.1
- * @date 21.07.2007
+ * @version 0.2
+ * @date 13.02.2008
  * @brief Use by cupp::kernel_impl::kernel_launcher_impl to introspec the __global__ function and call a function inside the kernel_launcher_impl.
  * @warning The is very strictly tied to kernel_launcher_impl; I would not expect any usage beyond this.
  * @note This is a friend class of kernel_launcher_impl, but not defined into the same header to make it easier to extend it and to keep it clear.
@@ -38,114 +38,40 @@ class real_setup_argument {
 
 };
 
-
-template <>
-class real_setup_argument<8> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<9>::set(const device &d, const boost::any&, const int, T&);
+#define CUPP_REAL_SETUP_ARGUMENT_HEADER(a,b) \
+template <> \
+class real_setup_argument<a> { \
+	template <typename T> \
+	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that); \
+	\
+	template <typename T> \
+	friend class kernel_launcher_impl; \
+	\
+	template <typename T> \
+	friend boost::any real_setup_argument<b>::set(const device &d, const boost::any&, const int, T&); \
 };
 
-template <>
-class real_setup_argument<7> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<8>::set(const device &d, const boost::any&, const int, T&);
-};
 
-template <>
-class real_setup_argument<6> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<7>::set(const device &d, const boost::any&, const int, T&);
-};
+CUPP_REAL_SETUP_ARGUMENT_HEADER(16,17)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(15,16)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(14,15)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(13,14)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(12,13)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(11,12)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(10,11)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(9,10)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(8,9)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(7,8)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(6,7)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(5,6)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(4,5)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(3,4)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(2,3)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(1,2)
+CUPP_REAL_SETUP_ARGUMENT_HEADER(0,1)
 
-template <>
-class real_setup_argument<5> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<6>::set(const device &d, const boost::any&, const int, T&);
-};
 
-template <>
-class real_setup_argument<4> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<5>::set(const device &d, const boost::any&, const int, T&);
-};
-
-template <>
-class real_setup_argument<3> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<4>::set(const device &d, const boost::any&, const int, T&);
-};
-
-template <>
-class real_setup_argument<2> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<3>::set(const device &d, const boost::any&, const int, T&);
-};
-
-template <>
-class real_setup_argument<1> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<2>::set(const device &d, const boost::any&, const int, T&);
-};
-
-template <>
-class real_setup_argument<0> {
-	template <typename T>
-	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
-
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend boost::any real_setup_argument<1>::set(const device &d, const boost::any&, const int, T&);
-};
+#undef CUPP_REAL_SETUP_ARGUMENT_HEADER
 
 
 /*** IMPLEMENTATION ***/
@@ -160,79 +86,35 @@ boost::any real_setup_argument<0>::set (const device &d, const boost::any &arg, 
 }
 
 
-template <typename T>
-boost::any real_setup_argument<1>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 1) {
-		typedef typename boost::function_traits <typename T::F> :: arg1_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<0>::set(d, arg, pos, that);
-}
-	
-
-template <typename T>
-boost::any real_setup_argument<2>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 2) {
-		typedef typename boost::function_traits <typename T::F> :: arg2_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<1>::set(d, arg, pos, that);
+#define CUPP_REAL_SETUP_ARGUMENT(a,b) \
+template <typename T> \
+boost::any real_setup_argument<a>::set (const device &d, const boost::any &arg, const int pos, T &that) { \
+	if (pos == a) { \
+		typedef typename boost::function_traits <typename T::F> :: arg##a##_type ARG; \
+		return that.template setup_argument<ARG> (d, arg); \
+	} \
+	return real_setup_argument<b>::set(d, arg, pos, that); \
 }
 
-template <typename T>
-boost::any real_setup_argument<3>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 3) {
-		typedef typename boost::function_traits <typename T::F> :: arg3_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<2>::set(d, arg, pos, that);
-}
+CUPP_REAL_SETUP_ARGUMENT(1,0)
+CUPP_REAL_SETUP_ARGUMENT(2,1)
+CUPP_REAL_SETUP_ARGUMENT(3,2)
+CUPP_REAL_SETUP_ARGUMENT(4,3)
+CUPP_REAL_SETUP_ARGUMENT(5,4)
+CUPP_REAL_SETUP_ARGUMENT(6,5)
+CUPP_REAL_SETUP_ARGUMENT(7,6)
+CUPP_REAL_SETUP_ARGUMENT(8,7)
+CUPP_REAL_SETUP_ARGUMENT(9,8)
+CUPP_REAL_SETUP_ARGUMENT(10,9)
+CUPP_REAL_SETUP_ARGUMENT(11,10)
+CUPP_REAL_SETUP_ARGUMENT(12,11)
+CUPP_REAL_SETUP_ARGUMENT(13,12)
+CUPP_REAL_SETUP_ARGUMENT(14,13)
+CUPP_REAL_SETUP_ARGUMENT(15,14)
+CUPP_REAL_SETUP_ARGUMENT(16,15)
 
-template <typename T>
-boost::any real_setup_argument<4>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 4) {
-		typedef typename boost::function_traits <typename T::F> :: arg4_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<3>::set(d, arg, pos, that);
-}
 
-template <typename T>
-boost::any real_setup_argument<5>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 5) {
-		typedef typename boost::function_traits <typename T::F> :: arg5_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<4>::set(d, arg, pos, that);
-}
-
-template <typename T>
-boost::any real_setup_argument<6>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 6) {
-		typedef typename boost::function_traits <typename T::F> :: arg6_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<5>::set(d, arg, pos, that);
-}
-
-template <typename T>
-boost::any real_setup_argument<7>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 7) {
-		typedef typename boost::function_traits <typename T::F> :: arg7_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<6>::set(d, arg, pos, that);
-}
-
-template <typename T>
-boost::any real_setup_argument<8>::set (const device &d, const boost::any &arg, const int pos, T &that) {
-	if (pos == 8) {
-		typedef typename boost::function_traits <typename T::F> :: arg8_type ARG;
-		return that.template setup_argument<ARG> (d, arg);
-	}
-	return real_setup_argument<7>::set(d, arg, pos, that);
-}
-
+#undef CUPP_REAL_SETUP_ARGUMENT
 
 } // kernel_impl
 } // cupp

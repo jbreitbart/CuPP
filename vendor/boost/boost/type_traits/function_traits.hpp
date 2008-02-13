@@ -162,11 +162,148 @@ struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>
   typedef T10 arg10_type;
 };
 
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 11);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+};
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 12);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+  typedef T12 arg12_type;
+};
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 13);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+  typedef T12 arg12_type;
+  typedef T13 arg13_type;
+};
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 14);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+  typedef T12 arg12_type;
+  typedef T13 arg13_type;
+  typedef T14 arg14_type;
+};
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14,
+         typename T15>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 15);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+  typedef T12 arg12_type;
+  typedef T13 arg13_type;
+  typedef T14 arg14_type;
+  typedef T15 arg15_type;
+};
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14,
+         typename T15, typename T16>
+struct function_traits_helper<R (*)(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16)>
+{
+  BOOST_STATIC_CONSTANT(int, arity = 16);
+  typedef R result_type;
+  typedef T1 arg1_type;
+  typedef T2 arg2_type;
+  typedef T3 arg3_type;
+  typedef T4 arg4_type;
+  typedef T5 arg5_type;
+  typedef T6 arg6_type;
+  typedef T7 arg7_type;
+  typedef T8 arg8_type;
+  typedef T9 arg9_type;
+  typedef T10 arg10_type;
+  typedef T11 arg11_type;
+  typedef T12 arg12_type;
+  typedef T13 arg13_type;
+  typedef T14 arg14_type;
+  typedef T15 arg15_type;
+  typedef T16 arg16_type;
+};
+
 } // end namespace detail
 
 template<typename Function>
 struct function_traits : 
-    public detail::function_traits_helper<typename boost::add_pointer<Function>::type>
+    public detail::function_traits_helper<typename add_pointer<Function>::type>
 {
 };
 
@@ -221,6 +358,45 @@ template<typename R, typename T1, typename T2, typename T3, typename T4,
          typename T10>
 type_of_size<11> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8, 
                                               T9, T10));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11>
+type_of_size<12> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12>
+type_of_size<13> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11, T12));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13>
+type_of_size<14> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11, T12, T13));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14>
+type_of_size<15> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11, T12, T13, T14));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14,
+         typename T15>
+type_of_size<16> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11, T12, T13, T14, T15));
+
+template<typename R, typename T1, typename T2, typename T3, typename T4,
+         typename T5, typename T6, typename T7, typename T8, typename T9,
+         typename T10, typename T11, typename T12, typename T13, typename T14,
+         typename T15, typename T16>
+type_of_size<17> function_arity_helper(R (*f)(T1, T2, T3, T4, T5, T6, T7, T8,
+                                              T9, T10, T11, T12, T13, T14, T15, T16));
+
 } // end namespace detail
 
 // Won't work with references

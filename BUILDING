@@ -7,4 +7,3 @@ BUILD:
 2. Build using your local build tool (eg. call make)
 
 You will find the CuPP library in "lib" and the examples in "bin"
-

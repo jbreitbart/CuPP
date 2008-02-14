@@ -4,5 +4,4 @@ SUBDIRS(memory1d)
 SUBDIRS(kernel)
 SUBDIRS(vector)
 SUBDIRS(vector_complex) 
-SUBDIRS(64bit_test)
 

@@ -263,6 +263,14 @@ void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 	stack_in_use_ += sizeof(T);
+
+#if 0
+	// enable on 64bit system
+	// be sure we are at a 8byte boundary ... this may be a problem at 64bit systems
+	if ((stack_in_use_%8) !=0) {
+		stack_in_use_ += 8 - (stack_in_use_%8);
+	}
+#endif
 }
 
 } // kernel_impl

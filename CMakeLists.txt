@@ -1,15 +1,15 @@
 PROJECT(cupp)
 
 # consig the cuda system
-SET (CUDA_INSTALL_PREFIX /usr/local/cuda/)
+SET (CUDA_INSTALL_PREFIX /usr/local/cuda)
 SET (CUDA_BUILD_TYPE Device)
 
 # load cuda macros
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
 # include and link with CUDA
-INCLUDE_DIRECTORIES(/usr/local/cuda/include/)
-LINK_DIRECTORIES(/usr/local/cuda/lib)
+INCLUDE_DIRECTORIES(${CUDA_INSTALL_PREFIX}/include/)
+LINK_DIRECTORIES(${CUDA_INSTALL_PREFIX}/lib)
 
 # Include the local boost copy
 INCLUDE_DIRECTORIES(vendor/boost/)

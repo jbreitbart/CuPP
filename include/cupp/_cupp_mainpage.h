@@ -11,22 +11,22 @@
  * - Google group: ???
  * 
  * \section rel_notes Release Notes
- * <a href="static/cupp_v1_prev.tar.gz">Download CuPP</a>
+ * <a href="static/cupp_v1_prev.tar.gz">Download the current version of the CuPP framework</a>
  * 
- * This is the first preview release of CuPP. It is only testes on Ubuntu Linux (32bit),
+ * This is the first preview release of CuPP. It is only tested on Ubuntu Linux (32bit),
  * but it is expected to work well on other linux flavors. Windows is untested and not expected to work
- * correctly, but may be in an upcoming release.
+ * correctly, but maybe in an upcoming release.
  * 
  * The downloadable file contains:
  * - the CuPP framework itself
- * - simple example applications, that demonstrate the usage of CuPP
+ * - simple example applications demonstrating the usage of CuPP
  * - parts of the Boost Libraries used by CuPP (including a slidely modified version of
  *   <a href="http://www.boost.org/doc/html/boost_typetraits.html">Boost.TypeTraits</a>,
  *   which supports a higher function arity in function_traits.
  * 
  * \section start Getting Started
  * \subsection req Requirements
- * The CuPP framework requires the follow software to be installed:
+ * The CuPP framework requires the following software to be installed:
  * - <a href="http://www.cmake.org">CMake</a>, to generate the build script
  * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a> version 1.1
  * 
@@ -45,10 +45,10 @@
  * \section overview Overview
  * <img src="static/overview.png">
  * The CuPP framework consists of 5 highly interwoven parts of which some replace the existing CUDA counterparts
- * whereas other offer new functionality.
+ * whereas others offer new functionalities.
  * - <b>Device management</b> \n
  *   Device management is not done implicit by associating a thread with a
- *   device as it was done by CUDA. Instead, the developer is forced to create a
+ *   device as it is done by CUDA. Instead, the developer is forced to create a
  *   device handle (cupp::device), which is passed to all CuPP functions using
  *   the device, e.g. kernel calls and memory allocation.
  * - <b>Memory management</b> \n
@@ -70,11 +70,11 @@
  *   and from device memory.
  * - <b>Data structures</b> \n
  *   Currently only a std::vector wrapper offering automatic memory
- *   management is supplied. This class also implements a feature called lazy memory copying, which
- *   minimizes any memory transfers between device and host memory. Currently no other datastructure are
- *   supplied, but can be added easily.
+ *   management is supplied. This class also implements a feature called lazy memory copying, to
+ *   minimize any memory transfers between device and host memory. Currently no other datastructures are
+ *   supplied, but can be added with ease.
  *
- * A document describing the functionality in detail, can be found in the references section.
+ * A document describing all functionalities in detail, can be found in the references section.
  * 
  *
  * 

@@ -28,7 +28,7 @@
  * \subsection req Requirements
  * The CuPP framework requires the follow software to be installed:
  * - <a href="http://www.cmake.org">CMake</a>, to generate the build script
- * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a>
+ * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a> version 1.1
  * 
  * \subsection build Building the CuPP framework
  * Detail instructions of how to build CuPP are included in the download file. If you have any problems
@@ -41,7 +41,7 @@
  * - The number of parameters that can be passed to a kernel is limited by the function arity supported
  *   by function_traits of Boost.TypeTraits. The version included in the download file supports an
  *   arity of 16.
- 
+ *
  * \section overview Overview
  * <img src="static/overview.png">
  * The CuPP framework consists of 5 highly interwoven parts of which some replace the existing CUDA counterparts

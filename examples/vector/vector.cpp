@@ -1,3 +1,8 @@
+/*
+ * Copyright: See LICENSE file that comes with this distribution
+ *
+ */
+
 #include <cstdlib>
 #include <iostream>
 

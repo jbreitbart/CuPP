@@ -1,7 +1,5 @@
 /*
- * Author:  Jens Breitbart, http://www.gpuified.de/contact/
- *
- * Copyright: See COPYING file that comes with this distribution
+ * Copyright: See LICENSE file that comes with this distribution
  *
  */
 

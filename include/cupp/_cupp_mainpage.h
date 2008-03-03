@@ -8,7 +8,7 @@
  * 
  * \section HP Homepage
  * - CuPP homepage: http://cupp.gpuified.de/
- * - Google group: http://groups.google.de/group/cupp
+ * - Google group: http://groups.google.com/group/cupp
  * 
  * \section rel_notes Release Notes
  * <a href="static/cupp_v1_prev.tar.gz">Download the current version of the CuPP framework</a>

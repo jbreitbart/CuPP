@@ -16,7 +16,6 @@ namespace kernel_impl {
 
 /**
  * @class real_setup_argument
- * @author Björn Knafla Some very useful writting of the word "template". :-)
  * @author Jens Breitbart
  * @version 0.2
  * @date 13.02.2008

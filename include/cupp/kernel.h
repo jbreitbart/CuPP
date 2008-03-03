@@ -37,7 +37,7 @@ using namespace cupp::kernel_impl;
 
 /**
  * @class kernel
- * @author Björn Knafla: Initial design and some enlightening comments.
+ * @author Björn Knafla: Initial design
  * @author Jens Breitbart
  * @version 0.3
  * @date 03.08.2007

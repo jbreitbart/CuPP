@@ -16,7 +16,7 @@ namespace kernel_impl {
 
 /**
  * @class kernel_launcher_base
- * @author Björn Knafla: Initial design and some enlightening comments.
+ * @author Björn Knafla: Initial design
  * @author Jens Breitbart
  * @version 0.3
  * @date 03.08.2007

@@ -1,4 +1,4 @@
-# Doxyfile 1.5.1
+# Doxyfile 1.5.1-KDevelop
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = /home/jensman/projekte/uni/kapaga/svn/cuda++/include/
+STRIP_FROM_PATH        = /home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO

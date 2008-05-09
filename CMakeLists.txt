@@ -30,3 +30,6 @@ SUBDIRS(src)
 
 # build the examples
 SUBDIRS(examples)
+
+
+INSTALL(DIRECTORY include/cupp DESTINATION include)

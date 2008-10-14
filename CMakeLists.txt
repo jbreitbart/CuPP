@@ -1,15 +1,10 @@
-cmake_minimum_required(VERSION 2.4)
-
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
-
-
 PROJECT(cupp)
 
-# consig the cuda system
+# set CUDA path
 SET (CUDA_INSTALL_PREFIX /usr/local/cuda)
-SET (CUDA_BUILD_TYPE Device)
+
+# set build type: Device or Emulation
+#SET (CUDA_BUILD_TYPE Device)
 
 # load cuda macros
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
@@ -27,7 +22,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 CUDA_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # if you don want the full compiler output, uncomment the following line
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # add definitions, compiler switches, etc.
 ADD_DEFINITIONS(-Wall -W -O2 -g)
@@ -38,5 +33,12 @@ SUBDIRS(src)
 # build the examples
 SUBDIRS(examples)
 
-
+# generate make install
 INSTALL(DIRECTORY include/cupp DESTINATION include)
+
+# set minimum cmake version
+cmake_minimum_required(VERSION 2.4)
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)

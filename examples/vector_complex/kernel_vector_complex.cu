@@ -13,5 +13,5 @@ __global__ void global_function (deviceT::vector< deviceT::vector <int> > &i) {
 }
 
 kernelT get_kernel() {
-	return global_function;
+	return (kernelT)global_function;
 }

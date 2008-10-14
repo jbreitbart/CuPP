@@ -11,5 +11,5 @@ __global__ void global_function (cupp::deviceT::vector<int> &i) {
 }
 
 kernelT get_kernel() {
-	return global_function;
+	return (kernelT)global_function;
 }

@@ -12,5 +12,5 @@ __global__ void global_function (cupp::deviceT::memory1d<int>& p) {
 }
 
 kernelT get_kernel() {
-	return global_function;
+	return (kernelT)global_function;
 }

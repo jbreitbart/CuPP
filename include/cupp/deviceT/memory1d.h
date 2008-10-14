@@ -79,7 +79,8 @@ class memory1d {
 
 		CUPP_RUN_ON_HOST
 		void set_size(const size_type size);
-	private:
+
+	/*private:*/
 		/**
 		 * The pointer to the device memory
 		 */

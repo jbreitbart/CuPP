@@ -15,7 +15,7 @@
 #define CUPP_shared_device_pointer_H
 
 #if defined(NVCC)
-#error Not compatible with CUDA. Don't compile with nvcc.
+#error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 
 

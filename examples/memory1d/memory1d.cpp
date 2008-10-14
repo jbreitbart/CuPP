@@ -25,7 +25,7 @@ int main() {
 		eight[i]=i;
 	}
 
-	// show me what I have just filled into the array
+	// show me what I have just put into the array
 	cout << "before the kernel call:" << endl;
 	for (int i=0; i<8; ++i) {
 		cout << eight[i] << ", ";

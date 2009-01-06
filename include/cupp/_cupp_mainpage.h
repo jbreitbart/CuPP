@@ -11,7 +11,7 @@
  * - Google group: http://groups.google.com/group/cupp
  * 
  * \section rel_notes Release Notes
- * <a href="static/cupp_v1_prev.tar.gz">Download the current version of the CuPP framework</a>
+ * <a href="static/cupp_v0.1.1.tar.gz">Download version 0.1.1 of the CuPP framework</a>
  * 
  * This is the first preview release of CuPP. It is only tested on Ubuntu Linux (32bit),
  * but it is expected to work well on other linux flavors. Windows is untested and not expected to work
@@ -20,15 +20,12 @@
  * The downloadable file contains:
  * - the CuPP framework itself
  * - simple example applications demonstrating the usage of CuPP
- * - parts of the Boost Libraries used by CuPP (including a slidely modified version of
- *   <a href="http://www.boost.org/doc/html/boost_typetraits.html">Boost.TypeTraits</a>,
- *   which supports a higher function arity in function_traits.
  * 
  * \section start Getting Started
  * \subsection req Requirements
  * The CuPP framework requires the following software to be installed:
  * - <a href="http://www.cmake.org">CMake</a>, to generate the build script
- * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a> version 1.1
+ * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a> version 2.0
  * 
  * \subsection build Building the CuPP framework
  * Detail instructions of how to build CuPP are included in the download file. If you have any problems
@@ -39,8 +36,7 @@
  * 
  * \subsection limit Known limitation
  * - The number of parameters that can be passed to a kernel is limited by the function arity supported
- *   by function_traits of Boost.TypeTraits. The version included in the download file supports an
- *   arity of 16.
+ *   by function_traits of Boost.TypeTraits.
  *
  * \section overview Overview
  * <img src="static/overview.png">
@@ -80,20 +76,20 @@
  * 
  * \section ref References
  * An detail description of the CuPP framework can be found in:
- * - J. Breitbart. A framework for easy CUDA integration in C++ applications.
- *   Diplomarbeit, University of Kassel, 2008. http://cupp.gpuified.de/static/thesis.pdf
+ * - J. Breitbart. A framework for easy CUDA integration in C++ applications.<br/>
+ *   Diplomarbeit, University of Kassel, 2008.<br/>
+ *   http://www.plm.eecs.uni-kassel.de/plm/fileadmin/pm/publications/breitbart/framework_for_easy_cuda_integration_c___applications.pdf
  * 
- * At the time of writting no application using the CuPP framework has been released to public.
- * Some experience can be found in the thesis linked above, but the information should be expected
- * to be biased.
+ * \section ex Example
+ * - J. Breitbart. Case studies on GPU usage and data structure design.<br/>
+ *   Master Thesis, University of Kassel, 2008.<br/>
+ *   http://www.plm.eecs.uni-kassel.de/plm/fileadmin/pm/publications/breitbart/case_studies_on_gpu_usage_and_data_structure_design.pdf
  * 
  * \section credit Credits
  * 
  * \subsection developer Developers in alphabetical order
- * - Jens Breitbart
+ * - <a href="http://www.plm.eecs.uni-kassel.de/plm/index.php?id=breitbart">Jens Breitbart</a>
  * - <a href="http://www.plm.eecs.uni-kassel.de/plm/index.php?id=bknafla">Björn Knafla</a>,
- *   University of Kassel,
- *   <a href="http://www.plm.eecs.uni-kassel.de/plm/">Research Group Programming Languages / Methodologies</a>
  * 
  * \subsection ack Acknowledgments fly out to
  * - <a href="http://www.sci.utah.edu/~abe/">Abe Stephens</a> for his very usefull CUDA CMake

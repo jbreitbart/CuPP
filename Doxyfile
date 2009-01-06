@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = CuPP
-PROJECT_NUMBER         = "0.1 - preview release"
+PROJECT_NUMBER         = "0.1.1"
 OUTPUT_DIRECTORY       = doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = /home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/
+STRIP_FROM_PATH        = /home/jbreitbart/projekte/cupp/svn/trunk/
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
@@ -83,7 +83,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/jensman/projekte/uni/kapaga/svn/cuda++/trunk/include
+INPUT                  = ./include
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

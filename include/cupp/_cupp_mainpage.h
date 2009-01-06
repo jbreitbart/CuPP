@@ -7,13 +7,14 @@
  * and a special kernel call semantic, similar to call by reference as it is known from the C++ realm.
  * 
  * \section HP Homepage
- * - CuPP homepage: http://cupp.gpuified.de/
+ * - CuPP homepage: http://www.plm.eecs.uni-kassel.de/plm/index.php?id=cupp
+ * - Documentation: http://cupp.gpuified.de/
  * - Google group: http://groups.google.com/group/cupp
  * 
  * \section rel_notes Release Notes
  * <a href="static/cupp_v0.1.1.tar.gz">Download version 0.1.1 of the CuPP framework</a>
  * 
- * This is the first preview release of CuPP. It is only tested on Ubuntu Linux (32bit),
+ * This release of CuPP is only tested on Ubuntu Linux (32bit),
  * but it is expected to work well on other linux flavors. Windows is untested and not expected to work
  * correctly, but maybe in an upcoming release.
  * 
@@ -26,6 +27,7 @@
  * The CuPP framework requires the following software to be installed:
  * - <a href="http://www.cmake.org">CMake</a>, to generate the build script
  * - <a href="http://www.nvidia.com/object/cuda_home.html">CUDA</a> version 2.0
+ * - <a href="http://www.boost.org">Boost libraries</a>
  * 
  * \subsection build Building the CuPP framework
  * Detail instructions of how to build CuPP are included in the download file. If you have any problems

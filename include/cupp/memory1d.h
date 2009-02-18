@@ -241,13 +241,13 @@ class memory1d {
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		device_type transform(const device &d) const;
+		device_type transform(const device &d);
 
 		/**
 		 * @brief This function is called by the kernel_call_traits
 		 * @return A on the device useable memory1d reference
 		 */
-		device_reference<device_type> get_device_reference(const device &d) const;
+		device_reference<device_type> get_device_reference(const device &d);
 		
 		/**
 		 * @brief This function is called by the kernel_call_traits
@@ -282,7 +282,7 @@ class memory1d {
 
 
 template <typename T>
-typename memory1d<T>::device_type memory1d<T>::transform(const device &d) const {
+typename memory1d<T>::device_type memory1d<T>::transform(const device &d) {
 	UNUSED_PARAMETER(d);
 	
 	device_type temp;
@@ -294,7 +294,7 @@ typename memory1d<T>::device_type memory1d<T>::transform(const device &d) const 
 }
 
 template <typename T>
-device_reference< typename memory1d<T>::device_type > memory1d<T>::get_device_reference(const device &d) const {
+device_reference< typename memory1d<T>::device_type > memory1d<T>::get_device_reference(const device &d) {
 	if (device_ref_ == 0) {
 		// copy device_copy into global memory
 		device_ref_ = new device_reference < device_type > (d, transform(d) );

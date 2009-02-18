@@ -343,6 +343,16 @@ private:
 }; // class shared_device_pointer
 
 
+template< typename T, typename U >
+bool operator==( shared_device_pointer< T > const& lhs, shared_device_pointer< U > const& rhs );
+
+template< typename T, typename U >
+bool operator!=( shared_device_pointer< T > const& lhs, shared_device_pointer< U > const& rhs );
+
+template< typename T >
+void swap( shared_device_pointer< T >& lhs, shared_device_pointer< T >& rhs );
+
+
 
 
 template< typename T, typename U >

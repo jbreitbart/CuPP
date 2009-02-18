@@ -23,14 +23,65 @@ namespace cupp {
 template< typename T > class shared_device_pointer; // forward declaration to break cycle dependency
 
 template <typename T>
-void mem_set(T* device_pointer, int value, const size_t size=1) {
+void mem_set(T* device_pointer, int value, const size_t size=1);
+
+template <typename T>
+void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t size=1);
+
+inline void* malloc_ (const unsigned int size_in_b);
+
+template <typename T>
+T* malloc(const size_t size=1);
+
+template <typename T>
+void free(T* device_pointer);
+
+template <typename T>
+void copy_host_to_device(T *destination, const T * const source, size_t count=1);
+
+template <typename T>
+void copy_host_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1);
+
+template <typename T>
+void copy_device_to_device(T* destination, const T * const source, size_t count=1);
+
+
+template <typename T>
+void copy_device_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1);
+
+
+template <typename T>
+void copy_device_to_device(T *destination, const shared_device_pointer<T> source, size_t count=1);
+
+
+template <typename T>
+void copy_device_to_device(shared_device_pointer<T> destination, const shared_device_pointer<T> source, size_t count=1);
+
+
+template <typename T>
+void copy_device_to_host(T* destination, const T * const source, size_t count=1);
+
+
+template <typename T>
+void copy_device_to_host(T* destination, const shared_device_pointer<T> source, size_t count=1);
+
+inline void thread_synchronize();
+
+
+
+
+
+
+
+template <typename T>
+void mem_set(T* device_pointer, int value, const size_t size) {
 	if (cudaMemset( reinterpret_cast<void*>( device_pointer ), value, sizeof(T)*size ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 }
 
 template <typename T>
-void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t size=1) {
+void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t size) {
 	mem_set(device_pointer.get(), value, size);
 }
 
@@ -43,7 +94,7 @@ inline void* malloc_ (const unsigned int size_in_b) {
 }
 
 template <typename T>
-T* malloc(const size_t size=1) {
+T* malloc(const size_t size) {
 	return static_cast<T*> (malloc_ (size*sizeof(T)));
 }
 
@@ -57,7 +108,7 @@ void free(T* device_pointer) {
 
 
 template <typename T>
-void copy_host_to_device(T *destination, const T * const source, size_t count=1) {
+void copy_host_to_device(T *destination, const T * const source, size_t count) {
 	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
@@ -65,13 +116,13 @@ void copy_host_to_device(T *destination, const T * const source, size_t count=1)
 
 
 template <typename T>
-void copy_host_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1) {
+void copy_host_to_device(shared_device_pointer<T> destination, const T * const source, size_t count) {
 	copy_host_to_device(destination.get(), source, count);
 }
 
 
 template <typename T>
-void copy_device_to_device(T* destination, const T * const source, size_t count=1) {
+void copy_device_to_device(T* destination, const T * const source, size_t count) {
 	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
@@ -79,25 +130,25 @@ void copy_device_to_device(T* destination, const T * const source, size_t count=
 
 
 template <typename T>
-void copy_device_to_device(shared_device_pointer<T> destination, const T * const source, size_t count=1) {
+void copy_device_to_device(shared_device_pointer<T> destination, const T * const source, size_t count) {
 	copy_device_to_device (destination.get(), source, count);
 }
 
 
 template <typename T>
-void copy_device_to_device(T *destination, const shared_device_pointer<T> source, size_t count=1) {
+void copy_device_to_device(T *destination, const shared_device_pointer<T> source, size_t count) {
 	copy_device_to_device (destination, source.get(), count);
 }
 
 
 template <typename T>
-void copy_device_to_device(shared_device_pointer<T> destination, const shared_device_pointer<T> source, size_t count=1) {
+void copy_device_to_device(shared_device_pointer<T> destination, const shared_device_pointer<T> source, size_t count) {
 	copy_device_to_device (destination.get(), source.get(), count);
 }
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const T * const source, size_t count=1) {
+void copy_device_to_host(T* destination, const T * const source, size_t count) {
 	if (cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
@@ -105,7 +156,7 @@ void copy_device_to_host(T* destination, const T * const source, size_t count=1)
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const shared_device_pointer<T> source, size_t count=1) {
+void copy_device_to_host(T* destination, const shared_device_pointer<T> source, size_t count) {
 	if (cudaMemcpy(destination, source.get(), count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}

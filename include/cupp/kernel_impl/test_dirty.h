@@ -49,7 +49,17 @@ class test_dirty<a> { \
 	friend std::vector<bool> test_dirty<b>::dirty(); \
 };
 
-CUPP_TEST_DIRTY_HEADER(16,17)
+
+template <>
+class test_dirty<16> {
+	template <typename F>
+	static std::vector<bool> dirty ();
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+};
+
+//CUPP_TEST_DIRTY_HEADER(16,17)
 CUPP_TEST_DIRTY_HEADER(15,16)
 CUPP_TEST_DIRTY_HEADER(14,15)
 CUPP_TEST_DIRTY_HEADER(13,14)

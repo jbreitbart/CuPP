@@ -50,8 +50,19 @@ class real_setup_argument<a> { \
 	friend boost::any real_setup_argument<b>::set(const device &d, const boost::any&, const int, T&); \
 };
 
+template <>
+class real_setup_argument<16> {
+	template <typename T>
+	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that);
+	
+	template <typename T>
+	friend class kernel_launcher_impl;
+	
+	//template <typename T>
+	//friend boost::any real_setup_argument<17>::set(const device &d, const boost::any&, const int, T&);
+};
 
-CUPP_REAL_SETUP_ARGUMENT_HEADER(16,17)
+//CUPP_REAL_SETUP_ARGUMENT_HEADER(16,17)
 CUPP_REAL_SETUP_ARGUMENT_HEADER(15,16)
 CUPP_REAL_SETUP_ARGUMENT_HEADER(14,15)
 CUPP_REAL_SETUP_ARGUMENT_HEADER(13,14)

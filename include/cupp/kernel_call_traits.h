@@ -62,7 +62,7 @@ struct transform_caller {
 	template <typename host_type>
 	static device_type call( const device &d, host_type& that,
 	                         typename enable_if <
-	                           has_member_transform <device_type (host_type::*)(const device&) const >
+	                           has_member_transform <device_type (host_type::*)(const device&) >
 	                         >::type* = 0 ) {
 		return that.transform (d);
 	}
@@ -71,7 +71,7 @@ struct transform_caller {
 	template <typename host_type>
 	static device_type call( const device &d, host_type& that,
 	                          typename disable_if <
-	                            has_member_transform<device_type (host_type::*)(const device&) const >
+	                            has_member_transform<device_type (host_type::*)(const device&) >
 	                          >::type* = 0 ) {
 		UNUSED_PARAMETER(d);
 		return static_cast<device_type>(that);
@@ -128,7 +128,7 @@ struct get_device_ref_caller {
 	template <typename host_type>
 	static device_reference<device_type> call( const device &d, host_type& that,
 	                         typename enable_if <
-	                           has_member_get_device_ref <device_reference<device_type> (host_type::*)(const device&) const >
+	                           has_member_get_device_ref <device_reference<device_type> (host_type::*)(const device&)  >
 	                         >::type* = 0 ) {
 		return that.get_device_reference (d);
 	}
@@ -137,8 +137,13 @@ struct get_device_ref_caller {
 	template <typename host_type>
 	static device_reference<device_type> call( const device &d, host_type& that,
 	                          typename disable_if <
-	                            has_member_get_device_ref<device_reference<device_type> (host_type::*)(const device&) const >
-	                          >::type* = 0 ) {
+	                            has_member_get_device_ref <
+				       device_reference<device_type> (host_type::*)(const device&) 
+				                              >
+	                          >::type* = 0 )
+
+
+				  {
 		return cupp::device_reference < device_type > (d, transform_caller<device_type>::call(d, that) );
 	}
 
@@ -232,7 +237,7 @@ struct kernel_call_traits {
 	 * @param that The object that is about to be passed to the kernel
 	 * @note This function is called when you pass a parameter by value to a kernel.
 	 */
-	static device_type transform (const device &d, const host_type& that) {
+	static device_type transform (const device &d, host_type& that) {
 		using namespace impl;
 		return transform_caller<device_type>::call(d, const_cast<host_type&>(that) );
 	}
@@ -243,7 +248,7 @@ struct kernel_call_traits {
 	 * @param that The object that is about to be passed to the kernel
 	 * @note This function is called when you pass a parameter by reference to a kernel.
 	 */
-	static device_reference<device_type> get_device_reference (const device &d, const host_type& that) {
+	static device_reference<device_type> get_device_reference (const device &d, host_type& that) {
 		using namespace impl;
 		return get_device_ref_caller<device_type>::call (d, that);
 	}

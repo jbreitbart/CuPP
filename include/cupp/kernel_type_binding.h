@@ -62,7 +62,7 @@ struct get_type<false, T> {
 	typedef T    device_type;
 };
 
-}
+} //cupp::impl
 
 /**
  * @class get_type
@@ -77,6 +77,66 @@ struct get_type {
 	typedef typename impl::get_type <impl::has_typdefs < T >::value, T>::device_type    device_type;
 };
 
+/**
+ * specialization for the CUDA types
+ * @todo fix this in a more clean way
+ */
+
+
+#define SET_TYPE_SPEC(a) \
+template <> \
+struct get_type<a> { \
+	typedef a      host_type; \
+	typedef a    device_type; \
+};
+
+SET_TYPE_SPEC(dim3)
+SET_TYPE_SPEC(char1)
+SET_TYPE_SPEC(char2)
+SET_TYPE_SPEC(char3)
+SET_TYPE_SPEC(char4)
+SET_TYPE_SPEC(uchar1)
+SET_TYPE_SPEC(uchar2)
+SET_TYPE_SPEC(uchar3)
+SET_TYPE_SPEC(uchar4)
+
+SET_TYPE_SPEC(short1)
+SET_TYPE_SPEC(short2)
+SET_TYPE_SPEC(short3)
+SET_TYPE_SPEC(short4)
+SET_TYPE_SPEC(ushort1)
+SET_TYPE_SPEC(ushort2)
+SET_TYPE_SPEC(ushort3)
+SET_TYPE_SPEC(ushort4)
+
+SET_TYPE_SPEC(int1)
+SET_TYPE_SPEC(int2)
+SET_TYPE_SPEC(int3)
+SET_TYPE_SPEC(int4)
+SET_TYPE_SPEC(uint1)
+SET_TYPE_SPEC(uint2)
+SET_TYPE_SPEC(uint3)
+SET_TYPE_SPEC(uint4)
+
+
+SET_TYPE_SPEC(long1)
+SET_TYPE_SPEC(long2)
+SET_TYPE_SPEC(long3)
+SET_TYPE_SPEC(long4)
+SET_TYPE_SPEC(ulong1)
+SET_TYPE_SPEC(ulong2)
+SET_TYPE_SPEC(ulong3)
+SET_TYPE_SPEC(ulong4)
+
+SET_TYPE_SPEC(float1)
+SET_TYPE_SPEC(float2)
+SET_TYPE_SPEC(float3)
+SET_TYPE_SPEC(float4)
+
+SET_TYPE_SPEC(double1)
+SET_TYPE_SPEC(double2)
+
+#undef SET_TYPE_SPEC
 
 #if !defined(NVCC)
 
@@ -160,3 +220,4 @@ struct kernel_device_type<host_type volatile> {
 } // cupp
 
 #endif //CUPP_kernel_call_traits_H
+

@@ -12,7 +12,7 @@
  * - Google group: http://groups.google.com/group/cupp
  * 
  * \section rel_notes Release Notes
- * <a href="static/cupp_v0.1.1.tar.gz">Download version 0.1.1 of the CuPP framework</a>
+ * <a href="static/cupp_v0.1.2.tar.gz">Download version 0.1.2 of the CuPP framework</a>
  * 
  * This release of CuPP is only tested on Ubuntu Linux (32bit),
  * but it is expected to work well on other linux flavors. Windows is untested and not expected to work
@@ -41,7 +41,7 @@
  *   by function_traits of Boost.TypeTraits.
  *
  * \section overview Overview
- * <img src="static/overview.png">
+ * <img src="static/overview.png"/>
  * The CuPP framework consists of 5 highly interwoven parts of which some replace the existing CUDA counterparts
  * whereas others offer new functionalities.
  * - <b>Device management</b> \n

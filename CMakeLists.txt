@@ -1,13 +1,7 @@
 PROJECT(cupp)
 
-# set CUDA path
-SET (CUDA_INSTALL_PREFIX /usr/local/cuda)
-
-# set build type: Device or Emulation
-#SET (CUDA_BUILD_TYPE Device)
-
 # load cuda macros
-INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
 
 # include and link with CUDA
 INCLUDE_DIRECTORIES(${CUDA_INSTALL_PREFIX}/include/)

@@ -6,7 +6,7 @@
 #ifndef CUPP_memory1d_H
 #define CUPP_memory1d_H
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 
@@ -324,7 +324,6 @@ memory1d<T>::memory1d( device const& dev, T const* data, size_type size ) : devi
 template <typename T>
 template <typename InputIterator>
 memory1d<T>::memory1d( device const& dev, InputIterator first, InputIterator last ): device_ref_(0), d_(dev) {
-	/// @todo is this ok?
 	size_ = last - first;
 	
 	device_pointer_( cupp::malloc<T>(size_) );
@@ -375,7 +374,6 @@ void memory1d<T>::copy_to_device( size_type count, T const* data, size_type offs
 		throw exception::memory_access_violation();
 	}
 
-	/// @todo is this legal c++? not sure
 	cupp::copy_host_to_device (device_pointer_.get()+offset, data, count);
 }
 
@@ -391,7 +389,6 @@ void memory1d<T>::copy_to_device (memory1d const& other, size_type count, size_t
 		throw exception::memory_access_violation();
 	}
 
-	/// @todo again, legal?
 	cupp::copy_device_to_device (device_pointer_.get()+offset, other.device_pointer_, count);
 }
 

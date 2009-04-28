@@ -7,7 +7,7 @@
 #define CUPP_kernel_number_of_parameters_mismatch_H
 
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 

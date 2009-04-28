@@ -7,7 +7,7 @@
 #define CUPP_cuda_runtime_error_H
 
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 

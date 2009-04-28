@@ -7,7 +7,7 @@
 #define CUPP_kernel_type_binding_H
 
 // not used with CUDA
-#if !defined(NVCC)
+#if !defined(__CUDACC__)
 
 #include <boost/type_traits.hpp>
 

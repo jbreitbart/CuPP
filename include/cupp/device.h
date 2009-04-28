@@ -6,7 +6,7 @@
 #ifndef CUPP_device_H
 #define CUPP_device_H
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 

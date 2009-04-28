@@ -11,7 +11,7 @@
 
 
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 	#define CUPP_RUN_ON_HOST __host__
 	#define CUPP_RUN_ON_DEVICE __device__
 	#define CUPP_GLOBAL __global__

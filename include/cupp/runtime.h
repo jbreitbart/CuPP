@@ -6,7 +6,7 @@
 #ifndef CUPP_runtime_H
 #define CUPP_runtime_H
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 

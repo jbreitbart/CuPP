@@ -6,7 +6,7 @@
 #ifndef CUPP_memory_access_violation_H
 #define CUPP_memory_access_violation_H
 
-#if defined(NVCC)
+#if defined(__CUDACC__)
 #error "Not compatible with CUDA. Don't compile with nvcc."
 #endif
 

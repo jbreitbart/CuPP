@@ -1,15 +1,15 @@
 PROJECT(cupp)
 
 # load cuda macros
-INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
 
 # include and link with CUDA
-INCLUDE_DIRECTORIES(${CUDA_INSTALL_PREFIX}/include/)
-LINK_DIRECTORIES(${CUDA_INSTALL_PREFIX}/lib)
+#INCLUDE_DIRECTORIES(${CUDA_INSTALL_PREFIX}/include/)
+#LINK_DIRECTORIES(${CUDA_INSTALL_PREFIX}/lib)
 
 # set the include path
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
-CUDA_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
+#CUDA_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # if you don want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)

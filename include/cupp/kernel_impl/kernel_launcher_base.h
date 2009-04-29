@@ -28,7 +28,7 @@ class kernel_launcher_base {
 		/**
 		 * See in @c kernel_launcher_impl.
 		 */
-		virtual void configure_call() = 0;
+		virtual void configure_call(const device&) = 0;
 		
 		/**
 		 * See in @c kernel_launcher_impl.
@@ -38,7 +38,7 @@ class kernel_launcher_base {
 		/**
 		 * See in @c kernel_launcher_impl.
 		 */
-		virtual void launch() = 0;
+		virtual void launch(const device& d) = 0;
 
 		/**
 		 * See in @c kernel_launcher_impl.

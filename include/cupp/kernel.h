@@ -14,7 +14,7 @@
 // CUPP
 #include "cupp/exception/kernel_number_of_parameters_mismatch.h"
 #include "cupp/kernel_impl/kernel_launcher_base.h"
-#include "cupp/kernel_impl/kernel_launcher_impl.h"
+#include "cupp/kernel_impl/kernel_launcher_cell_impl.h"
 #include "cupp/kernel_type_binding.h"
 #include "cupp/kernel_call_traits.h"
 #include "cupp/device.h"
@@ -28,7 +28,7 @@
 #include <boost/type_traits.hpp>
 
 // CUDA
-#include <vector_types.h>
+#include "cell/cuda_stub.h"
 
 
 namespace cupp {
@@ -42,7 +42,7 @@ using namespace cupp::kernel_impl;
  * @version 0.3
  * @date 03.08.2007
  * @platform Host only!
- * @brief Represents a __global__ function
+ * @brief Represents a kernel function
  */
 
 class kernel {
@@ -50,33 +50,18 @@ class kernel {
 		/**
 		 * @brief Constructor used to generate a kernel
 		 * @param f A pointer to the kernel function
-		 * @param shared_mem The number of dynamic shared memory needed by this kernel (in bytes)
-		 * @param tokens
-		 */
-		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f, const size_t shared_mem=0, const int tokens = 0) :
-		number_of_parameters_ ( boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity ),
-		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
-
-			dim3 grid_dim;
-			dim3 block_dim;
-			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f, grid_dim, block_dim, shared_mem, tokens);
-		}
-		
-		/**
-		 * @brief Constructor used to generate a kernel
-		 * @param f A pointer to the kernel function
+		 * @param prog_handle The spe program handle
 		 * @param grid_dim The dimension of the grid, the kernel we be executed on
 		 * @param block_dim The dimension of the block, the kernel we be executed on
 		 * @param shared_mem The number of dynamic shared memory needed by this kernel (in bytes)
 		 * @param tokens
 		 */
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		kernel( CudaKernelFunc f, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
 		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
 		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
 		
-			kb_ = new kernel_launcher_impl< CudaKernelFunc >(f, grid_dim, block_dim, shared_mem, tokens);
+			kb_ = new kernel_launcher_cell_impl< CudaKernelFunc >(f, prog_handle, grid_dim, block_dim, shared_mem, tokens);
 		}
 
 		/**
@@ -401,20 +386,20 @@ inline void kernel::operator()(const device &d) {
 	UNUSED_PARAMETER(d);
 	check_number_of_parameters(0);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
-	kb_->launch();
+	kb_->launch(d);
 }
 
 template< typename P1 >
 void kernel::operator()(const device &d, const P1 &p1 ) {
 	check_number_of_parameters(1);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 
@@ -425,12 +410,12 @@ template< typename P1, typename P2 >
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2 ) {
 	check_number_of_parameters(2);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -442,13 +427,13 @@ template< typename P1, typename P2, typename P3 >
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3 ) {
 	check_number_of_parameters(3);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -462,14 +447,14 @@ template< typename P1, typename P2, typename P3, typename P4 >
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4 ) {
 	check_number_of_parameters(4);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p3), 3 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -484,7 +469,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5 >
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5 ) {
 	check_number_of_parameters(5);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -492,7 +477,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p4), 4 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -508,7 +493,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6 ) {
 	check_number_of_parameters(6);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -517,7 +502,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p5), 5 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -534,7 +519,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7 ) {
 	check_number_of_parameters(7);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -544,7 +529,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p6), 6 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p7), 7 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -562,7 +547,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8 ) {
 	check_number_of_parameters(8);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -573,7 +558,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p7), 7 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p8), 8 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -592,7 +577,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9 ) {
 	check_number_of_parameters(9);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -604,7 +589,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p8), 8 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p9), 9 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -624,7 +609,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10 ) {
 	check_number_of_parameters(10);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -637,7 +622,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p9), 9 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p10), 10 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -658,7 +643,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11 ) {
 	check_number_of_parameters(11);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -672,7 +657,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p10), 10 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p11), 11 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -694,7 +679,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11, const P12 &p12 ) {
 	check_number_of_parameters(12);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -709,7 +694,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p11), 11 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p12), 12 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -732,7 +717,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11, const P12 &p12, const P13 &p13 ) {
 	check_number_of_parameters(13);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -748,7 +733,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p12), 12 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p13), 13 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -772,7 +757,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11, const P12 &p12, const P13 &p13, const P14 &p14 ) {
 	check_number_of_parameters(14);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -789,7 +774,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p13), 13 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p14), 14 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -814,7 +799,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11, const P12 &p12, const P13 &p13, const P14 &p14, const P15 &p15 ) {
 	check_number_of_parameters(15);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -832,7 +817,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p14), 14 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p15), 15 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);
@@ -858,7 +843,7 @@ template< typename P1, typename P2, typename P3, typename P4, typename P5, typen
 void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5, const P6 &p6, const P7 &p7, const P8 &p8, const P9 &p9, const P10 &p10, const P11 &p11, const P12 &p12, const P13 &p13, const P14 &p14, const P15 &p15, const P16 &p16 ) {
 	check_number_of_parameters(16);
 	
-	kb_ -> configure_call();
+	kb_ -> configure_call(d);
 
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p1), 1 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p2), 2 ) );
@@ -877,7 +862,7 @@ void kernel::operator()(const device &d, const P1 &p1, const P2 &p2, const P3 &p
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p15), 15 ) );
 	returnee_vec_.push_back ( kb_-> setup_argument(d, boost::any(&p16), 16 ) );
 
-	kb_->launch();
+	kb_->launch(d);
 
 	handle_call_traits (p1, 1);
 	handle_call_traits (p2, 2);

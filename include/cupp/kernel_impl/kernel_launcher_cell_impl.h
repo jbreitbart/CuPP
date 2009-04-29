@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef CUPP_KERNEL_IMPL_kernel_launcher_impl_H
-#define CUPP_KERNEL_IMPL_kernel_launcher_impl_H
+#ifndef CUPP_KERNEL_IMPL_kernel_launcher_cell_impl_H
+#define CUPP_KERNEL_IMPL_kernel_launcher_cell_impl_H
 
 // CUPP
 #include "cupp/kernel_impl/kernel_launcher_base.h"
@@ -12,18 +12,26 @@
 #include "cupp/kernel_impl/real_setup_argument.h"
 #include "cupp/kernel_impl/test_dirty.h"
 
-#include "cupp/exception/cuda_runtime_error.h"
+#include "cupp/exception/cell_runtime_error.h"
 #include "cupp/exception/stack_overflow.h"
 #include "cupp/exception/kernel_parameter_type_mismatch.h"
 
 #include "cupp/kernel_call_traits.h"
 #include "cupp/kernel_type_binding.h"
-#include "cupp/runtime.h"
-#include "cupp/shared_device_pointer.h"
-#include "cupp/device_reference.h"
+// #include "cupp/runtime.h"
+// #include "cupp/shared_device_pointer.h"
+// #include "cupp/device_reference.h"
+
+
 
 // CUDA
-#include <vector_types.h>
+#include "cupp/cell/cuda_stub.h"
+
+// Cell
+#include <libspe2.h>
+#include <pthread.h>
+#include <errno.h>
+
 
 // STD
 #include <vector>
@@ -38,11 +46,10 @@ namespace kernel_impl {
 
 /**
  * @class kernel_launcher_impl
- * @author Björn Knafla: Initial design
  * @author Jens Breitbart
- * @version 0.3
- * @date 03.08.2007
- * @brief Use by cupp::kernel to push arguments on the cuda function stack, call the __global__ cuda function.
+ * @version 0.1
+ * @date 28.04.2008
+ * @brief Use by cupp::kernel to call the kernel on the Cell
  */
 
 template< typename F_ >
@@ -51,7 +58,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		
 		/**
 		 * @typedef F
-		 * @brief The function type of the __global__ cuda function
+		 * @brief The function type of the kernel function
 		 */
 		typedef typename boost::remove_pointer<F_>::type F;
 
@@ -71,14 +78,14 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
-		func_(func), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
+		kernel_launcher_impl (F func, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		func_(func), prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
 
 
 		/**
 		 * Configures the cuda launch. Specifies the grid/block size for the next call.
 		 */
-		virtual void configure_call();
+		virtual void configure_call(const device& d);
 
 		
 		/**
@@ -96,7 +103,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		/**
 		 * @brief Calls the __global__ function.
 		 */
-		virtual void launch();
+		virtual void launch(const device&);
 
 
 		/**
@@ -150,7 +157,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param a The parameter to be copied on the stack
 		 */
 		template <typename T>
-		void put_argument_on_stack(const T &a);
+		void put_argument_on_stack(const device &d, const T &a);
 
 	private:
 		/**
@@ -183,31 +190,129 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 */
 		size_t stack_in_use_;
 
+		/**
+		 * The SPE contextes
+		 */
+		spe_context_ptr_t *ctxs_;
+
+		/**
+		 * The pthreads used to run the spes
+		 */
+		pthread_t *threads_;
+
+		/**
+		 * The spe program handle
+		 */
+		spe_program_handle_t &prog_handle_;
+
 		template <int i>
 		friend class real_setup_argument;
 };
 
 
+static void *spe_kernel_pthread_function(void* arg) {
+	spe_context_ptr_t ctx;
+
+	unsigned int entry = SPE_DEFAULT_ENTRY;
+	ctx = *((spe_context_ptr_t *)arg);
+
+	if (spe_context_run(ctx, &entry, 0, NULL, NULL, NULL) < 0) {
+		throw cell_runtime_error ("Failed running context");
+	}
+
+	pthread_exit(NULL);
+	return 0;
+}
+
+
 template< typename F_ >
-void kernel_launcher_impl<F_>::configure_call() {
-	if (cudaConfigureCall(grid_dim_, block_dim_, shared_mem_, tokens_) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+void kernel_launcher_impl<F_>::configure_call(const device& d) {
+
+	// start the SPE threads
+	spe_context_ptr_t ctxs_ = new spe_context_ptr_t[d.spes()];
+	pthread_t threads_ = new pthread_t[d.spes()];
+
+	for (int i=0; i<d.spes(); ++i) {
+		// Create context
+		if ((ctxs_[i] = spe_context_create (0, NULL)) == NULL) {
+			throw cell_runtime_error ("Failed creating context");
+		}
+
+		// Load program into context
+		if (spe_program_load (ctxs_[i], &prog_handle)) {
+			throw cell_runtime_error ("Failed loading program");
+		}
+
+		// Create thread for each SPE context
+		if (pthread_create (&threads_[i], NULL, &spe_kernel_pthread_function, &ctxs[i]))  {
+			throw cell_runtime_error ("Failed creating thread");
+		}
+	}
+
+	// send grid / block dim to the SPE
+	for (i=0; i<d.spes(); ++i) {
+		unsigned int buffer = static_cast<unsigned int> (&grid_dim_);
+		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+	}
+
+	for (i=0; i<d.spes(); ++i) {
+		unsigned int buffer = static_cast<unsigned int> (&block_dim_);
+		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 	}
 }
 
 
 template< typename F_ >
-void kernel_launcher_impl<F_>::launch() {
-	if (cudaLaunch((const char*)func_) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
+void kernel_launcher_impl<F_>::launch(const device& d) {
+
+	// static work scheduling
+
+	const int number_of_work_per_spe = grid_dim_.x / d.spes();
+
+	unsigned int start = 0;
+	unsigned int end = number_of_work_per_spe;
+
+	for (int i=0; i<d.spes(); ++i) {
+		put_in_mbox (ctxs[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
+		put_in_mbox (ctxs[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
+		
+		start += number_of_work_per_spe;
+		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_;
 	}
-	stack_in_use_ = 0;
+
+// 	stack_in_use_ = 0;
+
+	// wait until all spes have finished their work
+	for (int i=0; i<d.spes(); ++i) {
+		unsigned int data = 1;
+		while (spe_out_mbox_status(ctxs[i]) != 1) {}
+		spe_out_mbox_read(ctxs[i], &data, 1);
+		if (data != 0) {
+			throw cell_runtime_error ("Something is completly wrong here ... aka \"the error that should not happen nb. 1a\"");
+		}
+	}
+
+	for (i=0; i<d.spes(); ++i) {
+		if (pthread_join (threads_[i], NULL)) {
+			throw cell_runtime_error ("Failed pthread_join");
+		}
+	
+		/* Destroy context */
+		if (spe_context_destroy (ctxs_[i]) != 0) {
+			throw cell_runtime_error ("Failed destroying context");
+		}
+	}
+
+
+	delete[] ctxs_;
+	delete[] threads_;
 }
 
 
 template< typename F_ >
 template <typename T>
 boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boost::any &arg) {
+
 	using namespace boost;
 	
 	// get the host type matching our device_type
@@ -224,53 +329,34 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 		// let's throw our own exception here
 		throw exception::kernel_parameter_type_mismatch();
 	}
-
-	if (is_reference <T>()) {
-		// ok this means our kernel wants a reference
-		
-		device_reference<device_type> device_ref ( kernel_call_traits<host_type, device_type>::get_device_reference (d, *temp) );
-		
-		// push address of device_copy in global memory of type device_type* on kernel_stack
-		put_argument_on_stack(device_ref.get_device_ptr().get());
-		
-		// return address of of type add_pointer<device_type>
-		return boost::any(device_ref);
-		
-	} else {
 	
-		//invoke the copy constructor ...
-		host_type host_copy (*temp);
-		
-		const device_type device_copy = kernel_call_traits<host_type, device_type>::transform(d, host_copy);
-		
-		// push device_type auf kernel stack
-		put_argument_on_stack(device_copy);
+	//invoke the copy constructor ...
+	//host_type host_copy (*temp);
+	
+	//const device_type device_copy = kernel_call_traits<host_type, device_type>::transform(d, host_copy);
+	
+	// push device_type auf kernel stack
+	put_argument_on_stack(d, *temp);
 
-		// return an empty any, this should trigger when some will try to cast it
-		return boost::any();
-		
-	}
+	// return an empty any, this should trigger when some tries to cast it
+	return boost::any();
 }
 
 
 template< typename F_ >
 template <typename T>
-void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
-	if (stack_in_use_+sizeof(T) > 256) {
-		throw exception::stack_overflow();
-	}
-	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
-		throw exception::cuda_runtime_error(cudaGetLastError());
-	}
-	stack_in_use_ += sizeof(T);
+void kernel_launcher_impl<F_>::put_argument_on_stack(const device &d, const T &a) {
+	//if (stack_in_use_+sizeof(T) > 256) {
+	//	throw exception::stack_overflow();
+	//}
 
-#if __LP64__
-	// enable on 64bit system
-	// be sure we are at a 8byte boundary ... this may be a problem
-	if ((stack_in_use_%8) != 0) {
-		stack_in_use_ += 8 - (stack_in_use_%8);
+	for (i=0; i<d.spes(); ++i) {
+		unsigned int buffer = static_cast<unsigned int> (&a);
+		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 	}
-#endif
+
+
+	//stack_in_use_ += sizeof(T);
 }
 
 } // kernel_impl

@@ -138,7 +138,7 @@ SET_TYPE_SPEC(double2)
 
 #undef SET_TYPE_SPEC
 
-#if !defined(NVCC)
+#if !defined(__CUDACC__)
 
 /**
  * @class kernel_host_type

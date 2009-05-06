@@ -18,7 +18,7 @@
 
 #include "cupp/kernel_call_traits.h"
 #include "cupp/kernel_type_binding.h"
-// #include "cupp/runtime.h"
+#include "cupp/runtime.h"
 // #include "cupp/shared_device_pointer.h"
 // #include "cupp/device_reference.h"
 
@@ -53,7 +53,7 @@ namespace kernel_impl {
  */
 
 template< typename F_ >
-class kernel_launcher_impl : public kernel_launcher_base {
+class kernel_launcher_cell_impl : public kernel_launcher_base {
 	public:
 		
 		/**
@@ -78,8 +78,8 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_impl (F func, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
-		func_(func), prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
+		kernel_launcher_cell_impl (F /*func*/, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
 
 
 		/**
@@ -161,9 +161,9 @@ class kernel_launcher_impl : public kernel_launcher_base {
 
 	private:
 		/**
-		 * A pointer to the __global__ cuda function.
+		 * The spe program handle
 		 */
-		F* func_;
+		spe_program_handle_t &prog_handle_;
 
 		/**
 		 * Grid dimension
@@ -200,24 +200,19 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 */
 		pthread_t *threads_;
 
-		/**
-		 * The spe program handle
-		 */
-		spe_program_handle_t &prog_handle_;
-
 		template <int i>
 		friend class real_setup_argument;
 };
 
 
-static void *spe_kernel_pthread_function(void* arg) {
+static inline void *spe_kernel_pthread_function(void* arg) {
 	spe_context_ptr_t ctx;
 
 	unsigned int entry = SPE_DEFAULT_ENTRY;
 	ctx = *((spe_context_ptr_t *)arg);
 
 	if (spe_context_run(ctx, &entry, 0, NULL, NULL, NULL) < 0) {
-		throw cell_runtime_error ("Failed running context");
+		throw cupp::exception::cell_runtime_error ("Failed running context");
 	}
 
 	pthread_exit(NULL);
@@ -226,44 +221,44 @@ static void *spe_kernel_pthread_function(void* arg) {
 
 
 template< typename F_ >
-void kernel_launcher_impl<F_>::configure_call(const device& d) {
+void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 
 	// start the SPE threads
-	spe_context_ptr_t ctxs_ = new spe_context_ptr_t[d.spes()];
-	pthread_t threads_ = new pthread_t[d.spes()];
+	ctxs_ = new spe_context_ptr_t[d.spes()];
+	threads_ = new pthread_t[d.spes()];
 
 	for (int i=0; i<d.spes(); ++i) {
 		// Create context
 		if ((ctxs_[i] = spe_context_create (0, NULL)) == NULL) {
-			throw cell_runtime_error ("Failed creating context");
+			throw cupp::exception::cell_runtime_error ("Failed creating context");
 		}
 
 		// Load program into context
-		if (spe_program_load (ctxs_[i], &prog_handle)) {
-			throw cell_runtime_error ("Failed loading program");
+		if (spe_program_load (ctxs_[i], &prog_handle_)) {
+			throw cupp::exception::cell_runtime_error ("Failed loading program");
 		}
 
 		// Create thread for each SPE context
-		if (pthread_create (&threads_[i], NULL, &spe_kernel_pthread_function, &ctxs[i]))  {
-			throw cell_runtime_error ("Failed creating thread");
+		if (pthread_create (&threads_[i], NULL, &spe_kernel_pthread_function, &ctxs_[i]))  {
+			throw cupp::exception::cell_runtime_error ("Failed creating thread");
 		}
 	}
 
 	// send grid / block dim to the SPE
-	for (i=0; i<d.spes(); ++i) {
-		unsigned int buffer = static_cast<unsigned int> (&grid_dim_);
-		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+	for (int i=0; i<d.spes(); ++i) {
+		unsigned int buffer = reinterpret_cast<unsigned int> (&grid_dim_);
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 	}
 
-	for (i=0; i<d.spes(); ++i) {
-		unsigned int buffer = static_cast<unsigned int> (&block_dim_);
-		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+	for (int i=0; i<d.spes(); ++i) {
+		unsigned int buffer = reinterpret_cast<unsigned int> (&block_dim_);
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 	}
 }
 
 
 template< typename F_ >
-void kernel_launcher_impl<F_>::launch(const device& d) {
+void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 
 	// static work scheduling
 
@@ -273,11 +268,11 @@ void kernel_launcher_impl<F_>::launch(const device& d) {
 	unsigned int end = number_of_work_per_spe;
 
 	for (int i=0; i<d.spes(); ++i) {
-		put_in_mbox (ctxs[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
-		put_in_mbox (ctxs[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
+		put_in_mbox (ctxs_[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
+		put_in_mbox (ctxs_[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
 		
 		start += number_of_work_per_spe;
-		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_;
+		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_.x;
 	}
 
 // 	stack_in_use_ = 0;
@@ -285,21 +280,21 @@ void kernel_launcher_impl<F_>::launch(const device& d) {
 	// wait until all spes have finished their work
 	for (int i=0; i<d.spes(); ++i) {
 		unsigned int data = 1;
-		while (spe_out_mbox_status(ctxs[i]) != 1) {}
-		spe_out_mbox_read(ctxs[i], &data, 1);
+		while (spe_out_mbox_status(ctxs_[i]) != 1) {}
+		spe_out_mbox_read(ctxs_[i], &data, 1);
 		if (data != 0) {
-			throw cell_runtime_error ("Something is completly wrong here ... aka \"the error that should not happen nb. 1a\"");
+			throw cupp::exception::cell_runtime_error ("Something is completly wrong here ... aka \"the error that should not happen nb. 1a\"");
 		}
 	}
 
-	for (i=0; i<d.spes(); ++i) {
+	for (int i=0; i<d.spes(); ++i) {
 		if (pthread_join (threads_[i], NULL)) {
-			throw cell_runtime_error ("Failed pthread_join");
+			throw cupp::exception::cell_runtime_error ("Failed pthread_join");
 		}
 	
 		/* Destroy context */
 		if (spe_context_destroy (ctxs_[i]) != 0) {
-			throw cell_runtime_error ("Failed destroying context");
+			throw cupp::exception::cell_runtime_error ("Failed destroying context");
 		}
 	}
 
@@ -311,7 +306,7 @@ void kernel_launcher_impl<F_>::launch(const device& d) {
 
 template< typename F_ >
 template <typename T>
-boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boost::any &arg) {
+boost::any kernel_launcher_cell_impl <F_>::setup_argument (const device &d, const boost::any &arg) {
 
 	using namespace boost;
 	
@@ -345,14 +340,14 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 
 template< typename F_ >
 template <typename T>
-void kernel_launcher_impl<F_>::put_argument_on_stack(const device &d, const T &a) {
+void kernel_launcher_cell_impl <F_>::put_argument_on_stack(const device &d, const T &a) {
 	//if (stack_in_use_+sizeof(T) > 256) {
 	//	throw exception::stack_overflow();
 	//}
 
-	for (i=0; i<d.spes(); ++i) {
-		unsigned int buffer = static_cast<unsigned int> (&a);
-		put_in_mbox (ctxs[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+	for (int i=0; i<d.spes(); ++i) {
+		unsigned int buffer = reinterpret_cast<unsigned int> (&a);
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 	}
 
 

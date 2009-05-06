@@ -9,7 +9,7 @@
 #include <boost/any.hpp>
 
 // cuda vector types
-#include <vector_types.h>
+#include "cupp/cell/cuda_stub.h"
 
 namespace cupp {
 namespace kernel_impl {

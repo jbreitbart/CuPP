@@ -44,7 +44,7 @@ class real_setup_argument<a> { \
 	inline static boost::any set (const device &d, const boost::any &arg, const int pos, T &that); \
 	\
 	template <typename T> \
-	friend class kernel_launcher_impl; \
+	friend class kernel_launcher_cell_impl; \
 	\
 	template <typename T> \
 	friend boost::any real_setup_argument<b>::set(const device &d, const boost::any&, const int, T&); \

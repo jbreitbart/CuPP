@@ -59,9 +59,10 @@ class kernel {
 		template< typename CudaKernelFunc>
 		kernel( CudaKernelFunc f, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
 		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
-		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
-		
+		dirty ( kernel_launcher_cell_impl< CudaKernelFunc >::dirty_parameters() ) {
+
 			kb_ = new kernel_launcher_cell_impl< CudaKernelFunc >(f, prog_handle, grid_dim, block_dim, shared_mem, tokens);
+
 		}
 
 		/**

@@ -43,7 +43,7 @@ class test_dirty<a> { \
 	static std::vector<bool> dirty (); \
 	\
 	template <typename T> \
-	friend class kernel_launcher_impl; \
+	friend class kernel_launcher_cell_impl; \
 	\
 	template <typename T> \
 	friend std::vector<bool> test_dirty<b>::dirty(); \
@@ -56,7 +56,7 @@ class test_dirty<16> {
 	static std::vector<bool> dirty ();
 	
 	template <typename T>
-	friend class kernel_launcher_impl;
+	friend class kernel_launcher_cell_impl;
 };
 
 //CUPP_TEST_DIRTY_HEADER(16,17)
@@ -79,115 +79,6 @@ CUPP_TEST_DIRTY_HEADER(0,1)
 
 #undef CUPP_TEST_DIRTY_HEADER
 
-#if 0
-template <>
-class test_dirty<8> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<9>::dirty();
-};
-
-template <>
-class test_dirty<7> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<8>::dirty();
-};
-
-template <>
-class test_dirty<6> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<7>::dirty();
-};
-
-template <>
-class test_dirty<5> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<6>::dirty();
-};
-
-template <>
-class test_dirty<4> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<5>::dirty();
-};
-
-template <>
-class test_dirty<3> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<4>::dirty();
-};
-
-template <>
-class test_dirty<2> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<3>::dirty();
-};
-
-template <>
-class test_dirty<1> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<2>::dirty();
-};
-
-template <>
-class test_dirty<0> {
-	template <typename F>
-	static std::vector<bool> dirty ();
-	
-	template <typename T>
-	friend class kernel_launcher_impl;
-	
-	template <typename T>
-	friend std::vector<bool> test_dirty<1>::dirty();
-};
-#endif
 
 /*** IMPLEMENTATION ***/
 

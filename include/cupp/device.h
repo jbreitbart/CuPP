@@ -30,12 +30,12 @@ class device {
 		/**
 		 * @brief Generates a default device with no special requirements
 		 */
-		device();
+		device() {}
 
 		/**
 		 * @brief Cleans up all ressources associated with the device
 		 */
-		~device();
+		~device() {}
 
 	public:
 		/**
@@ -49,7 +49,7 @@ class device {
 		 */
 		static int device_count();
 
-		int spes() { return number_of_spes; }
+		int spes() const { return number_of_spes; }
 
 		void set_spes( const int i) { number_of_spes = i; }
 

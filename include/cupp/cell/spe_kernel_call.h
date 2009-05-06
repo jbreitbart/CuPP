@@ -16,12 +16,16 @@ namespace cupp {
 
 namespace cell {
 
+
 	template <typename F_>
-	inline void call_kernel (F_ kernel_ptr) {
+	inline void call_kernel (F_ kernel_ptr, dim3 &gridDim, dim3 &blockDim) {
 
 		// 1. we receive the block and grid size
-		__ea dim3 *gridDim = (__ea dim3*) spu_read_in_mbox();
-		__ea dim3 *blockDim = (__ea dim3*) spu_read_in_mbox();
+		__ea dim3 *gridDim_ptr = (__ea dim3*) spu_read_in_mbox();
+		__ea dim3 *blockDim_ptr = (__ea dim3*) spu_read_in_mbox();
+
+		gridDim  = *gridDim_ptr;
+		blockDim = *blockDim_ptr;
 
 		real_call_kernel<arity> (kernel_ptr);
 	}

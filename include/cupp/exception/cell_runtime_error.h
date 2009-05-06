@@ -33,7 +33,7 @@ class cell_runtime_error : public exception {
 		 * @brief Generates an exception with the error number @a error
 		 * @param error The error string
 		 */
-		cuda_runtime_error(char* error): error_(error) {}
+		cell_runtime_error(char* error): error_(error) {}
 
 		char const* what() const throw() {
 			return error_;

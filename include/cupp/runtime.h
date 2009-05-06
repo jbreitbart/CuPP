@@ -11,10 +11,14 @@
 #endif
 
 #include <cstddef>
+#include <libspe2.h>
+#include <pthread.h>
+#include <errno.h>
+
 
 // CUPP
 #include "cupp/common.h"
-// #include "cupp/exception/cuda_runtime_error.h"
+#include "cupp/exception/cell_runtime_error.h"
 
 // CUDA
 // #include <cuda_runtime.h>
@@ -69,9 +73,23 @@ void copy_device_to_host(T* destination, const shared_device_pointer<T> source, 
 
 inline void thread_synchronize();
 
+inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int count, unsigned int behavior);
 
 
-
+inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int count, unsigned int behavior) {
+	while (spe_in_mbox_write (spe, mbox_data, count, behavior) == -1) {
+		if (errno == ESRCH) {
+			throw cupp::exception::cell_runtime_error  ("The specified SPE context is invalid.");
+		}
+		if (errno == EIO) {
+			throw cupp::exception::cell_runtime_error  ("The I/O error occurred.");
+		}
+		if (errno == EINVAL) {
+			throw cupp::exception::cell_runtime_error  ("The specified pointer to the mailbox message, the specified maximum number of mailbox entries, or the specified behavior is invalid.");
+		}
+		throw cupp::exception::cell_runtime_error ("The mailbox error that should not happen!");
+	}
+}
 
 
 
@@ -112,7 +130,7 @@ void free(T* device_pointer) {
 
 
 template <typename T>
-void copy_host_to_device(T *destination, const T * const source, size_t count) {
+void copy_host_to_device(T */*destination*/, const T * const /*source*/, size_t /*count*/) {
 // 	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyHostToDevice) != cudaSuccess) {
 // 		throw exception::cuda_runtime_error(cudaGetLastError());
 // 	}
@@ -120,13 +138,13 @@ void copy_host_to_device(T *destination, const T * const source, size_t count) {
 
 
 template <typename T>
-void copy_host_to_device(shared_device_pointer<T> destination, const T * const source, size_t count) {
+void copy_host_to_device(shared_device_pointer<T> /*destination*/, const T * const /*source*/, size_t /*count*/) {
 // 	copy_host_to_device(destination.get(), source, count);
 }
 
 
 template <typename T>
-void copy_device_to_device(T* destination, const T * const source, size_t count) {
+void copy_device_to_device(T* /*destination*/, const T * const /*source*/, size_t /*count*/) {
 // 	if ( cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToDevice) != cudaSuccess) {
 // 		throw exception::cuda_runtime_error(cudaGetLastError());
 // 	}
@@ -134,25 +152,25 @@ void copy_device_to_device(T* destination, const T * const source, size_t count)
 
 
 template <typename T>
-void copy_device_to_device(shared_device_pointer<T> destination, const T * const source, size_t count) {
+void copy_device_to_device(shared_device_pointer<T> /*destination*/, const T * const /*source*/, size_t /*count*/) {
 // 	copy_device_to_device (destination.get(), source, count);
 }
 
 
 template <typename T>
-void copy_device_to_device(T *destination, const shared_device_pointer<T> source, size_t count) {
+void copy_device_to_device(T */*destination*/, const shared_device_pointer<T> /*source*/, size_t /*count*/) {
 // 	copy_device_to_device (destination, source.get(), count);
 }
 
 
 template <typename T>
-void copy_device_to_device(shared_device_pointer<T> destination, const shared_device_pointer<T> source, size_t count) {
+void copy_device_to_device(shared_device_pointer<T> /*destination*/, const shared_device_pointer<T> /*source*/, size_t /*count*/) {
 // 	copy_device_to_device (destination.get(), source.get(), count);
 }
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const T * const source, size_t count) {
+void copy_device_to_host(T* /*destination*/, const T * const /*source*/, size_t /*count*/) {
 // 	if (cudaMemcpy(destination, source, count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 // 		throw exception::cuda_runtime_error(cudaGetLastError());
 // 	}
@@ -160,7 +178,7 @@ void copy_device_to_host(T* destination, const T * const source, size_t count) {
 
 
 template <typename T>
-void copy_device_to_host(T* destination, const shared_device_pointer<T> source, size_t count) {
+void copy_device_to_host(T* /*destination*/, const shared_device_pointer<T> /*source*/, size_t /*count*/) {
 // 	if (cudaMemcpy(destination, source.get(), count * sizeof(T), cudaMemcpyDeviceToHost) != cudaSuccess) {
 // 		throw exception::cuda_runtime_error(cudaGetLastError());
 // 	}

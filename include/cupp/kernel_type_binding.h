@@ -82,6 +82,7 @@ struct get_type {
  * @todo fix this in a more clean way
  */
 
+#if 0
 
 #define SET_TYPE_SPEC(a) \
 template <> \
@@ -137,6 +138,7 @@ SET_TYPE_SPEC(double1)
 SET_TYPE_SPEC(double2)
 
 #undef SET_TYPE_SPEC
+#endif
 
 #if !defined(NVCC)
 

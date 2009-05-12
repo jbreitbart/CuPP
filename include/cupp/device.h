@@ -30,7 +30,7 @@ class device {
 		/**
 		 * @brief Generates a default device with no special requirements
 		 */
-		device() {}
+		device() : number_of_spes(0) {}
 
 		/**
 		 * @brief Cleans up all ressources associated with the device

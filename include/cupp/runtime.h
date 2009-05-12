@@ -77,7 +77,9 @@ inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int cou
 
 
 inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int count, unsigned int behavior) {
-	while (spe_in_mbox_write (spe, mbox_data, count, behavior) == -1) {
+	int status = 0;
+	while (status == 0 || status== -1) {
+		status = spe_in_mbox_write (spe, mbox_data, count, behavior);
 		if (errno == ESRCH) {
 			throw cupp::exception::cell_runtime_error  ("The specified SPE context is invalid.");
 		}
@@ -87,7 +89,6 @@ inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int cou
 		if (errno == EINVAL) {
 			throw cupp::exception::cell_runtime_error  ("The specified pointer to the mailbox message, the specified maximum number of mailbox entries, or the specified behavior is invalid.");
 		}
-		throw cupp::exception::cell_runtime_error ("The mailbox error that should not happen!");
 	}
 }
 

@@ -12,11 +12,11 @@ SPU_STRIP         = spu-strip
 PPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
 SPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
 INCLUDE_PATH      = -I../../include/
-PPU_INCLUDE_PATH  = -I/home/jens/boost_1_38_0
-SPU_INCLUDE_PATH  = 
+PPU_INCLUDE_PATH  = -I/home/jens/boost_1_38_0 -L/opt/cell/sdk/usr/include
+SPU_INCLUDE_PATH  = -I/opt/cell/sdk/usr/spu/include
 LIBRARY_PATH      = 
-PPU_LIBARY_PATH   = 
-SPU_LIBARY_PATH   = 
+PPU_LIBARY_PATH   = -L/opt/cell/sdk/usr/lib
+SPU_LIBARY_PATH   = -L/opt/cell/sdk/usr/spu/lib
 
 
 ### Compiler FLAGS
@@ -27,14 +27,15 @@ DEBUG             = -g
 
 ## PPU
 PPU_WARNING       = -W -Wall
-PPU_OPTIMIZE      = -O0
+PPU_OPTIMIZE      = -O3
 PPU_CFLAGS        = $(PPU_WARNING) $(DEBUG) ${PPU_OPTIMIZE} $(PROFILE)
 
 ## SPU
 #SPU_WARNING       = -Wno-main
-SPU_OPTIMIZE      = -O0
+SPU_OPTIMIZE      = -O5
 SPU_CACHE_FLAGS   = -qswcache_size=128 -qea32
 SPU_CFLAGS        = $(DEBUG) $(WARNING) ${SPU_WARNING} ${SPU_OPTIMIZE} ${SPU_CACHE_FLAGS} $(PROFILE)
+
 
 ### Program details
 
@@ -53,7 +54,7 @@ SPU_SOURCES       = kernel.c
 SPU_OBJECTS       = ${SPU_SOURCES:%.c=%.out}
 SPU_OBJECTS_EMB   = $(SPU_OBJECTS:%.out=%_em.a)
 SPU_SYMBOL_EMB    = $(SPU_SOURCES:%.c=%)
-SPU_LIBRARIES     = 
+SPU_LIBRARIES     = -lsync -lm
 
 
 ### Targets
@@ -99,11 +100,11 @@ clean:
 
 ## Object targets
 ${SPU_OBJECTS}:
-		$(SPU_CC) $(SPU_CFLAGS) $(INCLUDE_PATH) $(SPU_INCLUDE_PATH) $(LIBRARY_PATH) $(SPU_LIBARY_PATH) $(LIBARIES) $(SPU_LIBRARIES) -o $*.out $*.c -lm
+		$(SPU_CC) $(SPU_CFLAGS) $(INCLUDE_PATH) $(SPU_INCLUDE_PATH) $(LIBRARY_PATH) $(SPU_LIBARY_PATH) $(LIBARIES) -o $*.out $*.c $(SPU_LIBRARIES)
 
 ${PPU_OBJECTS}:
-		$(PPU_CC) -c $(PPU_CFLAGS) $(INCLUDE_PATH) $(PPU_INCLUDE_PATH) $(LIBRARY_PATH) $(PPU_LIBARY_PATH) $(LIBARIES) -o $*.o $*.cpp
+		$(PPU_CC) -c $(PPU_CFLAGS) $(INCLUDE_PATH) $(PPU_INCLUDE_PATH) $(LIBRARY_PATH) $(PPU_LIBARY_PATH) -o $*.o $*.cpp $(PPU_LIBARIES)
 
 $(PPU_PROGRAM):	$(SPU_OBJECTS) $(PPU_OBJECTS)
-		$(PPU_CC) $(PPU_CFLAGS) $(INCLUDE_PATH) $(PPU_INCLUDE_PATH) $(LIBRARY_PATH) $(PPU_LIBARY_PATH) $(LIBARIES) $(PPU_LIBRARIES) -o $(PPU_PROGRAM) $(PPU_OBJECTS) $(SPU_OBJECTS_EMB)
+		$(PPU_CC) $(PPU_CFLAGS) $(INCLUDE_PATH) $(PPU_INCLUDE_PATH) $(LIBRARY_PATH) $(PPU_LIBARY_PATH) $(LIBARIES) -o $(PPU_PROGRAM) $(PPU_OBJECTS) $(SPU_OBJECTS_EMB) $(PPU_LIBRARIES)
 

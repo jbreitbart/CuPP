@@ -78,8 +78,14 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_cell_impl (F /*func*/, spe_program_handle_t prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
-		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
+		kernel_launcher_cell_impl (F /*func*/, spe_program_handle_t *prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {
+			stack_ = new char[2*sizeof(dim3) + 256];
+		}
+
+		~kernel_launcher_cell_impl() {
+			delete[] stack_;
+		}
 
 
 		/**
@@ -163,7 +169,7 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		/**
 		 * The spe program handle
 		 */
-		spe_program_handle_t &prog_handle_;
+		spe_program_handle_t *prog_handle_;
 
 		/**
 		 * Grid dimension
@@ -189,6 +195,11 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		 * How many cuda function call stack space is currently in use.
 		 */
 		size_t stack_in_use_;
+
+		/**
+		 * The stack
+		 */
+		char *stack_;
 
 		/**
 		 * The SPE contextes
@@ -234,7 +245,7 @@ void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 		}
 
 		// Load program into context
-		if (spe_program_load (ctxs_[i], &prog_handle_)) {
+		if (spe_program_load (ctxs_[i], prog_handle_)) {
 			throw cupp::exception::cell_runtime_error ("Failed loading program");
 		}
 
@@ -244,7 +255,10 @@ void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 		}
 	}
 
-	// send grid / block dim to the SPE
+	memcpy (stack_, (char*)&grid_dim_, sizeof(dim3));
+	memcpy (stack_+sizeof(dim3), (char*)&block_dim_, sizeof(dim3));
+
+/*	// send grid / block dim to the SPE
 	for (int i=0; i<d.spes(); ++i) {
 		unsigned int buffer = reinterpret_cast<unsigned int> (&grid_dim_);
 		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
@@ -253,7 +267,7 @@ void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 	for (int i=0; i<d.spes(); ++i) {
 		unsigned int buffer = reinterpret_cast<unsigned int> (&block_dim_);
 		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
-	}
+	}*/
 }
 
 
@@ -267,7 +281,11 @@ void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 	unsigned int start = 0;
 	unsigned int end = number_of_work_per_spe;
 
+	char* stack_ptr = stack_;
+	unsigned int buffer = (unsigned int)stack_ptr;
+
 	for (int i=0; i<d.spes(); ++i) {
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
 		put_in_mbox (ctxs_[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
 		put_in_mbox (ctxs_[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
 		
@@ -340,18 +358,21 @@ boost::any kernel_launcher_cell_impl <F_>::setup_argument (const device &d, cons
 
 template< typename F_ >
 template <typename T>
-void kernel_launcher_cell_impl <F_>::put_argument_on_stack(const device &d, const T &a) {
-	//if (stack_in_use_+sizeof(T) > 256) {
-	//	throw exception::stack_overflow();
-	//}
-
-	for (int i=0; i<d.spes(); ++i) {
-		unsigned int buffer = reinterpret_cast<unsigned int> (&a);
-		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+void kernel_launcher_cell_impl <F_>::put_argument_on_stack(const device &/*d*/, const T &a) {
+	if (stack_in_use_+sizeof(T) > 256) {
+		throw exception::stack_overflow();
 	}
 
+	int pos = 2*sizeof(dim3) + stack_in_use_;
+	memcpy (stack_+pos, &a, sizeof(T));
 
-	//stack_in_use_ += sizeof(T);
+// 	for (int i=0; i<d.spes(); ++i) {
+// 		unsigned int buffer = reinterpret_cast<unsigned int> (&a);
+// 		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+// 	}
+
+
+	stack_in_use_ += sizeof(T);
 }
 
 } // kernel_impl

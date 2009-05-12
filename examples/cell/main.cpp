@@ -30,7 +30,7 @@ int main (unsigned long long /*id*/) {
 	dim3 block_dim(10);
 	dim3 grid_dim(10);
 
-	cupp::kernel k(f, kernel, grid_dim, block_dim);
+	cupp::kernel k(f, &kernel, grid_dim, block_dim);
 
 	k (d, mem);
 

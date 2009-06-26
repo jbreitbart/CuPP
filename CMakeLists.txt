@@ -3,7 +3,7 @@ PROJECT(cupp)
 # load cuda macros
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
 
-#SET (CUDA_HOST_COMPILATION_CPP OFF)
+SET (CUDA_HOST_COMPILATION_CPP OFF)
 SET (CUDA_NVCC_FLAGS -D__CUDACC__)
 
 # include and link with CUDA

@@ -36,11 +36,15 @@ class memory1d {
 		typedef memory1d<T>   device_type;
 		typedef host_type_    host_type;
 
+/*memory1d (memory1d* a) {
+	*this = *a;
+}*/
+
 		/**
 		 * @typedef size_type
 		 * @brief The type you should use to index this class
 		 */
-		typedef std::size_t size_type;
+		typedef int size_type;
 
 		/**
 		 * @typedef value_type

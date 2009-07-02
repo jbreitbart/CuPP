@@ -47,8 +47,8 @@ static inline void kernel (__ea datatype* arr, __ea datatype* result) {
 	sdata[threadIdx.x] = arr[threadIdx.x + blockIdx.x*blockDim.x];
 
 	END
-	
-	for (unsigned int k=blockDim.x/2; k>0; k/=2) {
+	unsigned int k;
+	for (k=blockDim.x/2; k>0; k/=2) {
 		START
 
 		if (threadIdx.x < k) {
@@ -75,7 +75,7 @@ typedef union {
 
 typedef union {
 	__ea int* arg;
-	char dummy[sizeof( int*)];
+	char dummy[sizeof(__ea int*)];
 } arg2T;
 
 

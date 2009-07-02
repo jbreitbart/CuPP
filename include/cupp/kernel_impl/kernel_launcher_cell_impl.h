@@ -41,6 +41,8 @@
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>
 
+void call_kernel_cpu(char* stack_ptr, const unsigned int start_calc, const unsigned int end_calc);
+
 namespace cupp {
 namespace kernel_impl {
 
@@ -79,11 +81,13 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		 * @param tokens The number of tokens
 		 */
 		kernel_launcher_cell_impl (F /*func*/, spe_program_handle_t *prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
-		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {
+		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0), ctxs_(0), threads_(0) {
 			stack_ = new char[2*sizeof(dim3) + 256];
 		}
 
 		~kernel_launcher_cell_impl() {
+			delete[] ctxs_;
+			delete[] threads_;
 			delete[] stack_;
 		}
 
@@ -234,52 +238,48 @@ static inline void *spe_kernel_pthread_function(void* arg) {
 template< typename F_ >
 void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 
-	// start the SPE threads
-	ctxs_ = new spe_context_ptr_t[d.spes()];
-	threads_ = new pthread_t[d.spes()];
+	static bool first_run = true;
 
-	for (int i=0; i<d.spes(); ++i) {
-		// Create context
-		if ((ctxs_[i] = spe_context_create (0, NULL)) == NULL) {
-			throw cupp::exception::cell_runtime_error ("Failed creating context");
+	if (first_run) {
+		first_run = false;
+
+		// start the SPE threads
+		ctxs_ = new spe_context_ptr_t[d.spes()];
+		threads_ = new pthread_t[d.spes()];
+	
+		for (int i=0; i<d.spes(); ++i) {
+			// Create context
+			if ((ctxs_[i] = spe_context_create (0, NULL)) == NULL) {
+				throw cupp::exception::cell_runtime_error ("Failed creating context");
+			}
+	
+			// Load program into context
+			if (spe_program_load (ctxs_[i], prog_handle_)) {
+				throw cupp::exception::cell_runtime_error ("Failed loading program");
+			}
+	
+			// Create thread for each SPE context
+			if (pthread_create (&threads_[i], NULL, &spe_kernel_pthread_function, &ctxs_[i]))  {
+				throw cupp::exception::cell_runtime_error ("Failed creating thread");
+			}
 		}
 
-		// Load program into context
-		if (spe_program_load (ctxs_[i], prog_handle_)) {
-			throw cupp::exception::cell_runtime_error ("Failed loading program");
-		}
-
-		// Create thread for each SPE context
-		if (pthread_create (&threads_[i], NULL, &spe_kernel_pthread_function, &ctxs_[i]))  {
-			throw cupp::exception::cell_runtime_error ("Failed creating thread");
-		}
 	}
 
 	memcpy (stack_, (char*)&grid_dim_, sizeof(dim3));
 	memcpy (stack_+sizeof(dim3), (char*)&block_dim_, sizeof(dim3));
 
-/*	// send grid / block dim to the SPE
-	for (int i=0; i<d.spes(); ++i) {
-		unsigned int buffer = reinterpret_cast<unsigned int> (&grid_dim_);
-		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
-	}
-
-	for (int i=0; i<d.spes(); ++i) {
-		unsigned int buffer = reinterpret_cast<unsigned int> (&block_dim_);
-		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
-	}*/
 }
-
 
 template< typename F_ >
 void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 
 	// static work scheduling
 
-	const int number_of_work_per_spe = grid_dim_.x / d.spes();
+	const int number_of_work_per_spe = grid_dim_.x / (d.spes()*2 + 1);
 
 	unsigned int start = 0;
-	unsigned int end = number_of_work_per_spe;
+	unsigned int end = 2*number_of_work_per_spe;
 
 	char* stack_ptr = stack_;
 	unsigned int buffer = (unsigned int)stack_ptr;
@@ -289,36 +289,57 @@ void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 		put_in_mbox (ctxs_[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
 		put_in_mbox (ctxs_[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
 		
-		start += number_of_work_per_spe;
-		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_.x;
+		start += 2*number_of_work_per_spe;
+		end   += 2*number_of_work_per_spe;
+// 		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_.x;
 	}
 
-// 	stack_in_use_ = 0;
+	// call kernel @ cpu
+
+	call_kernel_cpu(stack_ptr, d.spes()*number_of_work_per_spe*2, grid_dim_.x);
+
 
 	// wait until all spes have finished their work
 	for (int i=0; i<d.spes(); ++i) {
 		unsigned int data = 1;
-		while (spe_out_mbox_status(ctxs_[i]) != 1) {}
-		spe_out_mbox_read(ctxs_[i], &data, 1);
+
+		int status = 0;
+		while (status == 0 || status== -1) {
+			errno = 0;
+			status = spe_out_mbox_read(ctxs_[i], &data, 1);
+
+			if (status!=0) {
+				if (errno == ESRCH) {
+					throw cupp::exception::cell_runtime_error  ("The specified SPE context is invalid.");
+				}
+				if (errno == EIO) {
+					throw cupp::exception::cell_runtime_error  ("The I/O error occurred.");
+				}
+				if (errno == EINVAL) {
+					throw cupp::exception::cell_runtime_error  ("The specified pointer to the mailbox message, the specified maximum number of mailbox entries, or the specified behavior is invalid.");
+				}
+			}
+		}
+
 		if (data != 0) {
 			throw cupp::exception::cell_runtime_error ("Something is completly wrong here ... aka \"the error that should not happen nb. 1a\"");
 		}
 	}
 
-	for (int i=0; i<d.spes(); ++i) {
-		if (pthread_join (threads_[i], NULL)) {
-			throw cupp::exception::cell_runtime_error ("Failed pthread_join");
-		}
-	
-		/* Destroy context */
-		if (spe_context_destroy (ctxs_[i]) != 0) {
-			throw cupp::exception::cell_runtime_error ("Failed destroying context");
-		}
-	}
+// 	for (int i=0; i<d.spes(); ++i) {
+// 		if (pthread_join (threads_[i], NULL)) {
+// 			throw cupp::exception::cell_runtime_error ("Failed pthread_join");
+// 		}
+// 	
+// 		/* Destroy context */
+// 		if (spe_context_destroy (ctxs_[i]) != 0) {
+// 			throw cupp::exception::cell_runtime_error ("Failed destroying context");
+// 		}
+// 	}
 
 
-	delete[] ctxs_;
-	delete[] threads_;
+	stack_in_use_ = 0;
+
 }
 
 

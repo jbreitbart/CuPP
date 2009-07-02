@@ -14,6 +14,7 @@
 #include <libspe2.h>
 #include <pthread.h>
 #include <errno.h>
+#include <iostream>
 
 
 // CUPP
@@ -79,15 +80,18 @@ inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int cou
 inline void put_in_mbox (spe_context_ptr_t spe, unsigned int *mbox_data, int count, unsigned int behavior) {
 	int status = 0;
 	while (status == 0 || status== -1) {
+		errno = 0;
 		status = spe_in_mbox_write (spe, mbox_data, count, behavior);
-		if (errno == ESRCH) {
-			throw cupp::exception::cell_runtime_error  ("The specified SPE context is invalid.");
-		}
-		if (errno == EIO) {
-			throw cupp::exception::cell_runtime_error  ("The I/O error occurred.");
-		}
-		if (errno == EINVAL) {
-			throw cupp::exception::cell_runtime_error  ("The specified pointer to the mailbox message, the specified maximum number of mailbox entries, or the specified behavior is invalid.");
+		if (status!=0) {
+			if (errno == ESRCH) {
+				throw cupp::exception::cell_runtime_error  ("The specified SPE context is invalid.");
+			}
+			if (errno == EIO) {
+				throw cupp::exception::cell_runtime_error  ("The I/O error occurred.");
+			}
+			if (errno == EINVAL) {
+				throw cupp::exception::cell_runtime_error  ("The specified pointer to the mailbox message, the specified maximum number of mailbox entries, or the specified behavior is invalid.");
+			}
 		}
 	}
 }

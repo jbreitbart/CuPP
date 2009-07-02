@@ -4,13 +4,13 @@
 PPU_CC            = ppu32-g++
 PPU_STRIP         = ppu-strip
 PPU_EMBEDSPU      = ppu32-embedspu
-#SPU_CC            = spu-g++
-SPU_CC            = $(SPU_COMPILER_PATH)spuxlc
+SPU_CC            = spu-gcc
+#SPU_CC            = $(SPU_COMPILER_PATH)spuxlc
 SPU_STRIP         = spu-strip
 
 
-PPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
-SPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
+#PPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
+#SPU_COMPILER_PATH = /opt/ibmcmp/xlc/cbe/10.1/bin/
 INCLUDE_PATH      = -I../../include/
 PPU_INCLUDE_PATH  = -I/home/jens/boost_1_38_0 -L/opt/cell/sdk/usr/include
 SPU_INCLUDE_PATH  = -I/opt/cell/sdk/usr/spu/include
@@ -32,8 +32,8 @@ PPU_CFLAGS        = $(PPU_WARNING) $(DEBUG) ${PPU_OPTIMIZE} $(PROFILE)
 
 ## SPU
 #SPU_WARNING       = -Wno-main
-SPU_OPTIMIZE      = -O5
-SPU_CACHE_FLAGS   = -qswcache_size=128 -qea32
+SPU_OPTIMIZE      = -O2
+#SPU_CACHE_FLAGS   = -qswcache_size=128 -qea32
 SPU_CFLAGS        = $(DEBUG) $(WARNING) ${SPU_WARNING} ${SPU_OPTIMIZE} ${SPU_CACHE_FLAGS} $(PROFILE)
 
 

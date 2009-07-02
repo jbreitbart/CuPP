@@ -18,7 +18,7 @@ static struct dim3 blockIdx;
 typedef int local_int[512];
 
 
-#define LOCAL(a) #a[threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y]
+#define LOCAL(a) a[threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y]
 #define __shared__
 
 #define __syncthreads()	\
@@ -57,6 +57,7 @@ typedef union {
 } arg1T;
 
 int main () {
+	int i;
 	__ea char* stack_ptr = (__ea char*) spu_read_in_mbox();
 	const unsigned int start_calc = spu_read_in_mbox();
 	const unsigned int end_calc = spu_read_in_mbox();
@@ -64,7 +65,7 @@ int main () {
 
 	char stack[2*sizeof(struct dim3) + 256];
 
-	for (int i=0; i<2*sizeof(struct dim3) + 256; ++i) {
+	for (i=0; i<2*sizeof(struct dim3) + 256; ++i) {
 		stack[i] = stack_ptr[i];
 	}
 
@@ -74,7 +75,7 @@ int main () {
 
 	// 2. get the arguments out of the stack
 	arg1T arg1;
-	for (int i=0; i<sizeof(__ea int*); ++i) {
+	for (i=0; i<sizeof(__ea int*); ++i) {
 		arg1.dummy[i] = stack[2*sizeof(struct dim3) + i];
 	}
 

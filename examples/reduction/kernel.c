@@ -19,6 +19,7 @@ static struct dim3 blockDim;
 static struct dim3 blockIdx;
 
 static int last_block = 0;
+static datatype atomic_result = 0;
 
 typedef datatype local_datatype[512];
 
@@ -41,7 +42,6 @@ typedef datatype local_datatype[512];
 
 static inline void kernel (__ea datatype* arr, __ea datatype* result) {
 	struct dim3 threadIdx;
-	static datatype atomic_result = 0;
 
 	START
 
@@ -67,6 +67,8 @@ typedef union {
 
 
 int main () {
+while (1==1) {
+
 	int stack_used = 0;
 	__ea char* stack_ptr = (__ea char*) spu_read_in_mbox();
 	const unsigned int start_calc = spu_read_in_mbox();
@@ -99,6 +101,8 @@ int main () {
 	}
 	stack_used += sizeof(__ea int*);
 
+	last_block = 0;
+	atomic_result = 0;
 
 	for (blockIdx.x=start_calc; blockIdx.x < end_calc; ++blockIdx.x) {
 	for (blockIdx.y=0; blockIdx.y<gridDim.y; ++blockIdx.y) {
@@ -113,8 +117,10 @@ int main () {
 	}
 	}
 
+
 	__cache_flush();
 	spu_write_out_mbox(0);
+}
 
 	return 0;
 }

@@ -19,8 +19,6 @@
 #include "cupp/kernel_call_traits.h"
 #include "cupp/kernel_type_binding.h"
 #include "cupp/runtime.h"
-// #include "cupp/shared_device_pointer.h"
-// #include "cupp/device_reference.h"
 
 
 
@@ -32,6 +30,9 @@
 #include <pthread.h>
 #include <errno.h>
 
+#ifdef DYNAMIC
+#include <libsync.h>
+#endif
 
 // STD
 #include <vector>
@@ -81,8 +82,10 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		 * @param tokens The number of tokens
 		 */
 		kernel_launcher_cell_impl (F /*func*/, spe_program_handle_t *prog_handle, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
-		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0), ctxs_(0), threads_(0) {
+		prog_handle_(prog_handle), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0), ctxs_(0), threads_(0), spes_already_started_(0) {
 			stack_ = new char[2*sizeof(dim3) + 256];
+			ctxs_ = new spe_context_ptr_t[6];
+			threads_ = new pthread_t[6];
 		}
 
 		~kernel_launcher_cell_impl() {
@@ -215,6 +218,8 @@ class kernel_launcher_cell_impl : public kernel_launcher_base {
 		 */
 		pthread_t *threads_;
 
+		int spes_already_started_;
+
 		template <int i>
 		friend class real_setup_argument;
 };
@@ -238,16 +243,10 @@ static inline void *spe_kernel_pthread_function(void* arg) {
 template< typename F_ >
 void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 
-	static bool first_run = true;
+	if (spes_already_started_ < d.spes()) {
 
-	if (first_run) {
-		first_run = false;
-
-		// start the SPE threads
-		ctxs_ = new spe_context_ptr_t[d.spes()];
-		threads_ = new pthread_t[d.spes()];
-	
-		for (int i=0; i<d.spes(); ++i) {
+		// start the SPE threads	
+		for (int i=spes_already_started_; i<d.spes(); ++i) {
 			// Create context
 			if ((ctxs_[i] = spe_context_create (0, NULL)) == NULL) {
 				throw cupp::exception::cell_runtime_error ("Failed creating context");
@@ -264,6 +263,8 @@ void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 			}
 		}
 
+		spes_already_started_ = d.spes();
+
 	}
 
 	memcpy (stack_, (char*)&grid_dim_, sizeof(dim3));
@@ -271,11 +272,9 @@ void kernel_launcher_cell_impl <F_>::configure_call(const device& d) {
 
 }
 
-template< typename F_ >
-void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 
-	// static work scheduling
-
+// static with PPE
+#if 0
 	const int number_of_work_per_spe = grid_dim_.x / (d.spes()*2 + 1);
 
 	unsigned int start = 0;
@@ -295,9 +294,65 @@ void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 	}
 
 	// call kernel @ cpu
-
 	call_kernel_cpu(stack_ptr, d.spes()*number_of_work_per_spe*2, grid_dim_.x);
+#endif
 
+template< typename F_ >
+void kernel_launcher_cell_impl <F_>::launch(const device& d) {
+
+	char* stack_ptr = stack_;
+	unsigned int buffer = (unsigned int)stack_ptr;
+
+	const int number_of_work_per_spe = grid_dim_.x / d.spes();
+
+	unsigned int start = 0;
+	unsigned int end = number_of_work_per_spe;
+
+
+	for (int i=0; i<d.spes(); ++i) {
+		buffer = (unsigned int)stack_ptr;
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+
+#ifndef DYNAMIC
+		put_in_mbox (ctxs_[i], &start, 1, SPE_MBOX_ALL_BLOCKING);
+		put_in_mbox (ctxs_[i], &end, 1, SPE_MBOX_ALL_BLOCKING);
+		
+		start += number_of_work_per_spe;
+		end = (i!=d.spes()-2) ? (end+number_of_work_per_spe) : grid_dim_.x;
+#endif
+	}
+
+
+#ifdef DYNAMIC
+	volatile int done __attribute__ ((aligned (32))) = 0;
+	atomic_ea_t atomic_ea;
+	atomic_ea = (atomic_ea_t)(uintptr_t)(&done);
+
+	for (int i=0; i<d.spes(); ++i) {
+		buffer = (unsigned int)&done;
+		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
+	}
+
+
+	// call kernel @ cpu
+	while (1==1) {
+		const int done = atomic_read( atomic_ea );
+
+		int todo = (grid_dim_.x - done)/(6*4);
+		if (todo < 4) todo = 4;
+
+// 		const int todo = 1;
+
+		const int start = atomic_add_return (todo, atomic_ea);
+
+		if (start >= grid_dim_.x) break;
+
+		int end = start + todo;
+		if (end > grid_dim_.x) end = grid_dim_.x;
+
+		call_kernel_cpu (stack_ptr, start, end);
+	}
+#endif
 
 	// wait until all spes have finished their work
 	for (int i=0; i<d.spes(); ++i) {
@@ -364,11 +419,6 @@ boost::any kernel_launcher_cell_impl <F_>::setup_argument (const device &d, cons
 		throw exception::kernel_parameter_type_mismatch();
 	}
 	
-	//invoke the copy constructor ...
-	//host_type host_copy (*temp);
-	
-	//const device_type device_copy = kernel_call_traits<host_type, device_type>::transform(d, host_copy);
-	
 	// push device_type auf kernel stack
 	put_argument_on_stack(d, *temp);
 
@@ -386,12 +436,6 @@ void kernel_launcher_cell_impl <F_>::put_argument_on_stack(const device &/*d*/, 
 
 	int pos = 2*sizeof(dim3) + stack_in_use_;
 	memcpy (stack_+pos, &a, sizeof(T));
-
-// 	for (int i=0; i<d.spes(); ++i) {
-// 		unsigned int buffer = reinterpret_cast<unsigned int> (&a);
-// 		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);
-// 	}
-
 
 	stack_in_use_ += sizeof(T);
 }

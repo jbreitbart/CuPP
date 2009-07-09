@@ -59,6 +59,7 @@ typedef union {
 
 
 int main () {
+while (1==1) {
 	int stack_used = 0;
 	__ea char* stack_ptr = (__ea char*) spu_read_in_mbox();
 	const unsigned int start_calc = spu_read_in_mbox();
@@ -104,6 +105,7 @@ int main () {
 
 	__cache_flush();
 	spu_write_out_mbox(0);
+}
 
 	return 0;
 }

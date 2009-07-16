@@ -308,7 +308,6 @@ void kernel_launcher_cell_impl <F_>::launch(const device& d) {
 	unsigned int start = 0;
 	unsigned int end = number_of_work_per_spe;
 
-
 	for (int i=0; i<d.spes(); ++i) {
 		buffer = (unsigned int)stack_ptr;
 		put_in_mbox (ctxs_[i], &buffer, 1, SPE_MBOX_ALL_BLOCKING);

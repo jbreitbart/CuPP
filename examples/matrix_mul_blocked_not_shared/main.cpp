@@ -73,7 +73,7 @@ int main (unsigned long long /*id*/) {
 
 	cupp::device d;
 
-	int size = 1<<9;    // number of elements to reduce
+	int size = 1<<10;    // number of elements to reduce
 	int threads = 16;  // number of threads per block
 
 	std::cout << "size: " << size << std::endl;
@@ -81,7 +81,7 @@ int main (unsigned long long /*id*/) {
 
 	datatype *A = (datatype*) malloc_aligned ( sizeof(datatype)*size*size );
 	datatype *B = (datatype*) malloc_aligned ( sizeof(datatype)*size*size );
-	datatype *C = (datatype*) malloc_aligned ( sizeof(datatype)*size*size );
+// 	datatype *C = (datatype*) malloc_aligned ( sizeof(datatype)*size*size );
 	datatype *C_d = (datatype*) malloc_aligned ( sizeof(datatype)*size*size );
 
 	fill (A, size*size);
@@ -93,16 +93,16 @@ int main (unsigned long long /*id*/) {
 
 
 	
-	gettimeofday(&tv1, NULL);
-	for (int i=0; i<size*size; ++i) {
-		C[i] = 0;
-	}
-	matrix_mul (A, B, C, size);
-	gettimeofday(&tv2, NULL);
+// 	gettimeofday(&tv1, NULL);
+// 	for (int i=0; i<size*size; ++i) {
+// 		C[i] = 0;
+// 	}
+// 	matrix_mul (A, B, C, size);
+// 	gettimeofday(&tv2, NULL);
+// 
+// 	std::cout << "CPU: " << timediff(tv2, tv1) << std::endl;
 
-	std::cout << "CPU: " << timediff(tv2, tv1) << std::endl;
-
-// 	print_matrix (C, size);
+	// print_matrix (C, size);
 
 	dim3 block_dim(threads, threads);
 	dim3 grid_dim(size/threads, size/threads);
@@ -119,14 +119,13 @@ int main (unsigned long long /*id*/) {
 
 		std::cout << "DEVICE with " << i << " SPEs: " << timediff(tv2, tv1) << std::endl;
 
-// 		print_matrix (C_d, size);
-
-		for (int j=0; j<size*size; ++j) {
+		// print_matrix (C_d, size);
+/*		for (int j=0; j<size*size; ++j) {
 			if (C[j] != C_d[j]) {
 				std::cerr << "Error, somthing is wrong with the kernel " << j << std::endl;
 				break;
 			}
-		}
+		}*/
 	}
 
 // 	delete[] A;

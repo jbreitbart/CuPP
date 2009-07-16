@@ -11,6 +11,12 @@
 #include "cupp/device.h"
 #include "cupp/kernel.h"
 
+typedef union {
+  unsigned long long ull;
+  unsigned int ui[2];
+} addr64;
+
+
 #include "kernel_t.h"
 
 extern spe_program_handle_t kernel;
@@ -47,6 +53,7 @@ void matrix_mul (const datatype *A, const datatype *B, datatype *C, const int si
 
 void print_matrix (const datatype *A, const int size) {
 	for (int i=0; i<size; ++i) {
+		std::cout << i << ": ";
 		for (int j=0; j<size; ++j) {
 			std::cout << A[i*size + j] << " ";
 		}
@@ -56,13 +63,13 @@ void print_matrix (const datatype *A, const int size) {
 
 
 void *malloc_aligned(size_t size) {
-	char* ptr = (char*)malloc(size + 16-1);
+	char* ptr = (char*)malloc(size + 128-1);
 	if (!ptr) return NULL;
 
 	const int adr = (int)ptr;
 
-	if ( adr % 16 != 0) {
-		ptr += 16 - (adr%16);
+	if ( adr % 128 != 0) {
+		ptr += 128 - (adr%128);
 	}
 
 	return ptr;
@@ -73,7 +80,7 @@ int main (unsigned long long /*id*/) {
 
 	cupp::device d;
 
-	int size = 1<<9;    // number of elements to reduce
+	int size = 1<<10;    // number of elements to reduce
 	int threads = 16;  // number of threads per block
 
 	std::cout << "size: " << size << std::endl;
@@ -93,14 +100,14 @@ int main (unsigned long long /*id*/) {
 
 
 	
-	gettimeofday(&tv1, NULL);
-	for (int i=0; i<size*size; ++i) {
-		C[i] = 0;
-	}
-	matrix_mul (A, B, C, size);
-	gettimeofday(&tv2, NULL);
+// 	gettimeofday(&tv1, NULL);
+// 	for (int i=0; i<size*size; ++i) {
+// 		C[i] = 0;
+// 	}
+// 	matrix_mul (A, B, C, size);
+// 	gettimeofday(&tv2, NULL);
 
-	std::cout << "CPU: " << timediff(tv2, tv1) << std::endl;
+// 	std::cout << "CPU: " << timediff(tv2, tv1) << std::endl;
 
 // 	print_matrix (C, size);
 
@@ -112,21 +119,27 @@ int main (unsigned long long /*id*/) {
 	for (int i=1; i<=6; ++i) {
 
 		d.set_spes(i);
+		addr64 a, b;
+		a.ull = (unsigned int)A;
+		b.ull = (unsigned int)B;
+
+// 		std::cout << A << " - " << B << std::endl;
+// 		std::cout << (unsigned int)A << " - " << (unsigned int)B << std::endl;
+// 		std::cout << a.ull << " - " << b.ull << std::endl;
 
 		gettimeofday(&tv1, NULL);
-		k (d, A, B, C_d, size);
+		k (d, a, b, C_d, size);
 		gettimeofday(&tv2, NULL);
 
 		std::cout << "DEVICE with " << i << " SPEs: " << timediff(tv2, tv1) << std::endl;
 
 // 		print_matrix (C_d, size);
-
-		for (int j=0; j<size*size; ++j) {
+/*		for (int j=0; j<size*size; ++j) {
 			if (C[j] != C_d[j]) {
 				std::cerr << "Error, somthing is wrong with the kernel " << j << std::endl;
-				break;
+				return 1;
 			}
-		}
+		}*/
 	}
 
 // 	delete[] A;

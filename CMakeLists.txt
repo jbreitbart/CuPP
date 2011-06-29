@@ -3,12 +3,12 @@ PROJECT(cupp)
 # load cuda macros
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
 
-SET (CUDA_HOST_COMPILATION_CPP OFF)
-SET (CUDA_NVCC_FLAGS -D__CUDACC__)
+#SET (CUDA_HOST_COMPILATION_CPP OFF)
+#SET (CUDA_NVCC_FLAGS -D__CUDACC__)
 
 # include and link with CUDA
 INCLUDE_DIRECTORIES(/usr/local/cuda/include/)
-LINK_DIRECTORIES(/usr/local/cuda/lib)
+LINK_DIRECTORIES(/usr/local/cuda/lib64)
 
 # set the include path
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)

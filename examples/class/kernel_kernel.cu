@@ -5,10 +5,9 @@
 
 #include "kernel_t.h"
 
-__global__ void global_function (const int i, int * j) {
-	*j = i;
+__global__ void global_function (test_device a) {
 }
 
 kernelT get_kernel() {
-	return global_function;
+	return (kernelT)global_function;
 }

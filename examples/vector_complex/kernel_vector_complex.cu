@@ -8,8 +8,8 @@
 
 using namespace cupp;
 
-__global__ void global_function (deviceT::vector< deviceT::vector <int> > &i) {
-	i[threadIdx.x][0] *= 2;
+__global__ void global_function (deviceT::vector< deviceT::vector <int> > *i) {
+	i->operator[](threadIdx.x)[0] *= 2;
 }
 
 kernelT get_kernel() {

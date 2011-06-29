@@ -71,7 +71,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		 * @param shared_mem The amount of dynamic shared memory needed by the kernel
 		 * @param tokens The number of tokens
 		 */
-		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		kernel_launcher_impl (F func, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, CUstream_st *tokens = 0) :
 		func_(func), grid_dim_(grid_dim), block_dim_(block_dim), shared_mem_(shared_mem), tokens_(tokens), stack_in_use_(0) {};
 
 
@@ -176,7 +176,7 @@ class kernel_launcher_impl : public kernel_launcher_base {
 		/**
 		 * The tokens ... whatever this may be, cuda docu ist kind of unspecific here
 		 */
-		int tokens_;
+		CUstream_st* tokens_;
 		
 		/**
 		 * How many cuda function call stack space is currently in use.
@@ -225,7 +225,8 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 		throw exception::kernel_parameter_type_mismatch();
 	}
 
-	if (is_reference <T>()) {
+	//if (is_reference <T>()) {
+	if (is_pointer <T>() && has_type_bindings<T>::value ) {
 		// ok this means our kernel wants a reference
 		
 		device_reference<device_type> device_ref ( kernel_call_traits<host_type, device_type>::get_device_reference (d, *temp) );
@@ -237,7 +238,6 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 		return boost::any(device_ref);
 		
 	} else {
-	
 		//invoke the copy constructor ...
 		host_type host_copy (*temp);
 		

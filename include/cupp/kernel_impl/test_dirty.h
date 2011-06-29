@@ -196,7 +196,7 @@ class test_dirty<0> {
  */
 template <typename ARG>
 inline bool check_arg() {
-	if (boost::is_reference<ARG>::value && !is_second_level_const<ARG>::value) {
+	if (boost::is_pointer<ARG>::value && !is_second_level_const<ARG>::value) {
 		return true;
 	}
 	

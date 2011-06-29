@@ -36,7 +36,7 @@ class has_typdefs {
 		template<class S> static two check(...);
 
 	public:
-		enum {value = (sizeof(check<T>(0, 0)) == sizeof(char))};
+		enum {value = (sizeof(check<T>(0, 0)) == sizeof(one))};
 };
 
 
@@ -63,6 +63,7 @@ struct get_type<false, T> {
 };
 
 } //cupp::impl
+
 
 /**
  * @class get_type
@@ -121,12 +122,12 @@ SET_TYPE_SPEC(uint4)
 
 SET_TYPE_SPEC(long1)
 SET_TYPE_SPEC(long2)
-SET_TYPE_SPEC(long3)
-SET_TYPE_SPEC(long4)
+// SET_TYPE_SPEC(long3)
+// SET_TYPE_SPEC(long4)
 SET_TYPE_SPEC(ulong1)
 SET_TYPE_SPEC(ulong2)
-SET_TYPE_SPEC(ulong3)
-SET_TYPE_SPEC(ulong4)
+// SET_TYPE_SPEC(ulong3)
+// SET_TYPE_SPEC(ulong4)
 
 SET_TYPE_SPEC(float1)
 SET_TYPE_SPEC(float2)
@@ -158,6 +159,13 @@ class kernel_host_type {
 		typedef typename get_type<device_type>::host_type type;
 };
 
+// T*  -> T
+template <typename device_type>
+class kernel_host_type<device_type*> {
+	public:
+		typedef typename kernel_host_type<typename boost::remove_pointer<device_type>::type>::type type;
+};
+
 // T&  -> T
 template <typename device_type>
 class kernel_host_type<device_type&> {
@@ -179,6 +187,68 @@ class kernel_host_type<device_type volatile> {
 		typedef typename kernel_host_type<typename boost::remove_volatile<device_type>::type>::type type;
 };
 
+#define KERNEL_HOST_TYPE(a) \
+template <> \
+struct kernel_host_type<a*> { \
+	typedef a* type; \
+};
+
+KERNEL_HOST_TYPE(int);
+KERNEL_HOST_TYPE(unsigned int);
+KERNEL_HOST_TYPE(char);
+KERNEL_HOST_TYPE(unsigned char);
+KERNEL_HOST_TYPE(short);
+KERNEL_HOST_TYPE(unsigned short);
+KERNEL_HOST_TYPE(long);
+KERNEL_HOST_TYPE(unsigned long);
+KERNEL_HOST_TYPE(float);
+KERNEL_HOST_TYPE(double);
+
+KERNEL_HOST_TYPE(dim3)
+KERNEL_HOST_TYPE(char1)
+KERNEL_HOST_TYPE(char2)
+KERNEL_HOST_TYPE(char3)
+KERNEL_HOST_TYPE(char4)
+KERNEL_HOST_TYPE(uchar1)
+KERNEL_HOST_TYPE(uchar2)
+KERNEL_HOST_TYPE(uchar3)
+KERNEL_HOST_TYPE(uchar4)
+
+KERNEL_HOST_TYPE(short1)
+KERNEL_HOST_TYPE(short2)
+KERNEL_HOST_TYPE(short3)
+KERNEL_HOST_TYPE(short4)
+KERNEL_HOST_TYPE(ushort1)
+KERNEL_HOST_TYPE(ushort2)
+KERNEL_HOST_TYPE(ushort3)
+KERNEL_HOST_TYPE(ushort4)
+
+KERNEL_HOST_TYPE(int1)
+KERNEL_HOST_TYPE(int2)
+KERNEL_HOST_TYPE(int3)
+KERNEL_HOST_TYPE(int4)
+KERNEL_HOST_TYPE(uint1)
+KERNEL_HOST_TYPE(uint2)
+KERNEL_HOST_TYPE(uint3)
+KERNEL_HOST_TYPE(uint4)
+
+
+KERNEL_HOST_TYPE(long1)
+KERNEL_HOST_TYPE(long2)
+KERNEL_HOST_TYPE(ulong1)
+KERNEL_HOST_TYPE(ulong2)
+
+KERNEL_HOST_TYPE(float1)
+KERNEL_HOST_TYPE(float2)
+KERNEL_HOST_TYPE(float3)
+KERNEL_HOST_TYPE(float4)
+
+KERNEL_HOST_TYPE(double1)
+KERNEL_HOST_TYPE(double2)
+
+#undef KERNEL_HOST_TYPE
+
+
 
 /**
  * @class kernel_device_type
@@ -196,6 +266,12 @@ struct kernel_device_type {
 	typedef typename get_type<host_type>::device_type type;
 };
 
+// T*  -> T
+// template <typename host_type>
+// struct kernel_device_type<host_type*> {
+// 	typedef typename kernel_device_type<typename boost::remove_pointer<host_type>::type>::type type;
+// };
+
 // T&  -> T
 template <typename host_type>
 struct kernel_device_type<host_type&> {
@@ -212,6 +288,21 @@ struct kernel_device_type<host_type const> {
 template <typename host_type>
 struct kernel_device_type<host_type volatile> {
 	typedef typename kernel_device_type<typename boost::remove_volatile<host_type>::type>::type type;
+};
+
+
+
+
+/**
+ * @class has_type_bindings
+ * @author Jens Breitbart
+ * @version 0.1
+ * @date 18.12.2009
+ * Returns if T has defined host/device types
+ */
+template <typename T>
+struct has_type_bindings {
+	enum {value = impl::has_typdefs < typename kernel_host_type<T>::type >::value};
 };
 
 #endif

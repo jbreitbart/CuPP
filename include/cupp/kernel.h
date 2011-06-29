@@ -35,6 +35,11 @@ namespace cupp {
 
 using namespace cupp::kernel_impl;
 
+// prototype
+template <bool has_device_type, typename P>
+struct local_handle_call_traits;
+
+
 /**
  * @class kernel
  * @author Björn Knafla: Initial design
@@ -72,7 +77,7 @@ class kernel {
 		 * @param tokens
 		 */
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, const int tokens = 0) :
+		kernel( CudaKernelFunc f, const dim3 &grid_dim, const dim3 &block_dim, const size_t shared_mem=0, CUstream_st* tokens = 0) :
 		number_of_parameters_(boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity),
 		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
 		
@@ -342,8 +347,8 @@ class kernel {
 		 * @param i The number of the parameter (1 == first parameter)
 		 */
 		template <typename P>
-		inline void handle_call_traits(const P &p, const int i);
-
+		inline void handle_call_traits(const P& p, const int i);
+		
 		/**
 		 * @brief Checks if @a number matches with @a number_of_parameters_
 		 * @param number The number to check with
@@ -370,6 +375,32 @@ class kernel {
 		 * @brief Stores the valuse returned by kb_ -> setup_argument(). They are needed by ther kernel_call_traits.
 		 */
 		std::vector<boost::any> returnee_vec_;
+		
+		template <bool has_device_type, typename P>
+		friend class local_handle_call_traits;
+};
+
+
+template <bool has_device_type, typename P>
+struct local_handle_call_traits {
+	static void call (const P &/*p*/, const int /*i*/, kernel */*k*/) {}
+};
+
+template <typename P>
+struct local_handle_call_traits<true, P> {
+	static void call (const P &p, const int i, kernel *k) {
+		if (k->dirty[i-1]) {
+			typedef typename kernel_device_type<P>::type device_type;
+			typedef typename kernel_host_type<P>::type host_type;
+			
+			device_reference<device_type> device_ref = boost::any_cast< device_reference<device_type> >(k->returnee_vec_[i-1]);
+
+			// we are allowed to make this cast
+			// because this function is only called, when p is passed by reference to the kernel
+			P &temp_p = const_cast<P&>(p);
+			kernel_call_traits<host_type, device_type>::dirty(temp_p, device_ref);
+		}
+	}
 };
 
 
@@ -379,21 +410,13 @@ inline void kernel::check_number_of_parameters (const int number) {
 	}
 }
 
-
 template <typename P>
 void kernel::handle_call_traits(const P &p, const int i) {
-	if (dirty[i-1]) {
-		typedef typename kernel_device_type<P>::type device_type;
-		typedef typename kernel_host_type<P>::type host_type;
-		
-		device_reference<device_type> device_ref = boost::any_cast< device_reference<device_type> >(returnee_vec_[i-1]);
-
-		// we can are allowed to make this cast
-		// because this function is only called, when p is passed by reference to the kernel
-		P &temp_p = const_cast<P&>(p);
-		kernel_call_traits<host_type, device_type>::dirty(temp_p, device_ref);
-	}
+	// we can only call the "real" implementation of handle_call_traits if there are
+	// host/device typedefs ... need to refactor this
+	local_handle_call_traits<has_type_bindings<P>::value, P>::call(p, i, this);
 }
+
 
 
 /***  OPERATPR()  ***/

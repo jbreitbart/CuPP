@@ -6,8 +6,8 @@
 #include "cupp/deviceT/vector.h"
 #include "kernel_t.h"
 
-__global__ void global_function (cupp::deviceT::vector<int> &i) {
-	i[threadIdx.x] *= 2;
+__global__ void global_function (cupp::deviceT::vector<int> *i) {
+	i->operator[](threadIdx.x) *= 2;
 }
 
 kernelT get_kernel() {

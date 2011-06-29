@@ -13,7 +13,7 @@
 extern "C"  {
 #endif
 
-typedef void(*kernelT)(cupp::deviceT::memory1d<int>&);
+typedef void(*kernelT)(cupp::deviceT::memory1d<int>*);
 
 kernelT get_kernel();
 

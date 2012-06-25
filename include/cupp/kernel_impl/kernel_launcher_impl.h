@@ -226,7 +226,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 	}
 
 	//if (is_reference <T>()) {
-	if (is_pointer <T>() && has_type_bindings<T>::value ) {
+	if (boost::is_pointer <T>() && has_type_bindings<T>::value ) {
 		// ok this means our kernel wants a reference
 		
 		device_reference<device_type> device_ref ( kernel_call_traits<host_type, device_type>::get_device_reference (d, *temp) );

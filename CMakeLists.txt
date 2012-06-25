@@ -1,24 +1,33 @@
 PROJECT(cupp)
 
 # load cuda macros
-INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCUDA.cmake)
+FIND_PACKAGE(CUDA)
+FIND_PACKAGE(boost)
 
 #SET (CUDA_HOST_COMPILATION_CPP OFF)
 #SET (CUDA_NVCC_FLAGS -D__CUDACC__)
 
 # include and link with CUDA
-INCLUDE_DIRECTORIES(/usr/local/cuda/include/)
-LINK_DIRECTORIES(/usr/local/cuda/lib64)
+IF (CMAKE_CL_64)
+    SET(CUDA_LIB_PATH ${CUDA_SDK_ROOT_DIR}/lib/x64  )
+ELSE (CMAKE_CL_64)
+    IF (CMAKE_CL_32)
+       SET(CUDA_LIB_PATH ${CUDA_SDK_ROOT_DIR}/lib )
+    ELSE (CMAKE_CL_32)
+       SET(CUDA_LIB_PATH ${CUDA_SDK_ROOT_DIR}/lib64)
+    ENDIF(CMAKE_CL_32)
+ENDIF (CMAKE_CL_64)
+
+LINK_DIRECTORIES(${CUDA_LIB_PATH})
 
 # set the include path
+
+INCLUDE_DIRECTORIES(${CUDA_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
-CUDA_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # if you don want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
-
-# add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -W -O2 -g)
 
 # build the CuPP library
 SUBDIRS(src)

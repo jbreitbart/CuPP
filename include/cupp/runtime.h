@@ -85,7 +85,7 @@ void mem_set(shared_device_pointer<T> device_pointer, int value, const size_t si
 	mem_set(device_pointer.get(), value, size);
 }
 
-inline void* malloc_ (const unsigned int size_in_b) {
+inline void* malloc_ (const size_t size_in_b) {
 	void* temp;
 	if (cudaMalloc( &temp, size_in_b ) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());

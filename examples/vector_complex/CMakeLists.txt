@@ -8,7 +8,7 @@ CUDA_ADD_LIBRARY(kernel_vector_complex kernel_vector_complex.cu )
 ADD_EXECUTABLE(vector_complex_example vector_complex.cpp)
 
 #need to link to some other libraries ? just add them here
-TARGET_LINK_LIBRARIES(vector_complex_example cupp kernel_vector_complex cudart GL GLU cuda)
+TARGET_LINK_LIBRARIES(vector_complex_example cupp kernel_vector_complex ${CUDA_LIBRARY})
 
 # set minimum cmake version
 cmake_minimum_required(VERSION 2.4)

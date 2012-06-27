@@ -32,12 +32,12 @@ using boost::disable_if;
 template<class T> struct has_member_transform;
 
 template<class R, class C>
-class has_member_transform<R C::*> {
+class has_member_transform<R (C::*)(const device &)> {
 	private:
 		typedef char one;
 		typedef char (&two)[2];
 
-		template<R C::*> struct helper;
+		template<R (C::*)(const device &)> struct helper;
 
 		// if function transform is defined in T:
 		template<class T> static one check(helper<&T::transform>*);
@@ -98,7 +98,7 @@ struct transform_caller {
 template<class T> struct has_member_get_device_ref;
 
 template<class R, class C>
-class has_member_get_device_ref<R C::*> {
+class has_member_get_device_ref<R (C::*)(const device &)> {
 	private:
 		typedef char one;
 		typedef char (&two)[2];
@@ -165,13 +165,13 @@ struct get_device_ref_caller {
  */
 template<class T> struct has_member_dirty;
 
-template<class R, class C>
-class has_member_dirty<R C::*> {
+template<class R, class C, class D>
+class has_member_dirty<R (C::*)(device_reference<D>)> {
 	private:
 		typedef char one;
 		typedef char (&two)[2];
 
-		template<R C::*> struct helper;
+		template<void (C::*)(device_reference<D>)> struct helper;
 
 		// if function dirty() is defined in T:
 		template<class T> static one check(helper<&T::dirty>*);

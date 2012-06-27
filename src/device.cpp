@@ -43,6 +43,7 @@ void device::real_constructor(const int major, const int minor, const char* name
 	int cur_device;
 	if (cudaGetDevice(&cur_device) == cudaSuccess) {
 		cudaSetDevice(cur_device);
+		cudaGetDeviceProperties(&device_prop_, cur_device);
 		return;
 		//throw too_many_devices_per_thread();
 	}

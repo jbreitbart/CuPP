@@ -377,13 +377,13 @@ class kernel {
 		std::vector<boost::any> returnee_vec_;
 		
 		template <bool has_device_type, typename P>
-		friend class local_handle_call_traits;
+		friend struct local_handle_call_traits;
 };
 
 
 template <bool has_device_type, typename P>
 struct local_handle_call_traits {
-	static void call (const P &/*p*/, const int /*i*/, kernel */*k*/) {}
+	static void call (const P & /*p*/, const int /*i*/, kernel * /*k*/) {}
 };
 
 template <typename P>

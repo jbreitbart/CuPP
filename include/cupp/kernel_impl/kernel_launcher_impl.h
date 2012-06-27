@@ -224,7 +224,7 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 
 	try {
 		temp = const_cast <host_type*> (any_cast< const host_type* > (arg));
-	} catch (boost::bad_any_cast &e) {
+	} catch (boost::bad_any_cast &) {
 		// ok, something is wrong with the types
 		// let's throw our own exception here
 		throw exception::kernel_parameter_type_mismatch();

@@ -6,8 +6,9 @@
 #include "kernel_t.h"
 
 __global__ void global_function (test_device a) {
+    
 }
 
 kernelT get_kernel() {
-	return (kernelT)global_function;
+	return global_function;
 }

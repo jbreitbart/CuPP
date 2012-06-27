@@ -8,7 +8,7 @@ CUDA_ADD_LIBRARY(class_kernel kernel_kernel.cu )
 ADD_EXECUTABLE(class_example kernel.cpp)
 
 #need to link to some other libraries ? just add them here
-TARGET_LINK_LIBRARIES(class_example cupp kernel_kernel cudart GL GLU cuda)
+TARGET_LINK_LIBRARIES(class_example cupp class_kernel ${CUDA_LIBRARY})
 
 # set minimum cmake version
 cmake_minimum_required(VERSION 2.4)

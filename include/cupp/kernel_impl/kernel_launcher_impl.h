@@ -33,6 +33,11 @@
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>
 
+
+// align data correctly
+#define ALIGN_UP(offset, alignment) (offset) = ((offset) + (alignment) - 1) & ~((alignment) - 1)
+
+
 namespace cupp {
 namespace kernel_impl {
 
@@ -259,18 +264,14 @@ void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
 	if (stack_in_use_+sizeof(T) > 256) {
 		throw exception::stack_overflow();
 	}
+	// align the offset based on the current parameter
+
+	size_t alignof = boost::alignment_of<T>::value;
+	ALIGN_UP(stack_in_use_, alignof);
 	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 	stack_in_use_ += sizeof(T);
-
-#if __LP64__
-	// enable on 64bit system
-	// be sure we are at a 8byte boundary ... this may be a problem
-	if ((stack_in_use_%8) != 0) {
-		stack_in_use_ += 8 - (stack_in_use_%8);
-	}
-#endif
 }
 
 } // kernel_impl

@@ -33,6 +33,11 @@
 #include <boost/type_traits.hpp>
 #include <boost/any.hpp>
 
+
+// align data correctly
+#define ALIGN_UP(offset, alignment) (offset) = ((offset) + (alignment) - 1) & ~((alignment) - 1)
+
+
 namespace cupp {
 namespace kernel_impl {
 
@@ -219,14 +224,14 @@ boost::any kernel_launcher_impl<F_>::setup_argument (const device &d, const boos
 
 	try {
 		temp = const_cast <host_type*> (any_cast< const host_type* > (arg));
-	} catch (boost::bad_any_cast &e) {
+	} catch (boost::bad_any_cast &) {
 		// ok, something is wrong with the types
 		// let's throw our own exception here
 		throw exception::kernel_parameter_type_mismatch();
 	}
 
 	//if (is_reference <T>()) {
-	if (is_pointer <T>() && has_type_bindings<T>::value ) {
+	if (boost::is_pointer <T>() && has_type_bindings<T>::value ) {
 		// ok this means our kernel wants a reference
 		
 		device_reference<device_type> device_ref ( kernel_call_traits<host_type, device_type>::get_device_reference (d, *temp) );
@@ -259,18 +264,14 @@ void kernel_launcher_impl<F_>::put_argument_on_stack(const T &a) {
 	if (stack_in_use_+sizeof(T) > 256) {
 		throw exception::stack_overflow();
 	}
+	// align the offset based on the current parameter
+
+	size_t alignof = boost::alignment_of<T>::value;
+	ALIGN_UP(stack_in_use_, alignof);
 	if (cudaSetupArgument(&a, sizeof(T), stack_in_use_) != cudaSuccess) {
 		throw exception::cuda_runtime_error(cudaGetLastError());
 	}
 	stack_in_use_ += sizeof(T);
-
-#if __LP64__
-	// enable on 64bit system
-	// be sure we are at a 8byte boundary ... this may be a problem
-	if ((stack_in_use_%8) != 0) {
-		stack_in_use_ += 8 - (stack_in_use_%8);
-	}
-#endif
 }
 
 } // kernel_impl

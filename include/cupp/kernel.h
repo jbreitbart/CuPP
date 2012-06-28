@@ -59,7 +59,7 @@ class kernel {
 		 * @param tokens
 		 */
 		template< typename CudaKernelFunc>
-		kernel( CudaKernelFunc f, const size_t shared_mem=0, const int tokens = 0) :
+		kernel( CudaKernelFunc f, const size_t shared_mem=0, CUstream_st* tokens = 0) :
 		number_of_parameters_ ( boost::function_traits < typename boost::remove_pointer<CudaKernelFunc>::type >::arity ),
 		dirty ( kernel_launcher_impl< CudaKernelFunc >::dirty_parameters() ) {
 

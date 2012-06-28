@@ -30,7 +30,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # build the CuPP library
-SUBDIRS(src)
+# the CuPP library is now header-only, so it doesn't need to be built
+# SUBDIRS(src)
 
 # build the examples
 SUBDIRS(examples)
